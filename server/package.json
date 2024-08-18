@@ -1,0 +1,14 @@
+{
+  "name": "server",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Social Media MERN Stack",
+  "main": "src/server.js",
+  "author": "lamthanhvy",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2"
+  }
+}
