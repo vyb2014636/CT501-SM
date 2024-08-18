@@ -8,7 +8,9 @@ import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
+import { useNavigate } from 'react-router-dom'
 const AccountButton = () => {
+  const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -17,6 +19,7 @@ const AccountButton = () => {
   const handleClose = () => {
     setAnchorEl(null)
   }
+
   return (
     <>
       <Tooltip title='Tài khoản'>
@@ -63,7 +66,7 @@ const AccountButton = () => {
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={() => navigate('/profile')}>
           <Avatar /> Tài khoản của tôi
         </MenuItem>
         <Divider />

@@ -1,7 +1,13 @@
+import { Container } from '@mui/material'
 import React from 'react'
+import { Outlet } from 'react-router-dom'
 
-const ChatPage = () => {
-  return <div>ChatPage</div>
+const Auth = () => {
+  return (
+    <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', overflow: 'hidden', display: 'flex' }}>
+      <Outlet />
+    </Container>
+  )
 }
 
-export default ChatPage
+export default Auth

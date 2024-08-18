@@ -1,12 +1,15 @@
 // src/routes.js
 import { createBrowserRouter } from 'react-router-dom'
 import HomePage from '@/pages/HomePage'
-import Main from '@/pages/HomePage/Main/Main'
-import Contact from '@/pages/HomePage/Contact/Contact'
 import AdminPage from '@/pages/AdminPage'
 import Dashboard from '@/pages/AdminPage/Dashboard/Dashboard'
 import Setting from '@/pages/AdminPage/Setting/Setting'
-import Posts from '@/components/Posts/Posts/Posts'
+import Posts from '@/pages/HomePage/Posts/Posts'
+import ProfilePage from '@/pages/ProfilePage'
+import ProfileCard from '@/pages/ProfilePage/Profile/ProfileCard'
+import Auth from '@/pages/Auth'
+import Login from '@/pages/Auth/Login/Login'
+import SignUp from '@/pages/Auth/SignUp/SignUp'
 
 const router = createBrowserRouter([
   {
@@ -16,14 +19,24 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Posts />
+      }
+    ]
+  },
+  {
+    path: '/profile',
+    element: <ProfilePage />
+  },
+  {
+    path: '/auth',
+    element: <Auth />,
+    children: [
+      {
+        path: '/auth',
+        element: <Login />
       },
       {
-        path: 'contact',
-        element: <Contact />
-      },
-      {
-        path: 'profile/:userId',
-        element: <Posts />
+        path: '/auth/signup',
+        element: <SignUp />
       }
     ]
   },

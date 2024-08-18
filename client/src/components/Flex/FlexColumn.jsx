@@ -3,7 +3,6 @@ import Box from '@mui/material/Box'
 
 const FlexColumn = styled(Box)({
   display: 'flex',
-  alignItems: 'center',
   flexDirection: 'column'
 })
 
