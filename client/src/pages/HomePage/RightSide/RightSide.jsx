@@ -1,7 +1,7 @@
 import React from 'react'
-import NavIcons from '@/components/NavIcons/NavIcons'
 import Box from '@mui/material/Box'
-import ContactCard from '@/components/ContactCard/ContactCard'
+import ListContact from '@/pages/HomePage/RightSide/ListContact/ListContact'
+import RightBar from './RightBar/RightBar'
 
 const RightSide = () => {
   return (
@@ -15,8 +15,8 @@ const RightSide = () => {
         overflowY: 'auto',
         overflowX: 'hidden'
       }}>
-      <NavIcons />
-      <ContactCard />
+      <RightBar />
+      <ListContact />
     </Box>
   )
 }

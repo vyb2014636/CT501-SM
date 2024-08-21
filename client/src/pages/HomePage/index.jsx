@@ -2,8 +2,8 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import { Outlet } from 'react-router-dom'
-import LeftSide from '@components/LeftSide/LeftSide'
-import RightSide from '@components/RightSide/RightSide'
+import LeftSide from '@/pages/HomePage/LeftSide/LeftSide'
+import RightSide from '@/pages/HomePage/RightSide/RightSide'
 import { useMediaQuery } from '@mui/material'
 
 const HomePage = () => {

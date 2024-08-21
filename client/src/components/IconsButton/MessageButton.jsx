@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton'
 const MessageButton = () => {
   return (
     <IconButton>
-      <ChatBubbleOutlineOutlinedIcon color='primary' />
+      <ChatBubbleOutlineOutlinedIcon color='primary' fontSize='medium' />
     </IconButton>
   )
 }

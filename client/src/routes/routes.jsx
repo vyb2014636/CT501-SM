@@ -4,12 +4,11 @@ import HomePage from '@/pages/HomePage'
 import AdminPage from '@/pages/AdminPage'
 import Dashboard from '@/pages/AdminPage/Dashboard/Dashboard'
 import Setting from '@/pages/AdminPage/Setting/Setting'
-import Posts from '@/pages/HomePage/Posts/Posts'
 import ProfilePage from '@/pages/ProfilePage'
-import ProfileCard from '@/pages/ProfilePage/Profile/ProfileCard'
 import Auth from '@/pages/Auth'
 import Login from '@/pages/Auth/Login/Login'
 import SignUp from '@/pages/Auth/SignUp/SignUp'
+import Main from '@/pages/HomePage/Content/Main/Main'
 
 const router = createBrowserRouter([
   {
@@ -18,7 +17,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Posts />
+        element: <Main />
       }
     ]
   },

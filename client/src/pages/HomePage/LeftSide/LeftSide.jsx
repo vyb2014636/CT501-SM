@@ -1,8 +1,8 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import SearchLogo from '@/components/SearchLogo/SearchLogo'
 import { useMediaQuery } from '@mui/material'
-import FollowerCard from '@/components/FollowerCard/FollowerCard'
+import ListFollower from './ListFollower/ListFollower'
+import LeftBar from './LeftBar/LeftBar'
 
 const LeftSide = () => {
   const isNonScreenMobile = useMediaQuery('(min-width: 950px)')
@@ -14,8 +14,8 @@ const LeftSide = () => {
         p: 2,
         display: { md: 'block' }
       }}>
-      <SearchLogo />
-      {isNonScreenMobile && <FollowerCard />}
+      <LeftBar />
+      {isNonScreenMobile && <ListFollower />}
     </Box>
   )
 }
