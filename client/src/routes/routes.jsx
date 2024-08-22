@@ -1,29 +1,34 @@
 // src/routes.js
 import { createBrowserRouter } from 'react-router-dom'
-import HomePage from '@/pages/HomePage'
-import AdminPage from '@/pages/AdminPage'
-import Dashboard from '@/pages/AdminPage/Dashboard/Dashboard'
-import Setting from '@/pages/AdminPage/Setting/Setting'
-import ProfilePage from '@/pages/ProfilePage'
+import Admin from '@/pages/Admin'
+import Home from '@/pages/Home'
 import Auth from '@/pages/Auth'
+import Profile from '@/pages/Profile'
+import Dashboard from '@/pages/Admin/Dashboard/Dashboard'
+import Setting from '@/pages/Admin/Setting/Setting'
 import Login from '@/pages/Auth/Login/Login'
 import SignUp from '@/pages/Auth/SignUp/SignUp'
-import Main from '@/pages/HomePage/Content/Main/Main'
+import Favorites from '@/pages/Home/Content/Favorites/Favorites'
+import Main from '@/pages/Home/Content/Main/Main'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <HomePage />,
+    element: <Home />,
     children: [
       {
         path: '/',
         element: <Main />
+      },
+      {
+        path: '/favorites',
+        element: <Favorites />
       }
     ]
   },
   {
     path: '/profile',
-    element: <ProfilePage />
+    element: <Profile />
   },
   {
     path: '/auth',
@@ -41,7 +46,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin',
-    element: <AdminPage />,
+    element: <Admin />,
     children: [
       {
         path: '/admin',

@@ -11,7 +11,7 @@ const contacts = [
   { name: 'Trần Thị B', imgSrc: '/path/to/image2.jpg' }
 ]
 
-const ListContact = () => {
+const ListContacts = () => {
   return (
     <Box
       sx={{
@@ -36,4 +36,4 @@ const ListContact = () => {
   )
 }
 
-export default ListContact
+export default ListContacts

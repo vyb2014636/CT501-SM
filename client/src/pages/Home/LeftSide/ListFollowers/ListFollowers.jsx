@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import { Followers } from '@/data/follower'
 import FollowerCard from './FollowerCard/FollowerCard'
 
-const ListFollower = () => {
+const ListFollowers = () => {
   return (
     <Box
       sx={{
@@ -23,4 +23,4 @@ const ListFollower = () => {
   )
 }
 
-export default ListFollower
+export default ListFollowers

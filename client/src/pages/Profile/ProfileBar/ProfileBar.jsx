@@ -1,7 +1,7 @@
 import React from 'react'
 import FlexBetween from '@/components/Flex/FlexBetween'
-import LeftBar from '@/pages/HomePage/LeftSide/LeftBar/LeftBar'
-import RightBar from '@/pages/HomePage/RightSide/RightBar/RightBar'
+import LeftBar from '@/pages/Home/LeftSide/LeftBar/LeftBar'
+import RightBar from '@/pages/Home/RightSide/RightBar/RightBar'
 import Box from '@mui/material/Box'
 import { useMediaQuery } from '@mui/material'
 

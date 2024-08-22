@@ -1,6 +1,6 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import ListContact from '@/pages/HomePage/RightSide/ListContact/ListContact'
+import ListContact from '@/pages/Home/RightSide/ListContacts/ListContacts'
 import RightBar from './RightBar/RightBar'
 
 const RightSide = () => {

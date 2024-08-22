@@ -3,7 +3,6 @@ import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import avatar from '@/img/imgF1.png'
-
 import Typography from '@mui/material/Typography'
 import InputBase from '@mui/material/InputBase'
 import PhotoOutlinedIcon from '@mui/icons-material/PhotoOutlined'

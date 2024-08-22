@@ -1,7 +1,7 @@
 import React from 'react'
 import Box from '@mui/material/Box'
 import { useMediaQuery } from '@mui/material'
-import ListFollower from './ListFollower/ListFollower'
+import ListFollower from './ListFollowers/ListFollowers'
 import LeftBar from './LeftBar/LeftBar'
 
 const LeftSide = () => {

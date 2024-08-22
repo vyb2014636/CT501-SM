@@ -21,7 +21,7 @@ import MenuItem from '@mui/material/MenuItem'
 import { IconButton } from '@mui/material'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
-const Post = () => {
+const Post = ({ noMedia }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -33,7 +33,6 @@ const Post = () => {
   return (
     <Card sx={{ mx: 'auto', my: 2, borderRadius: '16px', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
       {/* Header bài đăng */}
-
       <CardHeader
         avatar={<Avatar src={avatar} alt='Profile Picture' sx={{ width: 52, height: 52 }} />}
         action={
@@ -80,9 +79,9 @@ const Post = () => {
       <CardContent>
         <Typography variant='body1'>Bạn sẽ không bao giờ hối hận khi thích bức ảnh này ❤️</Typography>
       </CardContent>
-
       {/* Hình ảnh trong bài đăng */}
-      <CardMedia component='img' height='500' image={img} alt='Post image' />
+      {!noMedia && <CardMedia component='img' height='500' image={img} alt='Post image' />}
+      <Divider />
       <CardContent>
         <Typography variant='body2'>Bạn bè và những người khác</Typography>
       </CardContent>
