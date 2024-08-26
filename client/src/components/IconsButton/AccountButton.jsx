@@ -9,8 +9,11 @@ import Tooltip from '@mui/material/Tooltip'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { logout } from '@/features/auth/authSlice'
 const AccountButton = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -19,7 +22,7 @@ const AccountButton = () => {
   const handleClose = () => {
     setAnchorEl(null)
   }
-
+  const handleLogout = () => dispatch(logout())
   return (
     <>
       <Tooltip title='Tài khoản'>
@@ -75,7 +78,7 @@ const AccountButton = () => {
           </ListItemIcon>
           Cài đặt
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize='small' />
           </ListItemIcon>

@@ -1,36 +1,26 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Button, Container, TextField, Typography } from '@mui/material'
 import FlexCenter from '@/components/Flex/FlexCenter'
-import { ReactComponent as socialIcon } from '@/assets/logoIcon.svg'
 import Logo from '@components/Logo/Logo'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { loginPost } from '@/features/auth/authThunk'
+import { logout } from '@/features/auth/authSlice'
 // import axios from 'axios'
+// import { ReactComponent as socialIcon } from '@/assets/logoIcon.svg'
 
 const Login = () => {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [credentials, setCredentials] = useState({ email: '', password: '' })
+  const { user, status, error } = useSelector((state) => state.auth)
+  const dispatch = useDispatch()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    const formData = {
-      firstName,
-      lastName,
-      email,
-      password,
-      confirmPassword
-    }
-
-    // try {
-    //   const response = await axios.post('/api/signup', formData)
-    //   console.log(response.data)
-    // } catch (error) {
-    //   console.error('Error signing up:', error)
-    // }
+    const result = await dispatch(loginPost(credentials))
+    if (!error) alert(result.payload.message)
   }
+
+  if (user) return <Navigate to='/' />
 
   return (
     <FlexCenter
@@ -85,8 +75,8 @@ const Login = () => {
               margin='normal'
               label='Tên đăng nhập'
               variant='outlined'
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              value={credentials?.email}
+              onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
             />
             <TextField
               fullWidth
@@ -94,8 +84,8 @@ const Login = () => {
               label='Mật khẩu'
               variant='outlined'
               type='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={credentials?.password}
+              onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
             />
 
             <Typography variant='body2' color='textSecondary' textAlign='center' mt={2}>
@@ -106,7 +96,8 @@ const Login = () => {
               type='submit'
               fullWidth
               variant='contained'
-              sx={{ mt: 3, background: 'linear-gradient(to right, #673ab7, #2196f3)' }}>
+              sx={{ mt: 3, background: 'linear-gradient(to right, #673ab7, #2196f3)' }}
+              disabled={status === 'loading'}>
               Đăng nhập
             </Button>
           </form>
