@@ -1,4 +1,4 @@
-import ApiError from '~/utils/ApiError'
+import ApiError from '~/middlewares/ApiError'
 import verifyToken from './verifyToken'
 
 const verifyAdmin = (req, res, next) => {

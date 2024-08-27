@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { env } from '~/config/environment'
-import ApiError from '~/utils/ApiError'
+import ApiError from '~/middlewares/ApiError'
 
 const verifyToken = (req, res, next) => {
   const token = req.headers.token

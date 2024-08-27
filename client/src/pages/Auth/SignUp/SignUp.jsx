@@ -1,37 +1,43 @@
-import React, { useState } from 'react'
-import { Box, Button, Container, TextField, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Box, Button, TextField, Typography } from '@mui/material'
+import { Link, useNavigate } from 'react-router-dom'
 import FlexCenter from '@/components/Flex/FlexCenter'
-import { ReactComponent as socialIcon } from '@/assets/logoIcon.svg'
-import Logo from '@components/Logo/Logo'
-import { Link } from 'react-router-dom'
 import FlexRow from '@/components/Flex/FlexRow'
-// import axios from 'axios'
+import LeftSection from '@/components/Form/LeftSection'
+import { validateField } from '@/utils/validation'
+import { registerAPI } from '@/apis/authAPI'
 
 const SignUp = () => {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [credentials, setCredentials] = useState({ firstname: '', lastname: '', email: '', password: '', confirmPassword: '' })
+  const [isSubmitDisabled, setSubmitDisabled] = useState(true)
+  const [errors, setErrors] = useState({})
+  const navigate = useNavigate()
+
+  const handleChangeInput = (e) => {
+    const { name, value } = e.target
+    setCredentials({ ...credentials, [name]: value })
+
+    // Validation form
+    const error = validateField(name, value, credentials)
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }))
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    const formData = {
-      firstName,
-      lastName,
-      email,
-      password,
-      confirmPassword
-    }
-
-    // try {
-    //   const response = await axios.post('/api/signup', formData)
-    //   console.log(response.data)
-    // } catch (error) {
-    //   console.error('Error signing up:', error)
-    // }
+    const { confirmPassword, ...user } = credentials
+    registerAPI(user).then((response) => {
+      const email = response.email
+      navigate('/auth/verify', { state: { email } })
+    })
   }
+
+  useEffect(() => {
+    // Validate all fields and determine if the submit button should be disabled
+    const hasErrors = Object.values(errors).some((error) => error !== '')
+    const isAnyFieldEmpty = Object.values(credentials).some((value) => value === '')
+
+    setSubmitDisabled(hasErrors || isAnyFieldEmpty)
+  }, [credentials, errors])
 
   return (
     <FlexCenter
@@ -49,25 +55,7 @@ const SignUp = () => {
           maxWidth: '900px',
           overflow: 'hidden'
         }}>
-        {/* Left Section */}
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'background.default',
-            padding: { xs: 3, md: 4 },
-            width: { xs: '100%', md: '50%' },
-            textAlign: { xs: 'center', md: 'left' }
-          }}>
-          <Logo />
-          <Typography color='textSecondary' mt={1}>
-            Khám phá những ý tưởng trên khắp thế giới.
-          </Typography>
-        </Box>
-
-        {/* Right Section */}
+        <LeftSection />
         <Box
           sx={{
             width: { xs: '100%', md: '50%' },
@@ -81,32 +69,57 @@ const SignUp = () => {
 
           <form onSubmit={handleSubmit}>
             <FlexRow gap={2}>
-              <TextField margin='normal' label='Họ' value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-              <TextField margin='normal' label='Tên' value={lastName} onChange={(e) => setLastName(e.target.value)} />
+              <TextField
+                margin='normal'
+                label='Họ'
+                name='firstname'
+                value={credentials.firstname}
+                onChange={handleChangeInput}
+                error={Boolean(errors.firstname)}
+                helperText={errors.firstname}
+              />
+              <TextField
+                margin='normal'
+                label='Tên'
+                name='lastname'
+                value={credentials.lastname}
+                onChange={handleChangeInput}
+                error={Boolean(errors.lastname)}
+                helperText={errors.lastname}
+              />
             </FlexRow>
             <TextField
               fullWidth
               margin='normal'
               label='Email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name='email'
+              value={credentials.email}
+              onChange={handleChangeInput}
+              error={Boolean(errors.email)}
+              helperText={errors.email}
             />
             <TextField
               fullWidth
               margin='normal'
               label='Mật khẩu'
               variant='outlined'
+              name='password'
               type='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={credentials.password}
+              onChange={handleChangeInput}
+              error={Boolean(errors.password)}
+              helperText={errors.password}
             />
             <TextField
               fullWidth
               margin='normal'
               label='Xác nhận mật khẩu'
+              name='confirmPassword'
               type='password'
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={credentials.confirmPassword}
+              onChange={handleChangeInput}
+              error={Boolean(errors.confirmPassword)}
+              helperText={errors.confirmPassword}
             />
 
             <Typography variant='body2' color='textSecondary' textAlign='center' mt={2}>
@@ -117,7 +130,13 @@ const SignUp = () => {
               type='submit'
               fullWidth
               variant='contained'
-              sx={{ mt: 3, background: 'linear-gradient(to right, #673ab7, #2196f3)' }}>
+              sx={{
+                mt: 3,
+                background: !isSubmitDisabled ? 'linear-gradient(to right, #673ab7, #2196f3)' : undefined
+                // Add any additional styling if needed
+              }}
+              disabled={isSubmitDisabled} // Disable button based on the state
+            >
               Đăng ký
             </Button>
           </form>

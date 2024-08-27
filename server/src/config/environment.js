@@ -7,6 +7,9 @@ export const env = {
   APP_HOST: process.env.APP_HOST,
   APP_PORT: process.env.APP_PORT,
   BUILD_MODE: process.env.BUILD_MODE,
-
+  MAILTRAP_TOKEN: process.env.MAILTRAP_TOKEN,
+  MAILTRAP_ENDPOINT: process.env.MAILTRAP_ENDPOINT,
+  NODEMAILER_NAME: process.env.NODEMAILER_NAME,
+  NODEMAILER_PASSWORD: process.env.NODEMAILER_PASSWORD,
   AUTHOR: process.env.AUTHOR
 }

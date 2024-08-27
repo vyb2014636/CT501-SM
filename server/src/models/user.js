@@ -32,6 +32,20 @@ var userSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
+    isVerify: {
+      type: Boolean,
+      default: false
+    },
+    lastLogin: {
+      type: Date,
+      default: Date.now
+    },
+    codeVerification: {
+      type: String
+    },
+    codeVerificationExpiresAt: {
+      type: Date
+    },
     avatar: String,
     background: String,
     about: String,

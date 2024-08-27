@@ -25,7 +25,9 @@
     "express": "^4.18.2",
     "joi": "^17.10.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.5.4"
+    "mailtrap": "^3.4.0",
+    "mongoose": "^8.5.4",
+    "nodemailer": "^6.9.14"
   },
   "devDependencies": {
     "@babel/cli": "^7.22.10",

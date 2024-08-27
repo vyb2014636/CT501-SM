@@ -1,5 +1,5 @@
 import Post from '~/models/post'
-import ApiError from '~/utils/ApiError'
+import ApiError from '~/middlewares/ApiError'
 
 const createPost = async (req, res, next) => {
   const { describe } = req.body

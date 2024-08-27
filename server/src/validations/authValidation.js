@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import ApiError from '~/utils/ApiError'
+import ApiError from '~/middlewares/ApiError'
 
 const validRegister = async (req, res, next) => {
   const correctCondition = Joi.object({
@@ -26,17 +26,15 @@ const validRegister = async (req, res, next) => {
         'string.pattern.base': 'Mật khẩu phải bao gồm chữ hoa, chữ thường, số, và ký tự đặc biệt.',
         'any.required': 'Mật khẩu là bắt buộc.'
       }),
-    lastname: Joi.string().required().min(2).max(30).trim().strict().pattern(new RegExp('^[a-zA-Z]+$')).messages({
+    lastname: Joi.string().required().min(2).max(30).trim().strict().messages({
       'string.empty': 'Không được để rỗng',
       'string.min': 'Tên có ít nhất 2 ký tự',
-      'any.required': 'Tên là bắt buộc.',
-      'string.pattern.base': 'Tên không được có số'
+      'any.required': 'Tên là bắt buộc.'
     }),
-    firstname: Joi.string().required().min(2).max(30).trim().strict().pattern(new RegExp('^[a-zA-Z]+$')).messages({
+    firstname: Joi.string().required().min(2).max(30).trim().strict().messages({
       'string.empty': 'Không được để rỗng',
       'string.min': 'Tên có ít nhất 2 ký tự',
-      'any.required': 'Họ là bắt buộc.',
-      'string.pattern.base': 'Tên không được có số'
+      'any.required': 'Họ là bắt buộc.'
     })
   })
 

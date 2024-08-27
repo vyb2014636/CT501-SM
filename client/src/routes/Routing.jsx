@@ -12,6 +12,7 @@ import Favorites from '@/pages/Home/Content/Favorites/Favorites'
 import Main from '@/pages/Home/Content/Main/Main'
 import { Routes, Route } from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
+import Verify from '@/pages/Auth/Verify/Verify'
 
 function Routing() {
   return (
@@ -34,6 +35,7 @@ function Routing() {
       <Route path='/auth' element={<Auth />}>
         <Route path='/auth' element={<Login />} />
         <Route path='/auth/signup' element={<SignUp />} />
+        <Route path='/auth/verify' element={<Verify />} />
       </Route>
     </Routes>
   )

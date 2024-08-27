@@ -20,6 +20,39 @@ axiosIntercept.interceptors.response.use(
     return error.response.data
   }
 )
+axiosIntercept.interceptors.request.use(
+  (config) => {
+    // Do something before request is sent, e.g., adding authorization tokens
+    return config
+  },
+  (error) => {
+    // Handle request errors here
+    return Promise.reject(error)
+  }
+)
+
+// Add a response interceptor
+axiosIntercept.interceptors.response.use(
+  (response) => {
+    // Do something with response data
+    return response
+  },
+  (error) => {
+    // Handle response errors here
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.error('Response error:', error.response.data)
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error('Request error:', error.request)
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.error('Error:', error.message)
+    }
+    return Promise.reject(error)
+  }
+)
 // axiosIntercept.interceptors.request.use(
 //   (config) => {
 //     const state = store.getState()

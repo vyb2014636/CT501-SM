@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, Container, TextField, Typography } from '@mui/material'
+import { Box, Button, TextField, Typography } from '@mui/material'
 import FlexCenter from '@/components/Flex/FlexCenter'
-import Logo from '@components/Logo/Logo'
 import { Link, Navigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginPost } from '@/features/auth/authThunk'
-import { logout } from '@/features/auth/authSlice'
-// import axios from 'axios'
-// import { ReactComponent as socialIcon } from '@/assets/logoIcon.svg'
+import LeftSection from '@/components/Form/LeftSection'
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' })
+  const [isDisable, setIsDisable] = useState(true)
   const { user, status, error } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
 
@@ -19,6 +17,10 @@ const Login = () => {
     const result = await dispatch(loginPost(credentials))
     if (!error) alert(result.payload.message)
   }
+  useEffect(() => {
+    if (credentials.email && credentials.password) setIsDisable(false)
+    else setIsDisable(true)
+  }, [credentials])
 
   if (user) return <Navigate to='/' />
 
@@ -38,24 +40,7 @@ const Login = () => {
           overflow: 'hidden'
         }}>
         {/* Left Section */}
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'background.default',
-            padding: { xs: 3, md: 4 },
-            width: { xs: '100%', md: '50%' },
-            textAlign: { xs: 'center', md: 'left' }
-          }}>
-          {/* <img src='/twitter-logo.png' alt='Logo' width='60' /> */}
-
-          <Logo />
-          <Typography color='textSecondary' mt={1}>
-            Khám phá những ý tưởng trên khắp thế giới.
-          </Typography>
-        </Box>
+        <LeftSection />
 
         {/* Right Section */}
         <Box
@@ -96,8 +81,12 @@ const Login = () => {
               type='submit'
               fullWidth
               variant='contained'
-              sx={{ mt: 3, background: 'linear-gradient(to right, #673ab7, #2196f3)' }}
-              disabled={status === 'loading'}>
+              sx={{
+                mt: 3,
+                background: !isDisable ? 'linear-gradient(to right, #673ab7, #2196f3)' : undefined
+              }}
+              // disabled={status === 'loading'}
+              disabled={isDisable}>
               Đăng nhập
             </Button>
           </form>
