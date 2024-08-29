@@ -1,27 +1,23 @@
 // src/features/authSlice.js
 import { createSlice } from '@reduxjs/toolkit'
-import { loginPost, logout } from './authThunk' // Đảm bảo đường dẫn chính xác
+import { loginPost } from './authThunk' // Đảm bảo đường dẫn chính xác
 import { getToken, setToken, removeToken } from '@/utils/tokenHelper' // Đảm bảo import removeToken
 
-export const authSlice = createSlice({
-  name: 'auth',
+export const postSlice = createSlice({
+  name: 'post',
   initialState: {
-    user: null,
-    accessToken: null,
-    refreshToken: getToken('refreshToken'),
-    status: 'idle',
-    error: null,
-    loading: false // Đảm bảo có biến loading
+    listPosts: null,
+    message: null
   },
   reducers: {
-    // logout: (state) => {
-    //   state.user = null
-    //   state.accessToken = null
-    //   state.refreshToken = null
-    //   state.error = null
-    //   removeToken('accessToken')
-    //   removeToken('refreshToken')
-    // }
+    logout: (state) => {
+      state.user = null
+      state.accessToken = null
+      state.refreshToken = null
+      state.error = null
+      removeToken('accessToken')
+      removeToken('refreshToken')
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -40,16 +36,6 @@ export const authSlice = createSlice({
       .addCase(loginPost.rejected, (state, action) => {
         state.loading = false // Cập nhật trạng thái loading
       })
-      .addCase(logout.fulfilled, (state, action) => {
-        state.user = null
-        state.accessToken = null
-        state.refreshToken = null
-        state.error = null
-        removeToken('accessToken')
-        removeToken('refreshToken')
-        state.status = 'idle'
-        state.loading = false
-      })
 
     // .addCase(refreshToken.fulfilled, (state, action) => {
     //   state.accessToken = action.payload.accessToken;
@@ -57,5 +43,5 @@ export const authSlice = createSlice({
   }
 })
 
-export const {} = authSlice.actions
-export default authSlice.reducer
+export const { logout, login } = postSlice.actions
+export default postSlice.reducer

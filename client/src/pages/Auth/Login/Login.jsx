@@ -1,28 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Button, TextField, Typography } from '@mui/material'
 import FlexCenter from '@/components/Flex/FlexCenter'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginPost } from '@/features/auth/authThunk'
 import LeftSection from '@/components/Form/LeftSection'
+import { toast } from 'react-toastify'
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' })
-  const [isDisable, setIsDisable] = useState(true)
-  const { user, status, error } = useSelector((state) => state.auth)
-  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(true)
+  const [disabled, setDisabled] = useState(true)
+  const { user } = useSelector((state) => state.auth)
 
+  const dispatch = useDispatch()
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const result = await dispatch(loginPost(credentials))
-    if (!error) alert(result.payload.message)
+    const response = await dispatch(loginPost(credentials))
+    if (response.payload?.statusCode === 500) toast.error(response.payload?.message)
+    else {
+      navigate('/')
+      toast.success('Đăng nhập thành công')
+    }
   }
   useEffect(() => {
-    if (credentials.email && credentials.password) setIsDisable(false)
-    else setIsDisable(true)
+    if (credentials.email && credentials.password) setDisabled(false)
+    else setDisabled(true)
   }, [credentials])
 
-  if (user) return <Navigate to='/' />
+  // if (user) return <Navigate to='/' />
 
   return (
     <FlexCenter
@@ -58,7 +65,7 @@ const Login = () => {
             <TextField
               fullWidth
               margin='normal'
-              label='Tên đăng nhập'
+              label='Email'
               variant='outlined'
               value={credentials?.email}
               onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
@@ -83,10 +90,10 @@ const Login = () => {
               variant='contained'
               sx={{
                 mt: 3,
-                background: !isDisable ? 'linear-gradient(to right, #673ab7, #2196f3)' : undefined
+                background: !disabled ? 'linear-gradient(to right, #673ab7, #2196f3)' : undefined
               }}
               // disabled={status === 'loading'}
-              disabled={isDisable}>
+              disabled={disabled}>
               Đăng nhập
             </Button>
           </form>

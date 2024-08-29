@@ -42,7 +42,7 @@ const validRegister = async (req, res, next) => {
     await correctCondition.validateAsync(req.body) // abortEarly trả về tất cả lỗi
     next()
   } catch (error) {
-    next(new ApiError(500, error.message))
+    next(new ApiError(404, error.message))
   }
 }
 

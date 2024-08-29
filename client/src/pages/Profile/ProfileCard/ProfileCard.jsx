@@ -6,11 +6,12 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Typography from '@mui/material/Typography'
 import img from '@/img/postPic1.jpg'
-import img1 from '@/img/imgF1.png'
+import avatar from '@/assets/avatarDefault.png'
 import FlexRow from '@/components/Flex/FlexRow'
 import FlexColumn from '@/components/Flex/FlexColumn'
+import { formatFullname } from '@/utils/helpers'
 
-const ProfileCard = () => {
+const ProfileCard = ({ user }) => {
   const [value, setValue] = useState(0)
 
   const handleChange = (event, newValue) => {
@@ -30,7 +31,7 @@ const ProfileCard = () => {
         }}>
         {/* Avatar */}
         <Avatar
-          src={img1}
+          src={avatar}
           sx={{
             width: 80,
             height: 80,
@@ -47,7 +48,7 @@ const ProfileCard = () => {
       {/* User Information */}
       <Box sx={{ textAlign: 'center', mt: 10 }}>
         <Typography variant='h5' fontWeight='bold'>
-          Yash Roy
+          {formatFullname(user?.firstname, user?.lastname)}
         </Typography>
 
         {/* Follower, Following, Posts */}
@@ -66,13 +67,7 @@ const ProfileCard = () => {
         </FlexRow>
       </Box>
       <Box mt='auto'>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          variant='scrollable'
-          scrollButtons='auto'
-          textColor='primary'
-          indicatorColor='primary'>
+        <Tabs value={value} onChange={handleChange} variant='scrollable' scrollButtons='auto' textColor='primary' indicatorColor='primary'>
           <Tab label='Bài viết' />
           <Tab label='Bạn bè' />
           <Tab label='Ảnh' />

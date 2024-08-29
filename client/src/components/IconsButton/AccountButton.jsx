@@ -9,9 +9,10 @@ import Tooltip from '@mui/material/Tooltip'
 import Settings from '@mui/icons-material/Settings'
 import Logout from '@mui/icons-material/Logout'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { logout } from '@/features/auth/authSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { logout } from '@/features/auth/authThunk'
 const AccountButton = () => {
+  const { user } = useSelector((state) => state.auth)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -22,16 +23,13 @@ const AccountButton = () => {
   const handleClose = () => {
     setAnchorEl(null)
   }
-  const handleLogout = () => dispatch(logout())
+  const handleLogout = () => {
+    const response = dispatch(logout())
+  }
   return (
     <>
       <Tooltip title='Tài khoản'>
-        <IconButton
-          onClick={handleClick}
-          aria-controls={open ? 'account-menu' : undefined}
-          aria-haspopup='true'
-          aria-expanded={open ? 'true' : undefined}
-          size='small'>
+        <IconButton onClick={handleClick} aria-controls={open ? 'account-menu' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined} size='small'>
           <Avatar sx={{ height: '32px', width: '32px' }}>M</Avatar>
         </IconButton>
       </Tooltip>

@@ -1,5 +1,6 @@
 // src/utils/axiosClient.js
 import axios from 'axios'
+import { jwtDecode } from 'jwt-decode'
 // import { store } from '@/redux/store' // Đảm bảo đường dẫn chính xác
 
 const axiosIntercept = axios.create({
@@ -20,6 +21,7 @@ axiosIntercept.interceptors.response.use(
     return error.response.data
   }
 )
+
 axiosIntercept.interceptors.request.use(
   (config) => {
     // Do something before request is sent, e.g., adding authorization tokens
@@ -30,6 +32,40 @@ axiosIntercept.interceptors.request.use(
     return Promise.reject(error)
   }
 )
+
+axiosIntercept.interceptors.request.use(
+  (config) => {
+    const accessToken = localStorage.getItem('accessToken') // Hoặc từ nguồn lưu trữ khác
+    if (accessToken) {
+      config.headers.token = `Bearer ${accessToken}`
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
+//Cấp phát lại accessToken nếu hết hạn bằng refreshToken
+// axiosJWT.interceptors.request.use(
+//   async (config) => {
+//     let date = new Date()
+//     const decodedToken = jwt_decode(user?.accessToken)
+//     if (decodedToken.exp < date.getTime() / 1000) {
+//       const data = await refreshToken()
+//       const refreshUser = {
+//         ...user,
+//         accessToken: data.accessToken
+//       }
+//       // dispatch(loginSuccess(refreshUser));
+//       config.headers['token'] = 'Bearer data.accessToken'
+//     }
+//     return config
+//   },
+//   (err) => {
+//     return Promise.reject(err)
+//   }
+// )
 
 // Add a response interceptor
 axiosIntercept.interceptors.response.use(

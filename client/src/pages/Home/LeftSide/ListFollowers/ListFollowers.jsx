@@ -17,7 +17,7 @@ const ListFollowers = () => {
         Những người bạn có thể biết
       </Typography>
       {Followers.map((follower, id) => (
-        <FollowerCard follower={follower} id={id} />
+        <FollowerCard follower={follower} id={id} key={id} />
       ))}
     </Box>
   )

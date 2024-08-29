@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, TextField, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 import FlexCenter from '@/components/Flex/FlexCenter'
 import FlexRow from '@/components/Flex/FlexRow'
 import LeftSection from '@/components/Form/LeftSection'
 import { validateField } from '@/utils/validation'
 import { registerAPI } from '@/apis/authAPI'
+import { toast } from 'react-toastify'
+import { setFalse, setValues } from '@/utils/helpers'
 
 const SignUp = () => {
   const [credentials, setCredentials] = useState({ firstname: '', lastname: '', email: '', password: '', confirmPassword: '' })
-  const [isSubmitDisabled, setSubmitDisabled] = useState(true)
+  const [disabled, setDisabled] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
 
@@ -25,18 +28,29 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const { confirmPassword, ...user } = credentials
+    setValues([setLoading, true], [setDisabled, true])
     registerAPI(user).then((response) => {
-      const email = response.email
-      navigate('/auth/verify', { state: { email } })
+      if (response?.success) {
+        const email = response.newUser.email
+        setValues([setLoading, false], [setDisabled, true])
+        navigate('/auth/verify', { state: { email } })
+      } else {
+        const setTimeoutLoading = setTimeout(() => {
+          toast.error(`${response.message}`)
+          setFalse(setDisabled, setLoading)
+        }, 2000)
+        return () => {
+          clearTimeout(setTimeoutLoading)
+        }
+      }
     })
   }
 
   useEffect(() => {
-    // Validate all fields and determine if the submit button should be disabled
     const hasErrors = Object.values(errors).some((error) => error !== '')
     const isAnyFieldEmpty = Object.values(credentials).some((value) => value === '')
 
-    setSubmitDisabled(hasErrors || isAnyFieldEmpty)
+    setDisabled(hasErrors || isAnyFieldEmpty)
   }, [credentials, errors])
 
   return (
@@ -126,19 +140,20 @@ const SignUp = () => {
               Bạn đã có tài khoản? <Link to='/auth'>Đăng nhập</Link>
             </Typography>
 
-            <Button
-              type='submit'
-              fullWidth
-              variant='contained'
-              sx={{
-                mt: 3,
-                background: !isSubmitDisabled ? 'linear-gradient(to right, #673ab7, #2196f3)' : undefined
-                // Add any additional styling if needed
-              }}
-              disabled={isSubmitDisabled} // Disable button based on the state
-            >
-              Đăng ký
-            </Button>
+            <Box sx={{ m: 1, position: 'relative' }}>
+              <Button
+                type='submit'
+                fullWidth
+                variant='contained'
+                sx={{
+                  mt: 3,
+                  background: !disabled ? 'linear-gradient(to right, #673ab7, #2196f3)' : undefined
+                }}
+                startIcon={loading ? <CircularProgress size={24} /> : ''}
+                disabled={disabled || loading}>
+                Đăng ký
+              </Button>
+            </Box>
           </form>
         </Box>
       </Box>

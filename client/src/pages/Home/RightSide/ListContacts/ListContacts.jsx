@@ -29,7 +29,7 @@ const ListContacts = () => {
       </FlexBetween>
       <List>
         {contacts.map((contact, index) => (
-          <ContactCard contacts={contacts} contact={contact} index={index} />
+          <ContactCard contacts={contacts} contact={contact} index={index} key={index} />
         ))}
       </List>
     </Box>

@@ -16,10 +16,6 @@ var userSchema = new mongoose.Schema(
       required: true,
       unique: true
     },
-    phone: {
-      type: String,
-      unique: true
-    },
     password: {
       type: String,
       required: true
@@ -37,13 +33,12 @@ var userSchema = new mongoose.Schema(
       default: false
     },
     lastLogin: {
-      type: Date,
-      default: Date.now
+      type: Date
     },
-    codeVerification: {
+    otpVerify: {
       type: String
     },
-    codeVerificationExpiresAt: {
+    otpExpired: {
       type: Date
     },
     avatar: String,

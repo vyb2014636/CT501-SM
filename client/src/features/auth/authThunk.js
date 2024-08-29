@@ -1,6 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axiosIntercept from '@/utils/axiosIntercept'
-import { login } from './authSlice'
 import { setToken } from '@/utils/tokenHelper'
 
 export const loginPost = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
@@ -8,9 +7,16 @@ export const loginPost = createAsyncThunk('auth/login', async (credentials, { re
   const response = await axiosIntercept.post('/auth/login', { email, password })
   if (response) {
     const { accessToken, refreshToken } = response
+    axiosIntercept.defaults.headers.Authorization = `Bearer ${accessToken}`
     setToken('accessToken', accessToken)
     setToken('refreshToken', refreshToken)
-    axiosIntercept.defaults.headers.Authorization = `Bearer ${accessToken}`
+    return response
+  } else return rejectWithValue(response)
+})
+
+export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
+  const response = await axiosIntercept.get('/auth/logout')
+  if (response) {
     return response
   } else return rejectWithValue(response)
 })
