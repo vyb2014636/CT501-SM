@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { combineReducers } from 'redux'
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
-import storage from 'redux-persist/lib/storage' // Sử dụng storage mặc định từ redux-persist
+import storage from 'redux-persist/lib/storage'
 import authReducer from '@/features/auth/authSlice'
 
 // Cấu hình persist

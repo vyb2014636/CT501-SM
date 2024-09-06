@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography } from '@mui/material'
 import FlexCenter from '@/components/Flex/FlexCenter'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { loginPost } from '@/features/auth/authThunk'
+import { login } from '@/features/auth/authThunk'
 import LeftSection from '@/components/Form/LeftSection'
 import { toast } from 'react-toastify'
 
@@ -17,7 +17,8 @@ const Login = () => {
   const dispatch = useDispatch()
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const response = await dispatch(loginPost(credentials))
+    const response = await dispatch(login(credentials))
+    console.log(response)
     if (response.payload?.statusCode === 500) toast.error(response.payload?.message)
     else {
       navigate('/')

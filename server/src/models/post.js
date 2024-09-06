@@ -10,12 +10,14 @@ var postSchema = new mongoose.Schema(
     describe: {
       type: String
     },
-    picture: {
-      type: String
-    },
-    video: {
-      type: String
-    },
+    images: [{ type: String }], // Array để chứa các đường dẫn hình ảnh
+    videos: [{ type: String }],
+    sharedBy: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        createdAt: { type: Date }
+      }
+    ],
     comment: [
       {
         user: { type: mongoose.Types.ObjectId, ref: 'User' },
@@ -32,7 +34,8 @@ var postSchema = new mongoose.Schema(
       {
         user: { type: mongoose.Types.ObjectId, ref: 'User' }
       }
-    ]
+    ],
+    createdAt: { type: Date, default: Date.now }
   },
   {
     timestamps: true

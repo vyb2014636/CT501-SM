@@ -29,8 +29,8 @@ const SignUp = () => {
     e.preventDefault()
     const { confirmPassword, ...user } = credentials
     setValues([setLoading, true], [setDisabled, true])
-    registerAPI(user).then((response) => {
-      if (response?.success) {
+    await registerAPI(user).then((response) => {
+      if (response.success) {
         const email = response.newUser.email
         setValues([setLoading, false], [setDisabled, true])
         navigate('/auth/verify', { state: { email } })
@@ -38,7 +38,7 @@ const SignUp = () => {
         const setTimeoutLoading = setTimeout(() => {
           toast.error(`${response.message}`)
           setFalse(setDisabled, setLoading)
-        }, 2000)
+        }, 1000)
         return () => {
           clearTimeout(setTimeoutLoading)
         }

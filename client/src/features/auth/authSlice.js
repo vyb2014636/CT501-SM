@@ -1,14 +1,14 @@
 // src/features/authSlice.js
 import { createSlice } from '@reduxjs/toolkit'
-import { loginPost, logout } from './authThunk' // Đảm bảo đường dẫn chính xác
-import { getToken, setToken, removeToken } from '@/utils/tokenHelper' // Đảm bảo import removeToken
+import { login, logout, refreshToken } from './authThunk' // Đảm bảo đường dẫn chính xác
+import { removeToken } from '@/utils/tokenHelper' // Đảm bảo import removeToken
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
     user: null,
     accessToken: null,
-    refreshToken: getToken('refreshToken'),
+    refreshToken: null,
     status: 'idle',
     error: null,
     loading: false // Đảm bảo có biến loading
@@ -25,10 +25,10 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginPost.pending, (state) => {
+      .addCase(login.pending, (state) => {
         state.loading = true
       })
-      .addCase(loginPost.fulfilled, (state, action) => {
+      .addCase(login.fulfilled, (state, action) => {
         const { accessToken, refreshToken, user } = action.payload
         state.accessToken = accessToken
         state.refreshToken = refreshToken
@@ -37,7 +37,7 @@ export const authSlice = createSlice({
         state.error = action.payload.message
         state.loading = false // Cập nhật trạng thái loading
       })
-      .addCase(loginPost.rejected, (state, action) => {
+      .addCase(login.rejected, (state, action) => {
         state.loading = false // Cập nhật trạng thái loading
       })
       .addCase(logout.fulfilled, (state, action) => {
@@ -51,9 +51,9 @@ export const authSlice = createSlice({
         state.loading = false
       })
 
-    // .addCase(refreshToken.fulfilled, (state, action) => {
-    //   state.accessToken = action.payload.accessToken;
-    // })
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.accessToken = action.payload.accessToken
+      })
   }
 })
 

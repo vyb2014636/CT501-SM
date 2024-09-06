@@ -100,6 +100,8 @@ const login = async (req, res, next) => {
         sameSite: 'strict'
       })
 
+      await User.findOneAndUpdate({ email }, { refreshToken }, { new: true })
+
       return res.status(200).json({
         mes: 'Đăng nhập thành công',
         user: validUser,
@@ -114,10 +116,12 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   const cookie = req.cookies
+  const { id } = req.user
   try {
     if (!cookie && !cookie.refreshToken) throw new ApiError(500, 'Hiện chưa đăng nhập')
 
-    await User.findOneAndUpdate({ refreshToken: cookie.refreshToken }, { refreshToken: '' }, { new: true })
+    await User.findOneAndUpdate({ refreshToken: cookie.refreshToken }, { refreshToken: null }, { new: true })
+    await User.findByIdAndUpdate(id, { refreshToken: '' }, { new: true })
 
     res.clearCookie('refreshToken', {
       httpOnly: true,
@@ -133,9 +137,48 @@ const logout = async (req, res, next) => {
   }
 }
 
+const refreshAccessToken = async (req, res, next) => {
+  const refreshToken = req.cookies.refreshToken
+  const { id } = req.user
+  if (!refreshToken) throw new ApiError(500, 'Bạn chưa chứng thực')
+
+  try {
+    jwt.verify(refreshToken, env.JWT_SECRET, async (err, user) => {
+      if (err) {
+        throw new ApiError(500, 'refreshToken không đúng')
+      }
+
+      const newAccessToken = generateAccessToken(user)
+      const newRefreshToken = generateRefreshToken(user)
+
+      res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict'
+      })
+
+      const updateRefreshToken = await User.findByIdAndUpdate(
+        id,
+        { refreshToken: newRefreshToken },
+        { new: true } // trả về document đã cập nhật
+      )
+
+      return res.status(200).json({
+        success: updateRefreshToken ? true : false,
+        message: updateRefreshToken ? 'Cập nhật accessToken mới thành công' : 'Cập nhật accessToken mới thất bại',
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      })
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const authController = {
   register,
   verifyEmail,
   login,
-  logout
+  logout,
+  refreshAccessToken
 }

@@ -31,7 +31,7 @@ const ProfileCard = ({ user }) => {
         }}>
         {/* Avatar */}
         <Avatar
-          src={avatar}
+          src={user?.avatar}
           sx={{
             width: 80,
             height: 80,
