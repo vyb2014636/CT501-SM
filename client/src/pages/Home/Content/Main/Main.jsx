@@ -10,7 +10,6 @@ const Main = () => {
     listPostsAPI()
       .then((response) => {
         setPosts(response.post)
-        console.log(response.post)
       })
       .catch((error) => {
         console.log(error)

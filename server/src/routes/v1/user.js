@@ -1,4 +1,6 @@
 import express from 'express'
+import { userController } from '~/controllers/userController'
+import verifyToken from '~/middlewares/verifyToken'
 
 const router = express.Router()
 
@@ -13,5 +15,7 @@ router
       message: 'signup'
     })
   })
+  .post('/sendFriend', verifyToken, userController.sendFriendRequest)
+  .post('/acceptFriend', verifyToken, userController.acceptFriendRequest)
 
 export const user = router

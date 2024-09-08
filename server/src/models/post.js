@@ -10,8 +10,13 @@ var postSchema = new mongoose.Schema(
     describe: {
       type: String
     },
-    images: [{ type: String }], // Array để chứa các đường dẫn hình ảnh
-    videos: [{ type: String }],
+    images: {
+      type: Array
+    }, // Array để chứa các đường dẫn hình ảnh
+    videos: {
+      type: Array
+    }, // URLs of images stored on Cloudinary
+
     sharedBy: [
       {
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

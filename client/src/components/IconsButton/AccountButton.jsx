@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '@/features/auth/authThunk'
 const AccountButton = () => {
+  const { user } = useSelector((state) => state.auth)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -29,7 +30,7 @@ const AccountButton = () => {
     <>
       <Tooltip title='Tài khoản'>
         <IconButton onClick={handleClick} aria-controls={open ? 'account-menu' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined} size='small'>
-          <Avatar sx={{ height: '32px', width: '32px' }}>M</Avatar>
+          <Avatar src={user.avatar} sx={{ height: '32px', width: '32px' }} />
         </IconButton>
       </Tooltip>
       <Menu

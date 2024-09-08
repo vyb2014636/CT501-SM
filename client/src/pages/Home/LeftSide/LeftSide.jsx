@@ -10,7 +10,7 @@ const LeftSide = () => {
   return (
     <Box
       sx={{
-        width: isNonScreenMobile ? '350' : '100%',
+        width: isNonScreenMobile ? '450' : '100%',
         p: 2,
         display: { md: 'block' }
       }}>

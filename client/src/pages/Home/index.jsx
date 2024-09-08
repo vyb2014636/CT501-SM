@@ -16,7 +16,9 @@ const Home = () => {
         <Box
           sx={{
             flex: 1,
-            p: 2,
+            py: 2,
+            px: 4,
+            mx: 4,
             overflowY: 'auto',
             overflowX: 'hidden',
             '&::-webkit-scrollbar-thumb': { bgcolor: 'background.paper' },
