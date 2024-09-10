@@ -5,9 +5,9 @@ import FlexCenter from '@/components/Flex/FlexCenter'
 import FlexRow from '@/components/Flex/FlexRow'
 import LeftSection from '@/components/Form/LeftSection'
 import { validateField } from '@/utils/validation'
-import { registerAPI } from '@/apis/authAPI'
 import { toast } from 'react-toastify'
 import { setFalse, setValues } from '@/utils/helpers'
+import { registerAPI } from '@/apis/auth/authAPI'
 
 const SignUp = () => {
   const [credentials, setCredentials] = useState({ firstname: '', lastname: '', email: '', password: '', confirmPassword: '' })

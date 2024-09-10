@@ -5,13 +5,12 @@ import Box from '@mui/material/Box'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Typography from '@mui/material/Typography'
-import img from '@/img/postPic1.jpg'
-import avatar from '@/assets/avatarDefault.png'
+import img from '@/assets/postPic1.jpg'
 import FlexRow from '@/components/Flex/FlexRow'
 import FlexColumn from '@/components/Flex/FlexColumn'
 import { formatFullname } from '@/utils/helpers'
 
-const ProfileCard = ({ user }) => {
+const CardProfile = ({ user }) => {
   const [value, setValue] = useState(0)
 
   const handleChange = (event, newValue) => {
@@ -78,4 +77,4 @@ const ProfileCard = ({ user }) => {
   )
 }
 
-export default ProfileCard
+export default CardProfile

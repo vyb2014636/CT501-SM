@@ -1,5 +1,3 @@
-// src/utils/tokenHelper.js
-
 // Lưu token vào localStorage
 export const setToken = (key, token) => {
   if (typeof window !== 'undefined') {

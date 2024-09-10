@@ -10,34 +10,54 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import FlexRow from '@/components/Flex/FlexRow'
 import { useSelector } from 'react-redux'
 import { formatFullname } from '@/utils/helpers'
-import ModalShare from '@/components/Share/ModalShare'
+import ModalShare from '@/components/Modal/ModalShare'
 
-const PostShare = () => {
+const CardShare = () => {
   const { user } = useSelector((state) => state.auth)
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.paper', borderRadius: '12px', p: 4, gap: 3 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 3 }}>
         <FlexRow>
           <Avatar alt={formatFullname(user?.firstname, user?.lastname)} src={user.avatar} sx={{ width: 48, height: 48 }} />
-          {/* <Typography >
-            Hãy nêu lên suy nghĩ của bạn
-          </Typography> */}
-          <ModalShare />
+          <ModalShare>
+            <Button
+              sx={{
+                width: '100%',
+                height: '100%',
+                ml: 2,
+                backgroundColor: 'neutral.primary',
+                borderRadius: '12px',
+                color: 'gray',
+                display: 'flex',
+                justifyContent: 'flex-start'
+              }}>
+              Hãy nêu lên suy nghĩ của bạn
+            </Button>
+          </ModalShare>
         </FlexRow>
         <Divider />
         <FlexRow justifyContent='end'>
-          <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
-            <PhotoOutlinedIcon color='primary' size='small' />
-            <Typography color='primary' fontWeight='bold'>
-              Hình ảnh
-            </Typography>
-          </Button>
-          <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
-            <PlayCircleOutlineIcon color='primary' size='small' />
-            <Typography color='primary' fontWeight='bold'>
-              Video
-            </Typography>
-          </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
+            <ModalShare>
+              <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
+                <PhotoOutlinedIcon color='primary' size='small' />
+                <Typography color='primary' fontWeight='bold'>
+                  Hình ảnh
+                </Typography>
+              </Button>
+            </ModalShare>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
+            <ModalShare>
+              <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
+                <PlayCircleOutlineIcon color='primary' size='small' />
+                <Typography color='primary' fontWeight='bold'>
+                  Video
+                </Typography>
+              </Button>
+            </ModalShare>
+          </Box>
           <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
             <LocationOnOutlinedIcon color='primary' size='small' />
             <Typography color='primary' fontWeight='bold'>
@@ -57,4 +77,4 @@ const PostShare = () => {
   )
 }
 
-export default PostShare
+export default CardShare

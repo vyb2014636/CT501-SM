@@ -2,7 +2,7 @@ import React from 'react'
 import FlexBetween from '@/components/Flex/FlexBetween'
 import { useMediaQuery } from '@mui/material'
 import MenuMobile from '@components/Mobile/MenuMobile'
-import Logo from '@/components/Logo/Logo'
+import Logo from '@/components/Common/Logo/Logo'
 import Search from '@/components/Inputs/Search/Search'
 
 const LeftBar = () => {

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import axiosIntercept from '@/utils/axiosIntercept'
+import axiosIntercept from '@/apis/axiosIntercept'
 import { setToken } from '@/utils/tokenHelper'
 
 export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
@@ -16,9 +16,9 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
 
 export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   const response = await axiosIntercept.get('/auth/logout')
-  if (response) {
-    return response
-  } else return rejectWithValue(response)
+
+  if (response) return response
+  else return rejectWithValue(response)
 })
 
 export const refreshToken = createAsyncThunk('auth/refreshToken', async (_, { rejectWithValue }) => {

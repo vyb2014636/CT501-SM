@@ -1,10 +1,10 @@
 import React from 'react'
 import FlexBetween from '@components/Flex/FlexBetween'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
-import ContactCard from './ContactCard/ContactCard'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import List from '@mui/material/List'
+import ContactCard from './ContactCard/ContactCard'
 
 const contacts = [
   { name: 'Nguyễn Văn A', imgSrc: '/path/to/image1.jpg' },

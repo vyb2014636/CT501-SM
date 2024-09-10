@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
-import ListPosts from './ListPosts/ListPosts'
-import PostShare from './PostShare/PostShare'
-import { listPostsAPI } from '@/apis/postsAPI'
+import { listPostsAPI } from '@/apis/post/postsAPI'
+import ListPosts from '@/components/List/ListPosts/ListPosts'
+import CardShare from '@/components/Card/CardShare/CardShare'
 
 const Main = () => {
   const [posts, setPosts] = useState([])
+  const fetchListPosts = async () => {
+    const response = await listPostsAPI()
+    if (response) setPosts(response.post)
+  }
   useEffect(() => {
-    listPostsAPI()
-      .then((response) => {
-        setPosts(response.post)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    fetchListPosts()
   }, [])
   return (
     <Box my={2}>
-      <PostShare />
+      <CardShare />
       <ListPosts posts={posts} />
     </Box>
   )

@@ -1,9 +1,8 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import ListContact from '@/pages/Home/RightSide/ListContacts/ListContacts'
-import RightBar from './RightBar/RightBar'
+import RightBar from '@/components/AppBar/RightBar/RightBar'
 
-const RightSide = () => {
+const RightSide = ({ children }) => {
   return (
     <Box
       sx={{
@@ -16,7 +15,7 @@ const RightSide = () => {
         overflowX: 'hidden'
       }}>
       <RightBar />
-      <ListContact />
+      {children}
     </Box>
   )
 }

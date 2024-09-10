@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import axiosIntercept from '@/utils/axiosIntercept'
+import axiosIntercept from '@/apis/axiosIntercept'
 import { setToken } from '@/utils/tokenHelper'
 
 export const login = createAsyncThunk('auth/postLogin', async (credentials, { rejectWithValue }) => {

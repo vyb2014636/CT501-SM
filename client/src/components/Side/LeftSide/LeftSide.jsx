@@ -1,21 +1,20 @@
 import React from 'react'
 import Box from '@mui/material/Box'
 import { useMediaQuery } from '@mui/material'
-import ListFollower from './ListFollowers/ListFollowers'
-import LeftBar from './LeftBar/LeftBar'
+import LeftBar from '@/components/AppBar/LeftBar/LeftBar'
 
-const LeftSide = () => {
+const LeftSide = ({ children }) => {
   const isNonScreenMobile = useMediaQuery('(min-width: 950px)')
 
   return (
     <Box
       sx={{
-        width: isNonScreenMobile ? '450' : '100%',
+        width: isNonScreenMobile ? '350' : '100%',
         p: 2,
         display: { md: 'block' }
       }}>
       <LeftBar />
-      {isNonScreenMobile && <ListFollower />}
+      {isNonScreenMobile && children}
     </Box>
   )
 }

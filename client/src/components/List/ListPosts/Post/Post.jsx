@@ -19,15 +19,32 @@ import MenuItem from '@mui/material/MenuItem'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import Masonry from '@mui/lab/Masonry'
+import { formatFullname } from '@/utils/helpers'
+import { useSelector } from 'react-redux'
+import ModalMedia from '@/components/Modal/ModalMedia'
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline' // Biểu tượng phát
 
 const Post = ({ noMedia, post }) => {
   const [anchorEl, setAnchorEl] = useState(null)
+  const { user } = useSelector((state) => state.auth)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const [openModal, setOpenModal] = useState(false)
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  const handleOpenModal = (index) => {
+    setCurrentIndex(index)
+    setOpenModal(true)
+  }
+
+  const handleCloseModal = () => {
+    setOpenModal(false)
   }
 
   const renderMedia = () => {
@@ -41,26 +58,24 @@ const Post = ({ noMedia, post }) => {
         {mediaCount < 3 && (
           <Masonry columns={mediaCount === 1 ? 1 : 2} sx={{ mx: 0 }}>
             {media?.slice(0, 3).map((image, index) => (
-              <Box
-                key={index}
-                sx={{
-                  position: 'relative',
-                  overflow: 'hidden',
-                  m: 0
-                }}>
+              <Box sx={{ position: 'relative', overflow: 'hidden', m: 0, cursor: 'pointer', cursor: 'pointer' }}>
                 {image.isVideo ? (
                   <CardMedia
                     component='video'
-                    src={image.url} // Dùng thuộc tính src cho video
-                    controls // Thêm controls cho video
-                    sx={{ width: '100%', objectFit: 'contain', height: mediaCount === 1 ? 'auto' : '240px' }}
+                    onLoad='lazy'
+                    src={image.url}
+                    sx={{ width: '100%', objectFit: 'cover', height: '100%' }}
+                    onClick={() => handleOpenModal(index)}
+                    controls
                   />
                 ) : (
                   <CardMedia
+                    loading='lazy'
                     component='img'
-                    image={image.url} // Dùng thuộc tính image cho hình ảnh
+                    image={image.url}
                     alt={`Post image ${index + 1}`}
-                    sx={{ width: '100%', objectFit: 'contain', height: mediaCount === 1 ? 'auto' : '240px' }}
+                    sx={{ width: '100%', objectFit: 'cover', height: '100%' }}
+                    onClick={() => handleOpenModal(index)}
                   />
                 )}
               </Box>
@@ -69,29 +84,24 @@ const Post = ({ noMedia, post }) => {
         )}
         {/* Phần hiển thị 3 ảnh đầu tiên với 3 cột */}
         {mediaCount >= 3 && (
-          <Masonry columns={3}>
+          <Masonry columns={3} sx={{ m: 0 }}>
             {media?.slice(0, 3).map((image, index) => (
-              <Box
-                key={index}
-                sx={{
-                  position: 'relative',
-                  borderRadius: '8px',
-                  overflow: 'hidden',
-                  m: 0
-                }}>
+              <Box key={index} sx={{ position: 'relative', overflow: 'hidden', m: 0, cursor: 'pointer' }}>
                 {image.isVideo ? (
                   <CardMedia
                     component='video'
-                    src={image.url} // Dùng thuộc tính src cho video
-                    controls // Thêm controls cho video
-                    sx={{ width: '100%', objectFit: 'contain', height: mediaCount === 1 ? 'auto' : '240px' }}
+                    src={image.url}
+                    sx={{ width: '100%', objectFit: 'fill', height: '240px' }}
+                    onClick={() => handleOpenModal(index)}
                   />
                 ) : (
                   <CardMedia
+                    loading='lazy'
                     component='img'
-                    image={image.url} // Dùng thuộc tính image cho hình ảnh
+                    image={image.url}
                     alt={`Post image ${index + 1}`}
-                    sx={{ width: '100%', objectFit: 'contain', height: mediaCount === 1 ? 'auto' : '240px' }}
+                    sx={{ width: '100%', objectFit: 'fill', height: '240px' }}
+                    onClick={() => handleOpenModal(index)}
                   />
                 )}
               </Box>
@@ -101,29 +111,24 @@ const Post = ({ noMedia, post }) => {
 
         {/* Phần hiển thị 2 ảnh cuối với 2 cột */}
         {mediaCount > 3 && (
-          <Masonry columns={2}>
+          <Masonry columns={mediaCount === 4 ? 1 : 2} sx={{ mx: 0 }}>
             {media?.slice(3, 5).map((image, index) => (
-              <Box
-                key={index + 3} // Cộng thêm 3 để đảm bảo index là duy nhất
-                sx={{
-                  position: 'relative',
-                  borderRadius: '8px',
-                  overflow: 'hidden',
-                  m: 0
-                }}>
-                {image.isVideo ? (
+              <Box key={index + 3} sx={{ position: 'relative', overflow: 'hidden', m: 0, cursor: 'pointer' }}>
+                {image?.isVideo ? (
                   <CardMedia
                     component='video'
-                    src={image.url} // Dùng thuộc tính src cho video
-                    controls // Thêm controls cho video
-                    sx={{ width: '100%', objectFit: 'contain', height: mediaCount === 1 ? 'auto' : '240px' }}
+                    src={image.url}
+                    sx={{ width: '100%', objectFit: 'fill', height: mediaCount === 4 ? '300px' : '240px' }}
+                    onClick={() => handleOpenModal(index + 3)}
                   />
                 ) : (
                   <CardMedia
+                    loading='lazy'
                     component='img'
-                    image={image.url} // Dùng thuộc tính image cho hình ảnh
+                    image={image.url}
                     alt={`Post image ${index + 1}`}
-                    sx={{ width: '100%', objectFit: 'contain', height: mediaCount === 1 ? 'auto' : '240px' }}
+                    sx={{ width: '100%', objectFit: 'fill', height: mediaCount === 4 ? '300px' : '240px' }}
+                    onClick={() => handleOpenModal(index + 3)}
                   />
                 )}
                 {mediaCount > 5 && index === 1 && (
@@ -138,10 +143,9 @@ const Post = ({ noMedia, post }) => {
                       display: 'flex',
                       justifyContent: 'center',
                       alignItems: 'center',
-                      borderRadius: '8px',
                       cursor: 'pointer'
                     }}
-                    onClick={() => alert('Show more images')}>
+                    onClick={() => handleOpenModal(index + 3)}>
                     <Typography variant='h4' color='white'>
                       +{mediaCount - 5}
                     </Typography>
@@ -151,6 +155,7 @@ const Post = ({ noMedia, post }) => {
             ))}
           </Masonry>
         )}
+        <ModalMedia open={openModal} handleClose={handleCloseModal} media={media} currentIndex={currentIndex} setCurrentIndex={setCurrentIndex} />
       </>
     )
   }
@@ -162,7 +167,7 @@ const Post = ({ noMedia, post }) => {
         avatar={<Avatar src={post?.byPost?.avatar} alt='Profile Picture' sx={{ width: 52, height: 52 }} />}
         action={
           <div>
-            <IconButton aria-controls={open ? 'option-post' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined} onClick={handleClick}>
+            <IconButton aria-={open ? 'option-post' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined} onClick={handleClick}>
               <MoreVertIcon />
             </IconButton>
             <Menu
@@ -178,10 +183,12 @@ const Post = ({ noMedia, post }) => {
                 horizontal: 'right'
               }}
               onClose={handleClose}>
-              <MenuItem onClick={handleClose}>
-                <DeleteOutlinedIcon />
-                <Typography ml={1}>Xóa</Typography>
-              </MenuItem>
+              {post?.byPost._id === user._id && (
+                <MenuItem onClick={handleClose}>
+                  <DeleteOutlinedIcon />
+                  <Typography ml={1}>Xóa</Typography>
+                </MenuItem>
+              )}
               <MenuItem onClick={handleClose}>
                 <FavoriteBorderOutlinedIcon />
                 <Typography ml={1}>Yêu thích</Typography>
@@ -191,7 +198,7 @@ const Post = ({ noMedia, post }) => {
         }
         title={
           <Typography variant='h6' fontWeight='bold'>
-            {post?.byPost?.fullname}
+            {formatFullname(post?.byPost?.firstname, post?.byPost?.lastname)}
           </Typography>
         }
         subheader={new Date(post.createdAt).toLocaleString()}

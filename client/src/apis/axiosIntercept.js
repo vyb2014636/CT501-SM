@@ -12,16 +12,6 @@ const axiosIntercept = axios.create({
 axiosIntercept.interceptors.request.use(
   (config) => {
     // Do something before request is sent, e.g., adding authorization tokens
-    return config
-  },
-  (error) => {
-    // Handle request errors here
-    return Promise.reject(error)
-  }
-)
-
-axiosIntercept.interceptors.request.use(
-  (config) => {
     const accessToken = localStorage.getItem('accessToken') // Hoặc từ nguồn lưu trữ khác
     if (accessToken) {
       config.headers.token = `Bearer ${accessToken}`
@@ -29,6 +19,7 @@ axiosIntercept.interceptors.request.use(
     return config
   },
   (error) => {
+    // Handle request errors here
     return Promise.reject(error)
   }
 )

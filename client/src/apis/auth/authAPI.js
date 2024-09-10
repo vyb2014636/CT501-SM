@@ -1,4 +1,4 @@
-import axiosIntercept from '@/utils/axiosIntercept'
+import axiosIntercept from '@/apis/axiosIntercept'
 
 export const registerAPI = async (user) => {
   const response = await axiosIntercept.post('auth/signup', user)

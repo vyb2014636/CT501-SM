@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, cloneElement } from 'react'
+
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
@@ -10,10 +11,10 @@ import SlowMotionVideoOutlinedIcon from '@mui/icons-material/SlowMotionVideoOutl
 import { useSelector } from 'react-redux'
 import { formatFullname } from '@/utils/helpers'
 import { scrollbarStyles, styleModal } from '@/styles/styles'
-import VisuallyHiddenInput from '../VisibleInput/VisuallyHiddenInput'
-import { postAPI } from '@/apis/postsAPI'
+import VisuallyHiddenInput from '../Inputs/Visible/VisuallyHiddenInput'
+import { postAPI } from '@/apis/post/postsAPI'
 
-const ModalShare = () => {
+const ModalShare = ({ children }) => {
   const [open, setOpen] = useState(false)
   const [describe, setDescribe] = useState('')
   const [files, setFiles] = useState([])
@@ -28,6 +29,7 @@ const ModalShare = () => {
     setImages([])
     setVideos([])
     setPreviews([])
+    setDescribe('')
   }
 
   const handleFileChange = (e) => {
@@ -63,23 +65,7 @@ const ModalShare = () => {
 
   return (
     <div style={{ height: '100%', width: '100%' }}>
-      <Button
-        onClick={() => setOpen(true)}
-        sx={{
-          ml: 2,
-          backgroundColor: 'neutral.primary',
-          borderRadius: '12px',
-          color: 'gray',
-          cursor: 'pointer',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center'
-        }}>
-        Hãy nêu lên suy nghĩ của bạn
-      </Button>
+      {cloneElement(children, { onClick: () => setOpen(true) })}
       <Modal open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Card sx={styleModal} style={{ maxHeight: '1000px' }} component='form' onSubmit={handleSubmit}>
           <Typography align='center' fontWeight={900} variant='h6' marginBottom={2} padding={0}>
