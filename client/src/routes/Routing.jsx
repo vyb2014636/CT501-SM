@@ -26,7 +26,7 @@ function Routing() {
           <Route path='/admin' element={<Dashboard />} />
           <Route path='/admin/setting' element={<Setting />} />
         </Route>
-        <Route path='/profile' element={<Profile />} />
+        <Route path='/:userId' element={<Profile />} />
       </Route>
       {/* <Route path='/' element={<Home />}>
         <Route path='/' element={<Main />} />

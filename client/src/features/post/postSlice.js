@@ -1,47 +1,24 @@
 // src/features/authSlice.js
 import { createSlice } from '@reduxjs/toolkit'
-import { loginPost } from './authThunk' // Đảm bảo đường dẫn chính xác
-import { getToken, setToken, removeToken } from '@/utils/tokenHelper' // Đảm bảo import removeToken
+import { fetchAllPosts } from './postThunk'
 
 export const postSlice = createSlice({
   name: 'post',
   initialState: {
-    listPosts: null,
+    posts: [],
+    status: null,
     message: null
   },
-  reducers: {
-    logout: (state) => {
-      state.user = null
-      state.accessToken = null
-      state.refreshToken = null
-      state.error = null
-      removeToken('accessToken')
-      removeToken('refreshToken')
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(loginPost.pending, (state) => {
-        state.loading = true
-      })
-      .addCase(loginPost.fulfilled, (state, action) => {
-        const { accessToken, refreshToken, user } = action.payload
-        state.accessToken = accessToken
-        state.refreshToken = refreshToken
-        state.user = user
-        state.status = 'succeeded'
-        state.error = action.payload.message
-        state.loading = false // Cập nhật trạng thái loading
-      })
-      .addCase(loginPost.rejected, (state, action) => {
-        state.loading = false // Cập nhật trạng thái loading
-      })
-
-    // .addCase(refreshToken.fulfilled, (state, action) => {
-    //   state.accessToken = action.payload.accessToken;
-    // })
+    builder.addCase(fetchAllPosts.pending, (state, action) => {
+      state.status = 'loading'
+    })
+    builder.addCase(fetchAllPosts.fulfilled, (state, action) => {
+      state.posts = action.payload.posts
+      state.status = null
+    })
   }
 })
 
-export const { logout, login } = postSlice.actions
 export default postSlice.reducer

@@ -5,13 +5,15 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import List from '@mui/material/List'
 import ContactCard from './ContactCard/ContactCard'
+import { useSelector } from 'react-redux'
 
-const contacts = [
-  { name: 'Nguyễn Văn A', imgSrc: '/path/to/image1.jpg' },
-  { name: 'Trần Thị B', imgSrc: '/path/to/image2.jpg' }
-]
+// const contacts = [
+//   { name: 'Nguyễn Văn A', imgSrc: '/path/to/image1.jpg' },
+//   { name: 'Trần Thị B', imgSrc: '/path/to/image2.jpg' }
+// ]
 
 const ListContacts = () => {
+  const { user } = useSelector((state) => state.auth)
   return (
     <Box
       sx={{
@@ -28,8 +30,8 @@ const ListContacts = () => {
         <SearchOutlinedIcon color='primary' />
       </FlexBetween>
       <List>
-        {contacts.map((contact, index) => (
-          <ContactCard contacts={contacts} contact={contact} index={index} key={index} />
+        {user.friends?.map((contact, index) => (
+          <ContactCard contacts={user?.friends} contact={contact} index={index} key={index} />
         ))}
       </List>
     </Box>

@@ -4,6 +4,7 @@ import ListItem from '@mui/material/ListItem'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import ListItemText from '@mui/material/ListItemText'
 import Divider from '@mui/material/Divider'
+import { formatFullname } from '@/utils/helpers'
 
 const ContactCard = ({ contacts, contact, index }) => {
   return (
@@ -16,9 +17,9 @@ const ContactCard = ({ contacts, contact, index }) => {
           }
         }}>
         <ListItemAvatar>
-          <Avatar alt={contact.name} src={contact.imgSrc} />
+          <Avatar alt={formatFullname(contact.firstName, contact.lastName)} src={contact.avatar} />
         </ListItemAvatar>
-        <ListItemText primary={contact.name} />
+        <ListItemText primary={formatFullname(contact.firstName, contact.lastName)} />
       </ListItem>
       {index < contacts.length - 1 && <Divider />}
     </React.Fragment>

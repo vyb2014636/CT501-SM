@@ -23,13 +23,16 @@ const AccountButton = () => {
   const handleClose = () => {
     setAnchorEl(null)
   }
-  const handleLogout = () => {
-    const response = dispatch(logout())
-  }
+
   return (
     <>
       <Tooltip title='Tài khoản'>
-        <IconButton onClick={handleClick} aria-controls={open ? 'account-menu' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined} size='small'>
+        <IconButton
+          onClick={handleClick}
+          aria-controls={open ? 'account-menu' : undefined}
+          aria-haspopup='true'
+          aria-expanded={open ? 'true' : undefined}
+          size='small'>
           <Avatar src={user.avatar} sx={{ height: '32px', width: '32px' }} />
         </IconButton>
       </Tooltip>
@@ -66,7 +69,7 @@ const AccountButton = () => {
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-        <MenuItem onClick={() => navigate('/profile')}>
+        <MenuItem onClick={() => navigate(`/${user._id}`)}>
           <Avatar /> Tài khoản của tôi
         </MenuItem>
         <Divider />
@@ -76,7 +79,7 @@ const AccountButton = () => {
           </ListItemIcon>
           Cài đặt
         </MenuItem>
-        <MenuItem onClick={handleLogout}>
+        <MenuItem onClick={() => dispatch(logout())}>
           <ListItemIcon>
             <Logout fontSize='small' />
           </ListItemIcon>

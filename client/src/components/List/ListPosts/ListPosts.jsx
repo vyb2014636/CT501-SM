@@ -4,9 +4,7 @@ import Post from './Post/Post'
 
 const ListPosts = ({ posts }) => {
   const renderedPosts = useMemo(() => {
-    return posts.map((post) =>
-      post.images?.length > 0 || post.videos?.length > 0 ? <Post key={post._id} post={post} /> : <Post key={post._id} post={post} noMedia />
-    )
+    return posts?.map((post) => <Post key={post._id} post={post} />)
   }, [posts]) // Chỉ tái tạo khi posts thay đổi
   return <Box my={2}>{renderedPosts}</Box>
 }

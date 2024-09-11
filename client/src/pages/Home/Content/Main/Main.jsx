@@ -3,20 +3,26 @@ import Box from '@mui/material/Box'
 import { listPostsAPI } from '@/apis/post/postsAPI'
 import ListPosts from '@/components/List/ListPosts/ListPosts'
 import CardShare from '@/components/Card/CardShare/CardShare'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchAllPosts } from '@/features/post/postThunk'
+import SkeletonPost from '@/components/Skeleton/SkeletonPost'
 
 const Main = () => {
-  const [posts, setPosts] = useState([])
-  const fetchListPosts = async () => {
-    const response = await listPostsAPI()
-    if (response) setPosts(response.post)
-  }
+  // const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const dispatch = useDispatch()
+  const { posts, status } = useSelector((state) => state.post)
+
   useEffect(() => {
-    fetchListPosts()
-  }, [])
+    dispatch(fetchAllPosts())
+    setLoading(false)
+  }, [dispatch])
+
   return (
     <Box my={2}>
+      {/* {status === 'loading' || (posts?.length === 0 && <SkeletonPost />)} */}
       <CardShare />
-      <ListPosts posts={posts} />
+      {loading ? <SkeletonPost /> : <ListPosts posts={posts} />}
     </Box>
   )
 }

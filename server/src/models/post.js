@@ -16,13 +16,11 @@ var postSchema = new mongoose.Schema(
     videos: {
       type: Array
     }, // URLs of images stored on Cloudinary
-
-    sharedBy: [
-      {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-        createdAt: { type: Date }
-      }
-    ],
+    sharedPost: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post'
+    }, //bài post này chia sẻ từ bài nào nếu không có thì không có ai chia sẻ
+    sharesBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comment: [
       {
         user: { type: mongoose.Types.ObjectId, ref: 'User' },
@@ -35,11 +33,11 @@ var postSchema = new mongoose.Schema(
         user: { type: mongoose.Types.ObjectId, ref: 'User' }
       }
     ],
-    byDislike: [
-      {
-        user: { type: mongoose.Types.ObjectId, ref: 'User' }
-      }
-    ],
+    // byDislike: [
+    //   {
+    //     user: { type: mongoose.Types.ObjectId, ref: 'User' }
+    //   }
+    // ],
     createdAt: { type: Date, default: Date.now }
   },
   {

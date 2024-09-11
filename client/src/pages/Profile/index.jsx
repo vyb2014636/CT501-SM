@@ -1,26 +1,32 @@
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import { useSelector } from 'react-redux'
-import { listPostUserAPI } from '@/apis/post/postsAPI'
+import { listUserPostAPI } from '@/apis/post/postsAPI'
 import LeftSide from '@/components/Side/LeftSide/LeftSide'
 import RightSide from '@/components/Side/RightSide/RightSide'
 import ListPosts from '@/components/List/ListPosts/ListPosts'
 import { useMediaQuery } from '@mui/material'
 import CardProfile from '../../components/Card/CardProfile/CardProfile'
+import { useParams } from 'react-router-dom'
 
 const Profile = () => {
   const isNonScreenMobile = useMediaQuery('(min-width: 950px)')
-
-  const { user } = useSelector((state) => state.auth)
+  const { userId } = useParams()
   const [posts, setPosts] = useState([])
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const fetchUserListPost = async () => {
-    const response = await listPostUserAPI()
-    if (response) setPosts(response.post)
+  const fetchUserListPost = async (userId) => {
+    const response = await listUserPostAPI(userId)
+    if (response) {
+      setPosts(response.posts)
+      setUser(response.user)
+    }
+    setLoading(false)
   }
   useEffect(() => {
-    fetchUserListPost()
+    fetchUserListPost(userId)
   }, [])
 
   return (
@@ -39,8 +45,14 @@ const Profile = () => {
             '&::-webkit-scrollbar-thumb:hover': { bgcolor: '#bfc2cf' },
             '&::-webkit-scrollbar': { width: 5 }
           }}>
-          <CardProfile user={user} />
-          <ListPosts posts={posts} />
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <>
+              <CardProfile user={user} />
+              <ListPosts posts={posts} />
+            </>
+          )}
         </Box>
         <RightSide />
       </Box>
@@ -48,4 +60,4 @@ const Profile = () => {
   )
 }
 
-export default Profile
+export default memo(Profile)

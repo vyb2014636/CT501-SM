@@ -9,9 +9,9 @@ export const listPostsAPI = async () => {
   }
 }
 
-export const listPostUserAPI = async () => {
+export const listUserPostAPI = async (userId) => {
   try {
-    const response = await axiosIntercept.get('post/profile')
+    const response = await axiosIntercept.get(`post/${userId}`)
     return response
   } catch (error) {
     console.log(error)

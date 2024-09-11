@@ -55,13 +55,13 @@ const CardProfile = ({ user }) => {
       <Box borderTop={2} borderBottom={2} borderColor='divider' py={4} my={2}>
         <FlexRow gap={4} justifyContent='center'>
           <Box textAlign='center' width='30%'>
-            <Typography variant='h6'>1</Typography>
-            <Typography variant='body2'>Followers</Typography>
+            <Typography variant='h6'>{user?.friends?.length}</Typography>
+            <Typography variant='body2'>Bạn bè</Typography>
           </Box>
           <Divider orientation='vertical' flexItem />
           <Box textAlign='center' width='30%'>
-            <Typography variant='h6'>2</Typography>
-            <Typography variant='body2'>Posts</Typography>
+            <Typography variant='h6'>0</Typography>
+            <Typography variant='body2'>Bài viết</Typography>
           </Box>
         </FlexRow>
       </Box>

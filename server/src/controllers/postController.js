@@ -1,6 +1,6 @@
 import Post from '~/models/post'
 import ApiError from '~/middlewares/ApiError'
-import User from '~/models/user'
+import { postService } from '~/services/postService'
 
 const createPost = async (req, res, next) => {
   const { describe } = req.body
@@ -32,17 +32,14 @@ const createPost = async (req, res, next) => {
   }
 }
 
-const getPostsUser = async (req, res, next) => {
-  const id = req.user.id
+const getUserPosts = async (req, res, next) => {
+  const { userId } = req.params
   try {
-    const listPost = await Post.find({
-      $or: [{ byPost: id }, { 'sharedBy.user': id }]
-    })
-      .populate('sharedBy.user byPost')
-      .sort({ createdAt: -1 })
+    const { user, posts } = await postService.getUserPosts(userId)
     return res.status(200).json({
-      mes: listPost ? 'Danh sách bài đăng' : 'Không có bài đăng nào',
-      post: listPost ? listPost : 'Không có bài đăng'
+      message: posts.length > 0 ? 'Danh sách bài đăng của bạn' : 'Bạn chưa có bài đăng nào',
+      posts: posts,
+      user: user
     })
   } catch (error) {
     next(error)
@@ -51,58 +48,33 @@ const getPostsUser = async (req, res, next) => {
 const getAllPosts = async (req, res, next) => {
   try {
     const userId = req.user.id.toString() // Lấy ID của người dùng hiện tại
-
-    // Tìm bạn bè của người dùng hiện tại
-    const currentUser = await User.findById(userId).populate('friends')
-
-    // Lấy danh sách ID của bạn bè
-    let friendIds = currentUser?.friends?.map((friend) => friend._id.toString())
-    // Thêm ID của người dùng hiện tại vào danh sách (để hiển thị cả bài của chính họ)
-    friendIds?.push(userId)
-    const listPost = await Post.find({
-      byPost: { $in: friendIds }
-    })
-      .populate('byPost')
-      .populate({
-        path: 'sharedBy.user'
-      })
-      .sort({ createdAt: -1 })
-
-    let allPosts = []
-
-    // Xử lý từng bài post và các bài chia sẻ của nó
-    listPost.forEach((post) => {
-      // Thêm bài post gốc vào danh sách
-      allPosts.push({
-        ...post._doc,
-        type: 'original',
-        postDate: post.createdAt
-      })
-
-      // Thêm các bài chia sẻ vào danh sách
-      post.sharedBy.forEach((shared) => {
-        allPosts.push({
-          ...post._doc,
-          type: 'shared',
-          postDate: shared.createdAt,
-          sharedByUser: shared.user
-        })
-      })
-    })
-
-    // Sắp xếp tất cả các bài post và chia sẻ theo ngày
-    allPosts.sort((a, b) => new Date(b.postDate) - new Date(a.postDate))
-
+    const posts = await postService.getAllPosts(userId)
     return res.status(200).json({
-      mes: allPosts.length > 0 ? 'Danh sách bài đăng' : 'Không có bài đăng nào',
-      post: allPosts
+      message: posts.length > 0 ? 'Danh sách bài đăng' : 'Không có bài đăng nào',
+      posts: posts
     })
   } catch (error) {
     next(error)
   }
 }
+
+const sharePost = async (req, res, next) => {
+  try {
+    const userId = req.user.id.toString() // Lấy ID của người dùng hiện tại
+    const { postId, describe } = req.body
+    const post = await postService.sharePost(postId, userId, describe)
+    return res.status(200).json({
+      message: post ? 'Bài đăng đã được chia sẻ' : 'Chia sẻ thất bại',
+      post: post
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const postController = {
   createPost,
-  getPostsUser,
-  getAllPosts
+  getUserPosts,
+  getAllPosts,
+  sharePost
 }

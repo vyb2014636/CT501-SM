@@ -16,6 +16,7 @@ router
     ]),
     postController.createPost
   )
-router.get('/profile', verifyToken, postController.getPostsUser)
+router.get('/:userId', verifyToken, postController.getUserPosts)
+router.post('/share', verifyToken, postController.sharePost)
 
 export const post = router
