@@ -18,18 +18,24 @@ import MenuItem from '@mui/material/MenuItem'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { formatFullname } from '@/utils/helpers'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import renderMedia from '@/components/Common/Mansory/MansoryMedia'
 import { useNavigate } from 'react-router-dom'
+import { toggleLikePost } from '@/features/post/postThunk'
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 
-const PostCommon = ({ noMedia, post }) => {
+const PostCommon = ({ noMedia, post, isLiked }) => {
   const [anchorEl, setAnchorEl] = useState(null)
+  const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
   const navigate = useNavigate()
   const open = Boolean(anchorEl)
 
   const handleClick = (event) => setAnchorEl(event.currentTarget)
 
+  const handleClickLike = () => {
+    dispatch(toggleLikePost(post._id))
+  }
   return (
     <Card sx={{ mx: 'auto', my: 2, borderRadius: '16px', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
       <CardHeader
@@ -40,7 +46,7 @@ const PostCommon = ({ noMedia, post }) => {
         }
         action={
           <>
-            <IconButton aria-={open ? 'option-post' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined} onClick={handleClick}>
+            <IconButton aria-haspopup='true' aria-expanded={open ? 'true' : undefined} onClick={handleClick}>
               <MoreVertIcon />
             </IconButton>
             <Menu
@@ -89,8 +95,8 @@ const PostCommon = ({ noMedia, post }) => {
       {/* Lượt thích, bình luận, chia sẻ */}
       <CardActions disableSpacing sx={{ width: '100%' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }} width='100%'>
-          <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
-            <ThumbUpIcon color='primary' />
+          <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }} onClick={handleClickLike}>
+            {isLiked ? <ThumbUpIcon color='primary' /> : <ThumbUpOffAltIcon color='primary' />}
             <Typography variant='body1' fontWeight='bold'>
               Thích
             </Typography>

@@ -4,7 +4,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import List from '@mui/material/List'
-import ContactCard from './ContactCard/ContactCard'
+import ContactCard from '../../Card/ContactCard'
 import { useSelector } from 'react-redux'
 
 // const contacts = [
@@ -30,9 +30,7 @@ const ListContacts = () => {
         <SearchOutlinedIcon color='primary' />
       </FlexBetween>
       <List>
-        {user.friends?.map((contact, index) => (
-          <ContactCard contacts={user?.friends} contact={contact} index={index} key={index} />
-        ))}
+        {/* {user?.friends && user.friends?.map((contact, index) => <ContactCard contacts={user?.friends} contact={contact} index={index} key={index} />)} */}
       </List>
     </Box>
   )

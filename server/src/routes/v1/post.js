@@ -16,7 +16,8 @@ router
     ]),
     postController.createPost
   )
-router.get('/:userId', verifyToken, postController.getUserPosts)
-router.post('/share', verifyToken, postController.sharePost)
-
+router
+  .get('/:userId', verifyToken, postController.getUserPosts)
+  .post('/share', verifyToken, postController.sharePost)
+  .put('/like', verifyToken, postController.likePost)
 export const post = router

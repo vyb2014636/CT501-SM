@@ -2,7 +2,7 @@ import React from 'react'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import { Followers } from '@/data/follower'
-import FollowerCard from './FollowerCard/FollowerCard'
+import FollowerCard from '../../Card/FollowerCard'
 
 const ListFollowers = () => {
   return (

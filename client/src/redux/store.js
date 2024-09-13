@@ -4,6 +4,7 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import storage from 'redux-persist/lib/storage' // Sử dụng storage mặc định từ redux-persist
 import authReducer from '@/features/auth/authSlice'
 import postReducer from '@/features/post/postSlice'
+import { setupAxiosInterceptors } from '@/apis/axiosIntercept'
 
 // Cấu hình persist
 const persistConfig = {
@@ -25,5 +26,7 @@ export const store = configureStore({
       }
     })
 })
+
+setupAxiosInterceptors(store)
 
 export let persistor = persistStore(store)

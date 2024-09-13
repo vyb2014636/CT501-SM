@@ -18,7 +18,6 @@ const CardProfile = ({ user }) => {
   }
   return (
     <FlexColumn sx={{ backgroundColor: 'background.paper', height: 500, borderRadius: '12px 12px 0 0 ' }}>
-      {/* Cover Photo */}
       <Box
         sx={{
           backgroundImage: `url('${img}')`,
@@ -28,7 +27,6 @@ const CardProfile = ({ user }) => {
           borderRadius: '12px 12px 0 0',
           position: 'relative'
         }}>
-        {/* Avatar */}
         <Avatar
           src={user?.avatar}
           sx={{
@@ -44,13 +42,10 @@ const CardProfile = ({ user }) => {
         />
       </Box>
 
-      {/* User Information */}
       <Box sx={{ textAlign: 'center', mt: 10 }}>
         <Typography variant='h5' fontWeight='bold'>
           {formatFullname(user?.firstname, user?.lastname)}
         </Typography>
-
-        {/* Follower, Following, Posts */}
       </Box>
       <Box borderTop={2} borderBottom={2} borderColor='divider' py={4} my={2}>
         <FlexRow gap={4} justifyContent='center'>

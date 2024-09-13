@@ -10,7 +10,7 @@ router
   .post('/signup', authValidation.validRegister, authController.register)
   .post('/verifyEmail', authController.verifyEmail)
   .get('/logout', verifyToken, authController.logout)
-  .post('/refreshToken', verifyToken, authController.refreshAccessToken)
+  .get('/refreshToken', verifyToken, authController.refreshAccessToken)
 // .get('/:id',verifyToken,authController.profile)
 
 export const auth = router

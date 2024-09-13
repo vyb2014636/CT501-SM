@@ -2,7 +2,7 @@ import React from 'react'
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined'
 import IconButton from '@mui/material/IconButton'
 
-const MessageButton = () => {
+const ChatButton = () => {
   return (
     <IconButton>
       <ChatBubbleOutlineOutlinedIcon color='primary' fontSize='medium' />
@@ -10,4 +10,4 @@ const MessageButton = () => {
   )
 }
 
-export default MessageButton
+export default ChatButton

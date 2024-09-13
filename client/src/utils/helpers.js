@@ -10,5 +10,5 @@ export const formatTime = (seconds) => {
 }
 
 export const formatFullname = (firstName, lastName) => {
-  return `${firstName.trim()} ${lastName.trim()}`
+  return `${firstName.trim()} ${lastName.trim()}` || ''
 }

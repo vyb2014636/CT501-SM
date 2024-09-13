@@ -18,17 +18,24 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { formatFullname } from '@/utils/helpers'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import renderMedia from '@/components/Common/Mansory/MansoryMedia'
 import { useNavigate } from 'react-router-dom'
+import { toggleLikePost } from '@/features/post/postThunk'
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 
-const PostShare = ({ noMedia, post }) => {
+const PostShare = ({ noMedia, post, isLiked }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
+  }
+
+  const handleClickLike = () => {
+    dispatch(toggleLikePost(post._id))
   }
 
   const handleClose = () => {
@@ -46,11 +53,7 @@ const PostShare = ({ noMedia, post }) => {
           }
           action={
             <>
-              <IconButton
-                aria-={open ? 'option-post' : undefined}
-                aria-haspopup='true'
-                aria-expanded={open ? 'true' : undefined}
-                onClick={handleClick}>
+              <IconButton aria-haspopup='true' aria-expanded={open ? 'true' : undefined} onClick={handleClick}>
                 <MoreVertIcon />
               </IconButton>
               <Menu
@@ -86,8 +89,11 @@ const PostShare = ({ noMedia, post }) => {
           }
           subheader={new Date(post?.createdAt).toLocaleString()}
         />
+        <CardContent>
+          <Typography variant='body1'>{post.describe}❤️</Typography>
+        </CardContent>
+
         <Card sx={{ mx: 'auto', m: 2, borderRadius: '16px', border: '1px solid', borderColor: 'background.default' }}>
-          {/* Header bài đăng */}
           <CardHeader
             avatar={
               <div onClick={() => navigate(`/${post?.sharedPost?.byPost?._id}`)}>
@@ -108,15 +114,16 @@ const PostShare = ({ noMedia, post }) => {
           {/* Hình ảnh trong bài đăng */}
           {!noMedia && renderMedia(post?.sharedPost)}
         </Card>
+
         <CardContent>
           <Typography variant='body2'>Bạn bè và những người khác</Typography>
         </CardContent>
         <Divider />
-        {/* Lượt thích, bình luận, chia sẻ */}
+
         <CardActions disableSpacing sx={{ width: '100%' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }} width='100%'>
-            <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
-              <ThumbUpIcon color='primary' />
+            <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }} onClick={handleClickLike}>
+              {isLiked ? <ThumbUpIcon color='primary' /> : <ThumbUpOffAltIcon color='primary' />}
               <Typography variant='body1' fontWeight='bold'>
                 Thích
               </Typography>

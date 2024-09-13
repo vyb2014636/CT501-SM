@@ -28,9 +28,10 @@ var postSchema = new mongoose.Schema(
         like: Boolean
       }
     ],
-    byLike: [
+    likes: [
       {
-        user: { type: mongoose.Types.ObjectId, ref: 'User' }
+        type: mongoose.Types.ObjectId,
+        ref: 'User'
       }
     ],
     // byDislike: [

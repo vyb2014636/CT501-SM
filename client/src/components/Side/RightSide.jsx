@@ -1,6 +1,6 @@
 import React from 'react'
 import Box from '@mui/material/Box'
-import RightBar from '@/components/AppBar/RightBar/RightBar'
+import RightBar from '@/components/AppBar/RightBar'
 
 const RightSide = ({ children }) => {
   return (

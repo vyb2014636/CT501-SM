@@ -10,10 +10,14 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import FlexRow from '@/components/Flex/FlexRow'
 import { useSelector } from 'react-redux'
 import { formatFullname } from '@/utils/helpers'
-import ModalShare from '@/components/Modal/ModalShare'
+import ModalShare from '@/components/Modal/ModalPost'
+import axiosIntercept from '@/apis/axiosIntercept'
 
 const CardShare = () => {
   const { user } = useSelector((state) => state.auth)
+  const handleTestRefreshToken = async () => {
+    const response = await axiosIntercept.get('/auth/refreshToken')
+  }
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.paper', borderRadius: '12px', p: 4, gap: 3 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 3 }}>
@@ -58,7 +62,7 @@ const CardShare = () => {
               </Button>
             </ModalShare>
           </Box>
-          <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
+          <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }} onClick={handleTestRefreshToken}>
             <LocationOnOutlinedIcon color='primary' size='small' />
             <Typography color='primary' fontWeight='bold'>
               Vị trí

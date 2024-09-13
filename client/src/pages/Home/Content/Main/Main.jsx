@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
-import { listPostsAPI } from '@/apis/post/postsAPI'
-import ListPosts from '@/components/List/ListPosts/ListPosts'
-import CardShare from '@/components/Card/CardShare/CardShare'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchAllPosts } from '@/features/post/postThunk'
 import SkeletonPost from '@/components/Skeleton/SkeletonPost'
+import ListPosts from '@/components/Common/List/ListPosts'
+import CardShare from '@/components/Card/CardShare'
 
 const Main = () => {
   // const [posts, setPosts] = useState([])

@@ -1,7 +1,7 @@
 import React from 'react'
 import Box from '@mui/material/Box'
 import { useMediaQuery } from '@mui/material'
-import LeftBar from '@/components/AppBar/LeftBar/LeftBar'
+import LeftBar from '@/components/AppBar/LeftBar'
 
 const LeftSide = ({ children }) => {
   const isNonScreenMobile = useMediaQuery('(min-width: 950px)')

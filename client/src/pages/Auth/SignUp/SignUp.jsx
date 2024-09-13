@@ -3,7 +3,7 @@ import { Box, Button, CircularProgress, TextField, Typography } from '@mui/mater
 import { Link, useNavigate } from 'react-router-dom'
 import FlexCenter from '@/components/Flex/FlexCenter'
 import FlexRow from '@/components/Flex/FlexRow'
-import LeftSection from '@/components/Form/LeftSection'
+import LeftSection from '@/components/Section/LeftSection'
 import { validateField } from '@/utils/validation'
 import { toast } from 'react-toastify'
 import { setFalse, setValues } from '@/utils/helpers'

@@ -25,11 +25,10 @@ const renderMedia = (post) => {
       {mediaCount < 3 && (
         <Masonry columns={mediaCount === 1 ? 1 : 2} sx={{ mx: 0 }} spacing={2}>
           {media?.slice(0, 3).map((image, index) => (
-            <Box sx={{ position: 'relative', overflow: 'hidden', m: 0, cursor: 'pointer' }}>
+            <Box key={index} sx={{ position: 'relative', overflow: 'hidden', m: 0, cursor: 'pointer' }}>
               {image.isVideo ? (
                 <CardMedia
                   component='video'
-                  onLoad='lazy'
                   src={image.url}
                   sx={{ width: '100%', objectFit: 'cover', height: '100%' }}
                   onClick={() => handleOpenModal(index)}

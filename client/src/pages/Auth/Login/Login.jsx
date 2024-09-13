@@ -4,7 +4,7 @@ import FlexCenter from '@/components/Flex/FlexCenter'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { login } from '@/features/auth/authThunk'
-import LeftSection from '@/components/Form/LeftSection'
+import LeftSection from '@/components/Section/LeftSection'
 import { toast } from 'react-toastify'
 
 const Login = () => {
@@ -19,7 +19,7 @@ const Login = () => {
     e.preventDefault()
     const response = await dispatch(login(credentials))
     console.log(response)
-    if (response.payload?.statusCode === 500) toast.error(response.payload?.message)
+    if (response.payload.statusCode) toast.error(response.payload?.message)
     else {
       navigate('/')
       toast.success('Đăng nhập thành công')

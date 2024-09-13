@@ -1,12 +1,12 @@
 import React from 'react'
+import { Outlet } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
-import { Outlet } from 'react-router-dom'
-import LeftSide from '@/components/Side/LeftSide/LeftSide'
-import RightSide from '@/components/Side/RightSide/RightSide'
 import { useMediaQuery } from '@mui/material'
-import ListFollowers from '@/components/List/ListFollowers/ListFollowers'
-import ListContacts from '@/components/List/ListContacts/ListContacts'
+import LeftSide from '@/components/Side/LeftSide'
+import ListFollowers from '@/components/Common/List/ListFollowers'
+import ListContacts from '@/components/Common/List/ListContacts'
+import RightSide from '@/components/Side/RightSide'
 
 const Home = () => {
   const isNonScreenMobile = useMediaQuery('(min-width: 950px)')

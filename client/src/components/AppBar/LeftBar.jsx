@@ -3,7 +3,7 @@ import FlexBetween from '@/components/Flex/FlexBetween'
 import { useMediaQuery } from '@mui/material'
 import MenuMobile from '@components/Mobile/MenuMobile'
 import Logo from '@/components/Common/Logo/Logo'
-import Search from '@/components/Inputs/Search/Search'
+import Search from '@/components/Inputs/Search'
 
 const LeftBar = () => {
   const isNonScreenMobile = useMediaQuery('(min-width: 950px)')

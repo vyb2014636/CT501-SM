@@ -17,11 +17,11 @@ const ContactCard = ({ contacts, contact, index }) => {
           }
         }}>
         <ListItemAvatar>
-          <Avatar alt={formatFullname(contact.firstName, contact.lastName)} src={contact.avatar} />
+          <Avatar alt={formatFullname(contact?.firstName, contact?.lastName) || 'name'} src={contact?.avatar} />
         </ListItemAvatar>
-        <ListItemText primary={formatFullname(contact.firstName, contact.lastName)} />
+        <ListItemText primary={formatFullname(contact?.firstName, contact?.lastName)} />
       </ListItem>
-      {index < contacts.length - 1 && <Divider />}
+      {index < contacts?.length - 1 && <Divider />}
     </React.Fragment>
   )
 }

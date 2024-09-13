@@ -4,6 +4,7 @@ import ApiError from '~/middlewares/ApiError'
 import { generateAccessToken, generateRefreshToken } from '~/utils/jwt'
 import { VERIFICATION_EMAIL_TEMPLATE } from '~/utils/mailTemplates'
 import { sendMail } from '~/utils/sendMail'
+import { authService } from '~/services/authService'
 
 const register = async (req, res, next) => {
   const { email, lastname, firstname, password } = req.body
@@ -81,34 +82,20 @@ const verifyEmail = async (req, res, next) => {
 }
 
 const login = async (req, res, next) => {
-  const { email, password } = req.body
   try {
-    const validUser = await User.findOne({ email }).select('-refreshToken')
-    if (!validUser) throw new ApiError(500, 'Tài khoản không tồn tại')
-    const validPassword = await bcrypt.compare(password, validUser.password)
-    if (!validPassword) throw new ApiError(500, 'Mật khẩu không chính xác')
+    const { user, accessToken, refreshToken } = await authService.login(req.body)
+    res.cookie('refreshToken', login.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax'
+    })
 
-    if (validUser && validPassword) {
-      validUser.lastLogin = new Date()
-      await validUser.save()
-      const accessToken = generateAccessToken(validUser)
-      //Generate refresh token
-      const refreshToken = generateRefreshToken(validUser)
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict'
-      })
-
-      await User.findOneAndUpdate({ email }, { refreshToken }, { new: true })
-
-      return res.status(200).json({
-        mes: 'Đăng nhập thành công',
-        user: validUser,
-        accessToken,
-        refreshToken
-      })
-    }
+    res.status(200).json({
+      message: 'Đăng nhập thành công',
+      user,
+      accessToken,
+      refreshToken
+    })
   } catch (error) {
     next(error)
   }
@@ -138,22 +125,21 @@ const logout = async (req, res, next) => {
 }
 
 const refreshAccessToken = async (req, res, next) => {
-  const refreshToken = req.cookies.refreshToken
+  const refreshToken = req.cookies
   const { id } = req.user
+  console.log(refreshToken)
   if (!refreshToken) throw new ApiError(500, 'Bạn chưa chứng thực')
 
   try {
     jwt.verify(refreshToken, env.JWT_SECRET, async (err, user) => {
-      if (err) {
-        throw new ApiError(500, 'refreshToken không đúng')
-      }
+      if (err) throw new ApiError(401, 'refreshToken không đúng')
 
       const newAccessToken = generateAccessToken(user)
       const newRefreshToken = generateRefreshToken(user)
 
       res.cookie('refreshToken', newRefreshToken, {
         httpOnly: true,
-        secure: true,
+        secure: false,
         sameSite: 'strict'
       })
 

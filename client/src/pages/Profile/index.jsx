@@ -1,14 +1,12 @@
 import React, { memo, useEffect, useState } from 'react'
+import { listUserPostAPI } from '@/apis/post/postsAPI'
+import { useMediaQuery } from '@mui/material'
+import { useParams } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
-import { useSelector } from 'react-redux'
-import { listUserPostAPI } from '@/apis/post/postsAPI'
-import LeftSide from '@/components/Side/LeftSide/LeftSide'
-import RightSide from '@/components/Side/RightSide/RightSide'
-import ListPosts from '@/components/List/ListPosts/ListPosts'
-import { useMediaQuery } from '@mui/material'
-import CardProfile from '../../components/Card/CardProfile/CardProfile'
-import { useParams } from 'react-router-dom'
+import LeftSide from '@/components/Side/LeftSide'
+import CardProfile from '@/components/Card/CardProfile'
+import ListPosts from '@/components/Common/List/ListPosts'
 
 const Profile = () => {
   const isNonScreenMobile = useMediaQuery('(min-width: 950px)')

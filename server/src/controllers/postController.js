@@ -58,6 +58,22 @@ const getAllPosts = async (req, res, next) => {
   }
 }
 
+const likePost = async (req, res, next) => {
+  const { postId } = req.body
+  const { id } = req.user
+
+  try {
+    const { message, post } = await postService.likePost(id, postId)
+    res.status(200).json({
+      success: true,
+      message,
+      updatePost: post
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const sharePost = async (req, res, next) => {
   try {
     const userId = req.user.id.toString() // Lấy ID của người dùng hiện tại
@@ -76,5 +92,6 @@ export const postController = {
   createPost,
   getUserPosts,
   getAllPosts,
-  sharePost
+  sharePost,
+  likePost
 }

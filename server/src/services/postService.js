@@ -12,10 +12,18 @@ const getAllPosts = async (userId) => {
     .populate({
       path: 'sharedPost',
       populate: {
-        path: 'byPost' // Populate trường byPost trong sharedPost để lấy thông tin người đăng gốc
+        path: 'byPost',
+        select: 'firstname lastname email background'
       }
     })
-    .populate('byPost sharesBy')
+    .populate({
+      path: 'byPost',
+      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
+    })
+    .populate({
+      path: 'sharesBy',
+      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
+    })
     .sort({ createdAt: -1 })
   return posts
 }
@@ -34,6 +42,43 @@ const getUserPosts = async (userId) => {
   const both = { user, posts }
   return both
 }
+
+const likePost = async (userId, postId) => {
+  const post = await Post.findById(postId)
+    .populate({
+      path: 'sharedPost',
+      populate: {
+        path: 'byPost',
+        select: 'firstname lastname email background'
+      }
+    })
+    .populate({
+      path: 'byPost',
+      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
+    })
+    .populate({
+      path: 'sharesBy',
+      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
+    })
+
+  if (!post) throw new ApiError(404, 'Không tìm thấy bài post')
+
+  const isLiked = post.likes.includes(userId)
+  console.log(isLiked)
+  let message = ''
+  if (isLiked) {
+    post.likes = post.likes.filter((id) => id.toString() !== userId)
+    message = 'Bỏ like thành công'
+  } else {
+    post.likes.push(userId)
+    message = 'Like thành công'
+  }
+
+  await post.save()
+
+  return { message, post }
+}
+
 const sharePost = async (postId, userId, describe) => {
   // Lấy bài viết gốc nếu bài viết này là một bài chia sẻ
   const post = await Post.findById(postId).populate('sharedPost')
@@ -65,5 +110,6 @@ const sharePost = async (postId, userId, describe) => {
 export const postService = {
   getAllPosts,
   getUserPosts,
-  sharePost
+  sharePost,
+  likePost
 }
