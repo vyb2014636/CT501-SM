@@ -18,24 +18,19 @@ import MenuItem from '@mui/material/MenuItem'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { formatFullname } from '@/utils/helpers'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import renderMedia from '@/components/Common/Mansory/MansoryMedia'
 import { useNavigate } from 'react-router-dom'
-import { toggleLikePost } from '@/features/post/postThunk'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 
-const PostCommon = ({ noMedia, post, isLiked }) => {
+const PostCommon = ({ noMedia, post, isLiked, handleClickLike }) => {
   const [anchorEl, setAnchorEl] = useState(null)
-  const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
   const navigate = useNavigate()
   const open = Boolean(anchorEl)
 
   const handleClick = (event) => setAnchorEl(event.currentTarget)
 
-  const handleClickLike = () => {
-    dispatch(toggleLikePost(post._id))
-  }
   return (
     <Card sx={{ mx: 'auto', my: 2, borderRadius: '16px', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
       <CardHeader
@@ -89,7 +84,7 @@ const PostCommon = ({ noMedia, post, isLiked }) => {
       {/* Hình ảnh trong bài đăng */}
       {!noMedia && renderMedia(post)}
       <CardContent>
-        <Typography variant='body2'>Bạn bè và những người khác</Typography>
+        <Typography variant='body2'>{post.likes?.length} người thích</Typography>
       </CardContent>
       <Divider />
       {/* Lượt thích, bình luận, chia sẻ */}

@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axiosIntercept from '@/apis/axiosIntercept'
 
-export const fetchAllPosts = createAsyncThunk('post/allPost', async (_, { rejectWithValue }) => {
-  const response = await axiosIntercept.get('/post/')
+export const fetchAllPosts = createAsyncThunk('post/allPost', async (page, { rejectWithValue }) => {
+  const response = await axiosIntercept.get(`/post/`, { params: { page: page } })
   if (response) return response
   else return rejectWithValue(response)
 })

@@ -45,6 +45,7 @@ var postSchema = new mongoose.Schema(
     timestamps: true
   }
 )
+postSchema.index({ createdAt: -1 }) // Thêm index trên trường createdAt
 
 //Export the model
 export default mongoose.model('Post', postSchema)

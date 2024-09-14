@@ -47,11 +47,16 @@ const getUserPosts = async (req, res, next) => {
 }
 const getAllPosts = async (req, res, next) => {
   try {
-    const userId = req.user.id.toString() // Lấy ID của người dùng hiện tại
-    const posts = await postService.getAllPosts(userId)
+    const userId = req.user.id.toString()
+    const { page } = req.query
+    const limit = 2
+    const skip = (page - 1) * limit
+    const posts = await postService.getAllPosts(userId, limit, skip)
+    const totalPosts = await Post.countDocuments()
     return res.status(200).json({
       message: posts.length > 0 ? 'Danh sách bài đăng' : 'Không có bài đăng nào',
-      posts: posts
+      posts: posts,
+      totalPosts: totalPosts
     })
   } catch (error) {
     next(error)
@@ -63,11 +68,12 @@ const likePost = async (req, res, next) => {
   const { id } = req.user
 
   try {
-    const { message, post } = await postService.likePost(id, postId)
+    const { message, post, quantity } = await postService.likePost(id, postId)
     res.status(200).json({
       success: true,
       message,
-      updatePost: post
+      updatePost: post,
+      quantity
     })
   } catch (error) {
     next(error)

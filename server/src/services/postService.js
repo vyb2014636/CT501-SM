@@ -2,7 +2,7 @@ import ApiError from '~/middlewares/ApiError'
 import Post from '~/models/post'
 import User from '~/models/user'
 
-const getAllPosts = async (userId) => {
+const getAllPosts = async (userId, limit, skip) => {
   const user = await User.findById(userId).populate('friends')
   const friendIds = user?.friends.map((friend) => friend._id)
   friendIds?.push(userId)
@@ -25,6 +25,9 @@ const getAllPosts = async (userId) => {
       select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
     })
     .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean()
   return posts
 }
 const getUserPosts = async (userId) => {
@@ -64,7 +67,6 @@ const likePost = async (userId, postId) => {
   if (!post) throw new ApiError(404, 'Không tìm thấy bài post')
 
   const isLiked = post.likes.includes(userId)
-  console.log(isLiked)
   let message = ''
   if (isLiked) {
     post.likes = post.likes.filter((id) => id.toString() !== userId)
@@ -74,9 +76,10 @@ const likePost = async (userId, postId) => {
     message = 'Like thành công'
   }
 
+  const quantity = post.likes.length
   await post.save()
 
-  return { message, post }
+  return { message, post, quantity }
 }
 
 const sharePost = async (postId, userId, describe) => {
@@ -107,6 +110,7 @@ const sharePost = async (postId, userId, describe) => {
 
   return sharedPost
 }
+
 export const postService = {
   getAllPosts,
   getUserPosts,

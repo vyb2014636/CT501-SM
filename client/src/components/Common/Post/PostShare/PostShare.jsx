@@ -18,24 +18,18 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { formatFullname } from '@/utils/helpers'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import renderMedia from '@/components/Common/Mansory/MansoryMedia'
 import { useNavigate } from 'react-router-dom'
-import { toggleLikePost } from '@/features/post/postThunk'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
 
-const PostShare = ({ noMedia, post, isLiked }) => {
+const PostShare = ({ noMedia, post, isLiked, handleClickLike }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const navigate = useNavigate()
-  const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
-  }
-
-  const handleClickLike = () => {
-    dispatch(toggleLikePost(post._id))
   }
 
   const handleClose = () => {
@@ -116,7 +110,7 @@ const PostShare = ({ noMedia, post, isLiked }) => {
         </Card>
 
         <CardContent>
-          <Typography variant='body2'>Bạn bè và những người khác</Typography>
+          <Typography variant='body2'>{post.likes?.length} người thích</Typography>
         </CardContent>
         <Divider />
 
