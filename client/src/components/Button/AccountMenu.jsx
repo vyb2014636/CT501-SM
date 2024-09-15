@@ -11,6 +11,7 @@ import Logout from '@mui/icons-material/Logout'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '@/features/auth/authThunk'
+import { resetPostState } from '@/features/post/postSlice'
 const AccountButton = () => {
   const { user } = useSelector((state) => state.auth)
   const navigate = useNavigate()
@@ -22,6 +23,14 @@ const AccountButton = () => {
   }
   const handleClose = () => {
     setAnchorEl(null)
+  }
+  const handleMyAccount = () => {
+    dispatch(resetPostState())
+    navigate(`/${user._id}`)
+  }
+  const handleLogout = () => {
+    dispatch(resetPostState())
+    dispatch(logout())
   }
 
   return (
@@ -69,7 +78,7 @@ const AccountButton = () => {
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-        <MenuItem onClick={() => navigate(`/${user._id}`)}>
+        <MenuItem onClick={handleMyAccount}>
           <Avatar /> Tài khoản của tôi
         </MenuItem>
         <Divider />
@@ -79,7 +88,7 @@ const AccountButton = () => {
           </ListItemIcon>
           Cài đặt
         </MenuItem>
-        <MenuItem onClick={() => dispatch(logout())}>
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize='small' />
           </ListItemIcon>

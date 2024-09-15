@@ -13,16 +13,7 @@ export const authSlice = createSlice({
     error: null,
     loading: false // Đảm bảo có biến loading
   },
-  reducers: {
-    // logout: (state) => {
-    //   state.user = null
-    //   state.accessToken = null
-    //   state.refreshToken = null
-    //   state.error = null
-    //   removeToken('accessToken')
-    //   removeToken('refreshToken')
-    // }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {

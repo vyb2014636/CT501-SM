@@ -33,21 +33,28 @@ const createPost = async (req, res, next) => {
 }
 
 const getUserPosts = async (req, res, next) => {
-  const { userId } = req.params
   try {
-    const { user, posts } = await postService.getUserPosts(userId)
+    const { userId } = req.params
+    const { page } = req.query
+    const limit = 2
+    const skip = (page - 1) * limit
+    const { user, posts } = await postService.getUserPosts(userId, limit, skip)
+    const totalPosts = await Post.find({ byPost: userId }).countDocuments()
+
     return res.status(200).json({
       message: posts.length > 0 ? 'Danh sách bài đăng của bạn' : 'Bạn chưa có bài đăng nào',
       posts: posts,
-      user: user
+      user: user,
+      totalPosts: totalPosts
     })
   } catch (error) {
     next(error)
   }
 }
+
 const getAllPosts = async (req, res, next) => {
   try {
-    const userId = req.user.id.toString()
+    const userId = req.user.id
     const { page } = req.query
     const limit = 2
     const skip = (page - 1) * limit

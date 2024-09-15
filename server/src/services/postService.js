@@ -6,9 +6,7 @@ const getAllPosts = async (userId, limit, skip) => {
   const user = await User.findById(userId).populate('friends')
   const friendIds = user?.friends.map((friend) => friend._id)
   friendIds?.push(userId)
-  const posts = await Post.find({
-    $or: [{ byPost: userId }, { byPost: { $in: friendIds } }]
-  })
+  const posts = await Post.find({ byPost: { $in: friendIds } })
     .populate({
       path: 'sharedPost',
       populate: {
@@ -30,18 +28,29 @@ const getAllPosts = async (userId, limit, skip) => {
     .lean()
   return posts
 }
-const getUserPosts = async (userId) => {
+const getUserPosts = async (userId, limit, skip) => {
   const user = await User.findById(userId).select('-password')
   if (!user) throw new ApiError(404, 'không tìm không tìm thấy người dùng')
   const posts = await Post.find({ byPost: userId })
     .populate({
       path: 'sharedPost',
       populate: {
-        path: 'byPost' // Populate trường byPost trong sharedPost để lấy thông tin người đăng gốc
+        path: 'byPost',
+        select: 'firstname lastname email background'
       }
     })
-    .populate('byPost sharesBy')
+    .populate({
+      path: 'byPost',
+      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
+    })
+    .populate({
+      path: 'sharesBy',
+      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
+    })
     .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean()
   const both = { user, posts }
   return both
 }

@@ -1,42 +1,56 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchAllPosts } from '@/features/post/postThunk'
 import SkeletonPost from '@/components/Skeleton/SkeletonPost'
-import ListPosts from '@/components/Common/List/ListPosts'
 import CardShare from '@/components/Card/CardShare'
-import InfiniteScroll from 'react-infinite-scroll-component'
-import { CircularProgress } from '@mui/material'
-import { incrementPage } from '@/features/post/postSlice'
-
-const scrollStyle = {
-  flex: 1,
-  py: 2,
-  px: 4,
-  mx: 4,
-  overflow: 'auto',
-  '&::-webkit-scrollbar-thumb': { bgcolor: 'background.paper' },
-  '&::-webkit-scrollbar-thumb:hover': { bgcolor: '#bfc2cf' },
-  '&::-webkit-scrollbar': { width: 5 }
-}
+import { Button, Typography } from '@mui/material'
+import Post from '@/components/Common/Post/Post'
+import { scrollbarStyleMui } from '@/styles/styles'
+import { resetPostState } from '@/features/post/postSlice'
 
 const Main = () => {
   const [loading, setLoading] = useState(true)
-  const [listPost, setListPost] = useState([]) // State cho danh sách bài đăng
-  const [newPosts, setNewPosts] = useState([]) // State để lưu các bài đăng mới
+  const [newPosts, setNewPosts] = useState([])
+  const pageRef = useRef(1)
+  const scrollBoxAllRef = useRef(null)
+  const prevScrollTop = useRef(0)
   const dispatch = useDispatch()
-  const { posts, page, totalPosts } = useSelector((state) => state.post)
+  const { posts, totalPosts, status } = useSelector((state) => state.post)
 
   useEffect(() => {
-    dispatch(fetchAllPosts(page)) // Lấy dữ liệu trang đầu tiên khi component được mount
+    dispatch(resetPostState())
+    dispatch(fetchAllPosts(pageRef.current)) // Gọi fetch cho trang đầu tiên
+    setLoading(false)
   }, [dispatch])
 
-  // Lấy bài đăng khi component mount (chỉ gọi fetchPosts cho page 1)
-  const fetchMoreData = () => {
-    dispatch(incrementPage()) // Tăng số trang khi load thêm dữ liệu
-    dispatch(fetchAllPosts(page + 1))
-  }
+  const handleScroll = useCallback(() => {
+    const scrollBoxAll = scrollBoxAllRef.current
+
+    if (scrollBoxAll && scrollBoxAll.scrollTop + scrollBoxAll.clientHeight >= scrollBoxAll.scrollHeight && posts.length < totalPosts) {
+      setLoading(true)
+
+      prevScrollTop.current = scrollBoxAll.scrollTop
+      pageRef.current += 1
+
+      dispatch(fetchAllPosts(pageRef.current)).then(() => {
+        setLoading(false)
+        scrollBoxAll.scrollTop = prevScrollTop.current
+      })
+    }
+  }, [dispatch, posts.length, totalPosts])
+
+  useEffect(() => {
+    const scrollBox = scrollBoxAllRef.current
+    if (scrollBox) {
+      scrollBox.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (scrollBox) {
+        scrollBox.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [handleScroll])
 
   // Hàm này sẽ được gọi khi có bài đăng mới qua WebSocket (hoặc một cách nào khác)
   const handleNewPost = (newPost) => {
@@ -45,12 +59,11 @@ const Main = () => {
 
   // Hàm để reload và thêm bài đăng mới vào listPost
   const handleReload = () => {
-    setListPost((prevPosts) => [...newPosts, ...prevPosts]) // Thêm bài mới vào đầu danh sách
     setNewPosts([]) // Xóa danh sách bài mới sau khi reload
   }
 
   return (
-    <Box sx={scrollStyle}>
+    <Box sx={{ flex: 1, py: 2, px: 4, mx: 4, ...scrollbarStyleMui }} ref={scrollBoxAllRef}>
       {/* Nếu có bài đăng mới, hiển thị nút "Reload" */}
       {newPosts.length > 0 && (
         <Box textAlign='center' my={2}>
@@ -59,22 +72,19 @@ const Main = () => {
           </Button>
         </Box>
       )}
-      {loading && posts.length === 0 ? (
-        <SkeletonPost />
+      <CardShare />
+      {loading && <SkeletonPost />}
+      {posts.length === 0 ? (
+        <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
+          Không có bài viết nào được đăng
+        </Typography>
       ) : (
-        <InfiniteScroll
-          dataLength={posts.length} // Đếm số bài hiện tại
-          next={fetchMoreData} // Gọi fetchPosts khi người dùng scroll tới cuối
-          hasMore={posts.length < totalPosts} // Chỉ tiếp tục scroll nếu còn bài đăng và không đang tải
-          loader={<CircularProgress color='primary' />}
-          endMessage={
-            <Typography variant='body1' align='center'>
-              Hết bài viết
-            </Typography>
-          }>
-          <CardShare />
-          <ListPosts posts={posts} />
-        </InfiniteScroll>
+        posts?.map((post) => <Post key={post._id} post={post} />)
+      )}
+      {posts.length !== 0 && (
+        <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
+          Đã hết bài viết
+        </Typography>
       )}
     </Box>
   )
