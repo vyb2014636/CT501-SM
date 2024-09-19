@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import { Followers } from '@/data/follower'
 import FollowerCard from '../../Card/FollowerCard'
-import { getListNoFriends } from '@/apis/user/userAPI'
+import { getListSuggestion } from '@/apis/user/userAPI'
 import { toast } from 'react-toastify'
 
 const ListFollowers = () => {
-  const [listNoFriends, setlistNoFriends] = useState(null)
+  const [suggestions, setSuggestions] = useState(null)
   const fetchListNoFriends = async () => {
     try {
-      const response = await getListNoFriends()
-      setlistNoFriends(response.listUser)
+      const response = await getListSuggestion()
+      setSuggestions(response.listUser)
     } catch (error) {
       toast.error(error.message)
     }
@@ -32,8 +31,8 @@ const ListFollowers = () => {
       <Typography variant='h7' gutterBottom color='primary' fontWeight='bold'>
         Những người bạn có thể biết
       </Typography>
-      {listNoFriends?.map((user, id) => (
-        <FollowerCard follower={user} id={id} key={id} />
+      {suggestions?.map((user, id) => (
+        <FollowerCard userNoFriend={user} id={id} key={id} />
       ))}
     </Box>
   )

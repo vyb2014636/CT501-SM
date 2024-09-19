@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import List from '@mui/material/List'
@@ -7,28 +7,49 @@ import ListItemText from '@mui/material/ListItemText'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import { formatFullname } from '@/utils/helpers'
 import { useSelector } from 'react-redux'
-import { getRequests, sendFriendAPI } from '@/apis/user/userAPI'
+import { cancelFriendAPI, getRequests, sendFriendAPI } from '@/apis/user/userAPI'
+import { toast } from 'react-toastify'
 
-const FollowerCard = ({ follower, id }) => {
-  const [existRequest, setExistRequest] = useState(false)
+const FollowerCard = ({ userNoFriend, id }) => {
+  const [existRequest, setExistRequest] = useState(null)
+  const [changeButton, setChangeButton] = useState(true)
   const { user } = useSelector((state) => state.auth)
-  const fetchRequests = async () => {
+
+  const handleSendFriendRequest = async () => {
     try {
-      const response = await getRequests()
+      await sendFriendAPI({ to: userNoFriend._id })
+      setChangeButton(false)
     } catch (error) {
-      setExistRequest(true)
+      toast.error(error.message)
     }
   }
+
+  const handleCancelFriendRequest = async () => {
+    try {
+      await cancelFriendAPI({ to: userNoFriend._id })
+      setChangeButton(true)
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
   return (
     <List sx={{ bgcolor: 'background.paper' }} key={id}>
       <ListItem>
         <ListItemAvatar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Avatar alt={follower.lastname} src={follower.avatar} sx={{ height: 46, width: 46 }} />
+          <Avatar alt={userNoFriend.lastname} src={userNoFriend.avatar} sx={{ height: 46, width: 46 }} />
         </ListItemAvatar>
-        <ListItemText primary={formatFullname(follower.firstname, follower.lastname)} secondary={`@${follower.firstname}`} />
-        <Button variant='contained' sx={{ borderRadius: 12 }}>
-          Kết bạn
-        </Button>
+        <ListItemText primary={formatFullname(userNoFriend.firstname, userNoFriend.lastname)} secondary={`@${userNoFriend.firstname}`} />
+        {/* {renderButton(existRequest)} */}
+        {changeButton ? (
+          <Button variant='contained' sx={{ borderRadius: 12 }} onClick={handleSendFriendRequest}>
+            Kết bạn
+          </Button>
+        ) : (
+          <Button variant='outlined' sx={{ borderRadius: 12 }} onClick={handleCancelFriendRequest}>
+            Hủy kết bạn
+          </Button>
+        )}
       </ListItem>
     </List>
   )

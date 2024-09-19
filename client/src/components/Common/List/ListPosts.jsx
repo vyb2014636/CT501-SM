@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import Post from '../Post/Post'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchAllPosts } from '@/features/post/postThunk'
-import SkeletonPost from '@/components/Skeleton/SkeletonPost'
+import SkeletonPosts from '@/components/Skeleton/SkeletonPosts'
 import { Box, Button, Typography } from '@mui/material'
 import { scrollbarStyleMui } from '@/styles/styles'
 import CardShare from '@/components/Card/CardShare'
@@ -23,7 +23,7 @@ const ListPosts = ({ userId = null }) => {
   useEffect(() => {
     dispatch(resetPostState())
     dispatch(fetchAllPosts({ page: pageRef.current, userId: userId }))
-  }, [dispatch])
+  }, [dispatch, userId])
 
   const handleScroll = useCallback(() => {
     const scrollBoxAll = scrollBoxAllRef.current
@@ -33,7 +33,7 @@ const ListPosts = ({ userId = null }) => {
       dispatch(fetchAllPosts({ page: pageRef.current, userId: userId }))
       scrollBoxAll.scrollTop = prevScrollTop.current
     }
-  }, [dispatch, posts?.length, totalPosts])
+  }, [dispatch, posts?.length, totalPosts, userId])
 
   useEffect(() => {
     const scrollBox = scrollBoxAllRef.current
@@ -68,8 +68,9 @@ const ListPosts = ({ userId = null }) => {
           </Button>
         </Box>
       )}
-      {loading && <SkeletonPost />}
-      {userId && posts && <CardProfile user={userPosts} totalPosts={totalPosts} />}
+      {loading && <SkeletonPosts />}
+      {/* Chỉ render CardProfile khi userPosts đã có dữ liệu hợp lệ */}
+      {userId && userPosts && Object.keys(userPosts).length > 0 && <CardProfile user={userPosts} totalPosts={totalPosts} />}
       {((userId === user?._id && userId) || !userId) && <CardShare />}
       {posts.length === 0 && !loading ? (
         <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
