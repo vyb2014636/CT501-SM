@@ -1,6 +1,22 @@
 import ApiError from '~/middlewares/ApiError'
 import FriendRequest from '~/models/friendRequest'
 import User from '~/models/user'
+import { userService } from '~/services/userService'
+
+const getRequest = async (req, res, next) => {
+  try {
+    const from = req.user.id
+    const { to } = req.body
+    const response = await FriendRequest.findOne({ from, to })
+    if (!response) throw new ApiError(404, 'Không tìm thấy lời mời nào')
+    res.status(200).json({
+      message: 'Bạn đã gửi lời mời rồi',
+      listRequest: response
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 
 const sendFriendRequest = async (req, res, next) => {
   const { to } = req.body // ID của người nhận yêu cầu kết bạn
@@ -64,7 +80,22 @@ const acceptFriendRequest = async (req, res, next) => {
   }
 }
 
+const getListUserNoFriend = async (req, res, next) => {
+  try {
+    const { id } = req.user
+    const usersNoFriend = await userService.getListUserNoFriend(id)
+    res.status(200).json({
+      message: 'Danh sách những người bạn có thể biết',
+      listUser: usersNoFriend
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const userController = {
   sendFriendRequest,
-  acceptFriendRequest
+  acceptFriendRequest,
+  getListUserNoFriend,
+  getRequest
 }

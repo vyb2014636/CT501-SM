@@ -1,12 +1,23 @@
+import mongoose from 'mongoose'
 import ApiError from '~/middlewares/ApiError'
 import Post from '~/models/post'
 import User from '~/models/user'
 
-const getAllPosts = async (userId, limit, skip) => {
-  const user = await User.findById(userId).populate('friends')
-  const friendIds = user?.friends.map((friend) => friend._id)
-  friendIds?.push(userId)
-  const posts = await Post.find({ byPost: { $in: friendIds } })
+const getPosts = async (loggedInId, userId, limit, skip) => {
+  let filter = { byPost: loggedInId }
+  let user = null
+  if (!userId) {
+    user = await User.findById(loggedInId).populate('friends').select('-password')
+    const friendIds = user?.friends.map((friend) => friend._id)
+    filter = { byPost: { $in: [loggedInId, ...friendIds] } }
+  } else {
+    user = await User.findById(userId).populate('friends').select('-password')
+    filter = { byPost: userId }
+    if (!user) throw new ApiError(404, 'Không tìm thấy')
+  }
+  const totalPosts = await Post.find(filter).countDocuments()
+
+  const posts = await Post.find(filter)
     .populate({
       path: 'sharedPost',
       populate: {
@@ -26,33 +37,8 @@ const getAllPosts = async (userId, limit, skip) => {
     .skip(skip)
     .limit(limit)
     .lean()
-  return posts
-}
-const getUserPosts = async (userId, limit, skip) => {
-  const user = await User.findById(userId).select('-password')
-  if (!user) throw new ApiError(404, 'không tìm không tìm thấy người dùng')
-  const posts = await Post.find({ byPost: userId })
-    .populate({
-      path: 'sharedPost',
-      populate: {
-        path: 'byPost',
-        select: 'firstname lastname email background'
-      }
-    })
-    .populate({
-      path: 'byPost',
-      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
-    })
-    .populate({
-      path: 'sharesBy',
-      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
-    })
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .lean()
-  const both = { user, posts }
-  return both
+
+  return { posts, totalPosts, user }
 }
 
 const likePost = async (userId, postId) => {
@@ -121,8 +107,7 @@ const sharePost = async (postId, userId, describe) => {
 }
 
 export const postService = {
-  getAllPosts,
-  getUserPosts,
+  getPosts,
   sharePost,
   likePost
 }

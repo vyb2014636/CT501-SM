@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { formatTime, setFalse, setValues } from '@/utils/helpers'
 import Swal from 'sweetalert2'
+import { styleForm } from '@/styles/styleAuth/style'
 
 const Verify = () => {
   const [codes, setCodes] = useState(Array(6).fill(''))
@@ -87,70 +88,46 @@ const Verify = () => {
   }, [timeExpired, navigate])
 
   return (
-    <FlexCenter
-      sx={{
-        height: '50%',
-        padding: 2,
-        m: 'auto'
-      }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          backgroundColor: 'background.default',
-          borderRadius: '16px',
-          maxWidth: '900px',
-          overflow: 'hidden'
-        }}>
-        <LeftSection />
-        <Box
-          sx={{
-            width: { xs: '100%', md: '50%' },
-            padding: { xs: 3, md: 4 },
-            bgcolor: 'background.paper',
-            borderRadius: '12px'
-          }}>
-          <Typography variant='h5' fontWeight='bold' textAlign='center' mb={2} color='primary'>
-            Xác thực tài khoản
-          </Typography>
-          <Typography variant='body2' color='textSecondary' textAlign='center' mt={2}>
-            Để hoàn tất cho quá trình đăng ký, bạn cần xác thực tài khoản .
-          </Typography>
-          <Typography variant='body2' color='textSecondary' textAlign='center' mt={2} align='center'>
-            Chúng tôi đã gửi mã xác thực qua email của bạn mã xác thực sẽ tồn tại trong :{formatTime(timeExpired)}
-          </Typography>
-          <form onSubmit={handleSubmit}>
-            <Box display='flex' justifyContent='center' gap={1} p={3}>
-              {codes.map((value, index) => (
-                <TextField
-                  key={index}
-                  id={`input-${index}`}
-                  value={value}
-                  onChange={(e) => handleChange(e, index)}
-                  onKeyDown={(e) => handleKeyDownBackspace(e, index)}
-                  inputProps={{
-                    maxLength: 1,
-                    style: { textAlign: 'center', fontSize: '12px', width: '24px', height: '24px' }
-                  }}
-                />
-              ))}
-            </Box>
-            <Button
-              type='submit'
-              fullWidth
-              variant='contained'
-              sx={{
-                mt: 3,
-                background: !disabled && 'linear-gradient(to right, #673ab7, #2196f3)'
+    <Box sx={styleForm}>
+      <Typography variant='h5' fontWeight='bold' textAlign='center' mb={2} color='primary'>
+        Xác thực tài khoản
+      </Typography>
+      <Typography variant='body2' color='textSecondary' textAlign='center' mt={2}>
+        Để hoàn tất cho quá trình đăng ký, bạn cần xác thực tài khoản .
+      </Typography>
+      <Typography variant='body2' color='textSecondary' textAlign='center' mt={2} align='center'>
+        Chúng tôi đã gửi mã xác thực qua email {email} của bạn mã xác thực sẽ tồn tại trong :{formatTime(timeExpired)}
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <Box display='flex' justifyContent='center' gap={1} p={3}>
+          {codes.map((value, index) => (
+            <TextField
+              key={index}
+              id={`input-${index}`}
+              value={value}
+              onChange={(e) => handleChange(e, index)}
+              onKeyDown={(e) => handleKeyDownBackspace(e, index)}
+              inputProps={{
+                maxLength: 1,
+                style: { textAlign: 'center', fontSize: '12px', width: '24px', height: '24px' }
               }}
-              startIcon={loading ? <CircularProgress size={24} /> : ''}
-              disabled={disabled || loading}>
-              Gửi
-            </Button>
-          </form>
+            />
+          ))}
         </Box>
-      </Box>
-    </FlexCenter>
+        <Button
+          type='submit'
+          fullWidth
+          variant='contained'
+          sx={{
+            mt: 3,
+            background: !disabled && 'linear-gradient(to right, #673ab7, #2196f3)'
+          }}
+          startIcon={loading ? <CircularProgress size={24} /> : ''}
+          disabled={disabled || loading}>
+          Gửi
+        </Button>
+      </form>
+    </Box>
   )
 }
 

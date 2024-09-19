@@ -5,16 +5,13 @@ import verifyToken from '~/middlewares/verifyToken'
 const router = express.Router()
 
 router
-  .get('/profile', (req, res) => {
-    return res.status(200).json({
-      message: 'login'
-    })
-  })
+  .get('/noFriends', verifyToken, userController.getListUserNoFriend)
   .get('/favorites', (req, res) => {
     return res.status(200).json({
       message: 'signup'
     })
   })
+  .get('/listRequests', verifyToken, userController.getRequest)
   .post('/sendFriend', verifyToken, userController.sendFriendRequest)
   .post('/acceptFriend', verifyToken, userController.acceptFriendRequest)
 

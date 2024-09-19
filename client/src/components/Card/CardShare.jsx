@@ -22,7 +22,7 @@ const CardShare = () => {
     <Box sx={{ display: 'flex', bgcolor: 'background.paper', borderRadius: '12px', p: 4, gap: 3 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 3 }}>
         <FlexRow>
-          <Avatar alt={formatFullname(user?.firstname, user?.lastname)} src={user.avatar} sx={{ width: 48, height: 48 }} />
+          <Avatar alt={user && formatFullname(user?.firstname, user?.lastname)} src={user && user.avatar} sx={{ width: 48, height: 48 }} />
           <ModalShare>
             <Button
               sx={{

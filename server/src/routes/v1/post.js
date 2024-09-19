@@ -7,7 +7,7 @@ const router = express.Router()
 
 router
   .route('/')
-  .get(verifyToken, postController.getAllPosts)
+  .get(verifyToken, postController.getPosts)
   .post(
     verifyToken,
     uploadCloud.fields([
@@ -16,8 +16,5 @@ router
     ]),
     postController.createPost
   )
-router
-  .get('/:userId', verifyToken, postController.getUserPosts)
-  .post('/share', verifyToken, postController.sharePost)
-  .put('/like', verifyToken, postController.likePost)
+router.post('/share', verifyToken, postController.sharePost).put('/like', verifyToken, postController.likePost)
 export const post = router

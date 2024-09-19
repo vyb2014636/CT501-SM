@@ -4,28 +4,36 @@ import { setToken } from '@/utils/tokenHelper'
 
 export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
   const { email, password } = credentials
-  const response = await axiosIntercept.post('/auth/login', { email, password })
-  if (response) {
-    const { accessToken, refreshToken } = response
-    axiosIntercept.defaults.headers.Authorization = `Bearer ${accessToken}`
-    setToken('accessToken', accessToken)
-    setToken('refreshToken', refreshToken)
-    return response
-  } else return rejectWithValue(response)
+  return axiosIntercept
+    .post('/auth/login', { email, password })
+    .then((response) => {
+      const { accessToken, refreshToken } = response
+      setToken('accessToken', accessToken)
+      setToken('refreshToken', refreshToken)
+      return response
+    })
+    .catch((error) => rejectWithValue(error))
 })
 
 export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
-  const response = await axiosIntercept.get('/auth/logout')
-
-  if (response) return response
-  else return rejectWithValue(response)
+  axiosIntercept
+    .get('/auth/logout')
+    .then((response) => {
+      return response
+    })
+    .catch((error) => rejectWithValue(error))
 })
 
 export const refreshToken = createAsyncThunk('auth/refreshToken', async (_, { rejectWithValue }) => {
-  const response = await axiosIntercept.post('/auth/refreshToken')
+  const response = await axiosIntercept
+    .post('/auth/refreshToken')
+    .then((response) => {
+      setToken('accessToken', response.accessToken)
+      setToken('refreshToken', response.refreshToken)
+      return response
+    })
+    .catch((error) => rejectWithValue(error))
+
   if (response) {
-    setToken('accessToken', response.accessToken)
-    setToken('refreshToken', response.refreshToken)
-    return response
   } else return rejectWithValue(response)
 })

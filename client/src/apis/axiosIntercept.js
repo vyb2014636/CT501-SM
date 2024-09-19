@@ -42,7 +42,8 @@ export const setupAxiosInterceptors = (store) => {
       //     return err.response.data
       //   }
       // }
-      return error.response.data
+      // return error.response.data
+      return Promise.reject(error.response.data)
     }
   )
 }

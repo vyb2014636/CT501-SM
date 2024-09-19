@@ -39,7 +39,8 @@ var userSchema = new mongoose.Schema(
       type: String
     },
     otpExpired: {
-      type: Date
+      type: Date,
+      expires: '1m'
     },
     avatar: {
       type: String

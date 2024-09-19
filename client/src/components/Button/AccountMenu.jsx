@@ -24,10 +24,7 @@ const AccountButton = () => {
   const handleClose = () => {
     setAnchorEl(null)
   }
-  const handleMyAccount = () => {
-    dispatch(resetPostState())
-    navigate(`/${user._id}`)
-  }
+  const handleMyAccount = () => navigate(`/${user._id}`)
   const handleLogout = () => {
     dispatch(resetPostState())
     dispatch(logout())
@@ -42,7 +39,7 @@ const AccountButton = () => {
           aria-haspopup='true'
           aria-expanded={open ? 'true' : undefined}
           size='small'>
-          <Avatar src={user.avatar} sx={{ height: '32px', width: '32px' }} />
+          <Avatar src={user && user.avatar} sx={{ height: '32px', width: '32px' }} />
         </IconButton>
       </Tooltip>
       <Menu

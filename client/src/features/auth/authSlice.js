@@ -11,13 +11,21 @@ export const authSlice = createSlice({
     refreshToken: null,
     status: 'idle',
     error: null,
-    loading: false // Đảm bảo có biến loading
+    loading: false,
+    isAuthenticated: false
   },
-  reducers: {},
+  reducers: {
+    resetError(state) {
+      state.status = 'idle'
+      state.error = null
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
+        state.status = 'loading'
         state.loading = true
+        state.isAuthenticated = false
       })
       .addCase(login.fulfilled, (state, action) => {
         const { accessToken, refreshToken, user } = action.payload
@@ -25,11 +33,14 @@ export const authSlice = createSlice({
         state.refreshToken = refreshToken
         state.user = user
         state.status = 'succeeded'
-        state.error = action.payload.message
-        state.loading = false // Cập nhật trạng thái loading
+        state.loading = false
+        state.isAuthenticated = true
       })
       .addCase(login.rejected, (state, action) => {
-        state.loading = false // Cập nhật trạng thái loading
+        state.status = 'failed'
+        state.loading = false
+        state.isAuthenticated = false
+        state.error = action.payload
       })
       .addCase(logout.fulfilled, (state, action) => {
         state.user = null
@@ -40,6 +51,7 @@ export const authSlice = createSlice({
         removeToken('refreshToken')
         state.status = 'idle'
         state.loading = false
+        state.isAuthenticated = false
       })
 
       .addCase(refreshToken.fulfilled, (state, action) => {
@@ -48,5 +60,6 @@ export const authSlice = createSlice({
   }
 })
 
-export const {} = authSlice.actions
+export const { resetError } = authSlice.actions
+
 export default authSlice.reducer

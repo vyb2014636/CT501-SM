@@ -6,7 +6,6 @@ import { toggleLikePost } from '@/features/post/postThunk'
 
 const Post = ({ post }) => {
   const { user } = useSelector((state) => state.auth)
-  console.log(post)
   const isLiked = post.likes.includes(user._id)
 
   const dispatch = useDispatch()

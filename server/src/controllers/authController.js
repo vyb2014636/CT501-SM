@@ -31,16 +31,16 @@ const register = async (req, res, next) => {
 
     await sendMail({ email, html, subject: 'Mã xác thực tài khoản' })
 
-    setTimeout(async () => {
-      const user = await User.findOne({ email })
-      if (user && !user.isVerify) {
-        await User.deleteOne({ email })
-      }
-    }, 60000)
+    // setTimeout(async () => {
+    //   const user = await User.findOne({ email })
+    //   if (user && !user.isVerify) {
+    //     await User.deleteOne({ email })
+    //   }
+    // }, 60000)
 
     return res.status(200).json({
       success: true,
-      mes: newUser ? 'Mã xác thực đã được gửi đến email của bạn,vui lòng kiểm tra email!' : 'Lỗi',
+      message: newUser ? 'Mã xác thực đã được gửi đến email của bạn,vui lòng kiểm tra email!' : 'Lỗi',
       newUser: { ...newUser._doc, password: undefined }
     })
   } catch (error) {

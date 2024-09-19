@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <CssVarsProvider theme={theme}>
         <CssBaseline />
         <App />
-        <ToastContainer />
+        <ToastContainer autoClose={1000} />
       </CssVarsProvider>
     </PersistGate>
   </Provider>

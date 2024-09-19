@@ -32,38 +32,18 @@ const createPost = async (req, res, next) => {
   }
 }
 
-const getUserPosts = async (req, res, next) => {
+const getPosts = async (req, res, next) => {
+  const { id } = req.user
+  const { page, userId } = req.query
+  const limit = 3
+  const skip = (page - 1) * limit
   try {
-    const { userId } = req.params
-    const { page } = req.query
-    const limit = 2
-    const skip = (page - 1) * limit
-    const { user, posts } = await postService.getUserPosts(userId, limit, skip)
-    const totalPosts = await Post.find({ byPost: userId }).countDocuments()
-
-    return res.status(200).json({
-      message: posts.length > 0 ? 'Danh sách bài đăng của bạn' : 'Bạn chưa có bài đăng nào',
-      posts: posts,
-      user: user,
-      totalPosts: totalPosts
-    })
-  } catch (error) {
-    next(error)
-  }
-}
-
-const getAllPosts = async (req, res, next) => {
-  try {
-    const userId = req.user.id
-    const { page } = req.query
-    const limit = 2
-    const skip = (page - 1) * limit
-    const posts = await postService.getAllPosts(userId, limit, skip)
-    const totalPosts = await Post.countDocuments()
+    const { posts, totalPosts, user } = await postService.getPosts(id, userId, limit, skip)
     return res.status(200).json({
       message: posts.length > 0 ? 'Danh sách bài đăng' : 'Không có bài đăng nào',
-      posts: posts,
-      totalPosts: totalPosts
+      posts,
+      totalPosts,
+      user
     })
   } catch (error) {
     next(error)
@@ -103,8 +83,7 @@ const sharePost = async (req, res, next) => {
 
 export const postController = {
   createPost,
-  getUserPosts,
-  getAllPosts,
+  getPosts,
   sharePost,
   likePost
 }

@@ -73,10 +73,10 @@ const ModalPost = ({ children }) => {
           </Typography>
           <Divider />
           <CardHeader
-            avatar={<Avatar src={user?.avatar} alt='Profile Picture' sx={{ width: 52, height: 52 }} />}
+            avatar={<Avatar src={user && user?.avatar} alt='Profile Picture' sx={{ width: 52, height: 52 }} />}
             title={
               <Typography variant='h6' fontWeight='bold'>
-                {formatFullname(user?.firstname, user?.lastname)}
+                {user && formatFullname(user?.firstname, user?.lastname)}
               </Typography>
             }
           />
