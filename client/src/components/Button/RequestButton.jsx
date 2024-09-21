@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import IconButton from '@mui/material/IconButton'
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined'
-import { Avatar, Button, Divider, List, ListItem, ListItemAvatar, ListItemText, Menu, Tooltip, Typography } from '@mui/material'
-import FlexBetween from '../Flex/FlexBetween'
-import FlexArrow from '../Flex/FlexArround'
+import { Avatar, Button, Divider, List, ListItem, ListItemAvatar, ListItemText, Menu, Tooltip } from '@mui/material'
 import FlexRow from '../Flex/FlexRow'
-import { acceptAddFriendAPI, getRequests } from '@/apis/user/userAPI'
+import { acceptAddFriendAPI, getRequests, rejectAddFriendAPI } from '@/apis/user/userAPI'
 import { formatFullname } from '@/utils/helpers'
 import { toast } from 'react-toastify'
-const ChatButton = () => {
+import { useNavigate } from 'react-router-dom'
+const RequestButton = () => {
   const [anchorEl, setAnchorEl] = useState(null)
   const [requests, setRequests] = useState([])
   const [error, setError] = useState(false)
   const open = Boolean(anchorEl)
+  const navigate = useNavigate()
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
@@ -35,7 +35,8 @@ const ChatButton = () => {
 
   const handleAcceptAddFriend = async (requestId) => {
     try {
-      const respone = await acceptAddFriendAPI(requestId)
+      const response = await acceptAddFriendAPI(requestId)
+      toast.success(response.message)
       fetchRequests()
     } catch (error) {
       toast.error(error.message)
@@ -43,17 +44,18 @@ const ChatButton = () => {
   }
 
   const handleRejectAddFriend = async (requestId) => {
-    console.log(requestId)
-    // try {
-    //   await acceptAddFriendAPI()
-    //   fetchRequests()
-    // } catch (error) {
-    //   toast.error(error.message)
-    // }
+    try {
+      console.log(requestId)
+      const response = await rejectAddFriendAPI(requestId)
+      toast.info(response.message)
+      fetchRequests()
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
   return (
     <>
-      <Tooltip title='Bạn bè'>
+      <Tooltip title='Lời mời'>
         <IconButton
           onClick={handleClick}
           aria-controls={open ? 'friends' : undefined}
@@ -69,8 +71,8 @@ const ChatButton = () => {
           {!error ? (
             requests?.length > 0 ? (
               requests.map((request) => (
-                <ListItem alignItems='flex-start' key={request._id}>
-                  <ListItemAvatar>
+                <ListItem alignItems='flex-start' key={request._id} sx={{ cursor: 'pointer' }}>
+                  <ListItemAvatar onClick={() => navigate(`/${request.from._id}`)}>
                     <Avatar alt='Remy Sharp' src={request.from?.avatar} />
                   </ListItemAvatar>
                   <ListItemText
@@ -81,7 +83,7 @@ const ChatButton = () => {
                           Đồng ý
                         </Button>
                         <Button variant='outlined' sx={{ flex: 1 }} onClick={() => handleRejectAddFriend(request._id)}>
-                          Xóa
+                          Từ chối
                         </Button>
                       </FlexRow>
                     }
@@ -89,16 +91,19 @@ const ChatButton = () => {
                 </ListItem>
               ))
             ) : (
-              <div>Không có yêu cầu nào</div>
+              <List sx={{ width: '100%', maxWidth: 350, bgcolor: 'background.paper' }}>
+                <ListItem alignItems='flex-start'>
+                  <ListItemText primary='Không có yêu cầu kết bạn nào' />
+                </ListItem>
+              </List>
             )
           ) : (
             <div>Lỗi khi tải yêu cầu</div>
           )}
-          <Divider variant='inset' component='li' />
         </List>
       </Menu>
     </>
   )
 }
 
-export default ChatButton
+export default RequestButton

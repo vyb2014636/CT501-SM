@@ -1,22 +1,7 @@
-import ApiError from '~/middlewares/ApiError'
 import { userService } from '~/services/userService'
 
-const acceptFriendRequest = async (req, res, next) => {
-  const { requestId } = req.body // ID của yêu cầu kết bạn
-  const userId = req.user.id // ID của người dùng hiện tại
-  console.log(requestId)
-  try {
-    const response = await userService.acceptFriendRequest(userId, requestId)
-    return res.status(200).json({
-      success: response ? true : false,
-      message: response ? 'Yêu cầu kết bạn đã được chấp nhận.' : 'Yêu cầu kết bạn thất bại'
-    })
-  } catch (error) {
-    next(error)
-  }
-}
 const unFriend = async (req, res, next) => {
-  const { targetId } = req.body // ID của yêu cầu kết bạn
+  const { targetId } = req.body // ID của người mà muốn hủy kết bạn
   const userId = req.user.id // ID của người dùng hiện tại
 
   try {
@@ -44,7 +29,6 @@ const getSuggestions = async (req, res, next) => {
 }
 
 export const userController = {
-  acceptFriendRequest,
   getSuggestions,
   unFriend
 }

@@ -46,8 +46,54 @@ const cancelFriendRequest = async (req, res, next) => {
   }
 }
 
+const rejectFriendRequest = async (req, res, next) => {
+  try {
+    console.log(requestId)
+    const { requestId } = req.body
+    const myId = req.user.id
+
+    // Tạo yêu cầu kết bạn mới
+    const response = await requestFriendService.rejectFriendRequest(myId, requestId)
+
+    return res.status(200).json({
+      success: response ? true : false,
+      message: 'Yêu cầu hủy kết bạn thành công.'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const checkFriendshipStatus = async (req, res, next) => {
+  try {
+    const { checkUserId } = req.params
+    const myId = req.user.id
+    const status = await requestFriendService.checkFriendshipStatus(checkUserId, myId)
+    res.status(200).json({ status })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const acceptFriendRequest = async (req, res, next) => {
+  const { requestId } = req.body // ID của yêu cầu kết bạn
+  const userId = req.user.id // ID của người dùng hiện tại
+  try {
+    const response = await requestFriendService.acceptFriendRequest(userId, requestId)
+    return res.status(200).json({
+      success: response ? true : false,
+      message: response ? 'Giờ 2 bạn đã là bạn của nhau.' : 'Lỗi'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const requestFriendControler = {
   getRequests,
   sendFriendRequest,
-  cancelFriendRequest
+  cancelFriendRequest,
+  checkFriendshipStatus,
+  rejectFriendRequest,
+  acceptFriendRequest
 }

@@ -1,6 +1,6 @@
 import AccountButton from '@/components/Button/AccountMenu'
 import HomeButton from '@/components/Button/HomeButton'
-import ChatButton from '@/components/Button/ChatButton'
+import RequestButton from '@/components/Button/RequestButton'
 import ModeButton from '@/components/Button/ModeButton'
 import NoticeButton from '@/components/Button/NoticeButton'
 import FlexBetween from '@/components/Flex/FlexBetween'
@@ -11,7 +11,7 @@ const RightBar = () => {
     <FlexBetween sx={{ gap: 2, my: 3 }}>
       <HomeButton />
       <ModeButton />
-      <ChatButton />
+      <RequestButton />
       <NoticeButton />
       <AccountButton />
     </FlexBetween>

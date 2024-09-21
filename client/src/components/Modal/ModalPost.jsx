@@ -14,14 +14,13 @@ import { scrollbarStyles, styleModal } from '@/styles/styles'
 import VisuallyHiddenInput from '../Inputs/VisuallyHiddenInput'
 import { postAPI } from '@/apis/post/postsAPI'
 
-const ModalPost = ({ children }) => {
+const ModalPost = ({ children, user }) => {
   const [open, setOpen] = useState(false)
   const [describe, setDescribe] = useState('')
   const [files, setFiles] = useState([])
   const [images, setImages] = useState([])
   const [videos, setVideos] = useState([])
   const [previews, setPreviews] = useState([]) // State để lưu URL tạm thời cho hình ảnh/video
-  const { user } = useSelector((state) => state.auth)
 
   const handleClose = () => {
     setOpen(false)
@@ -58,8 +57,7 @@ const ModalPost = ({ children }) => {
     formData.append('describe', describe)
     images.forEach((image) => formData.append('images', image))
     videos.forEach((video) => formData.append('videos', video))
-    const response = await postAPI(formData)
-    console.log(response)
+    await postAPI(formData)
     setOpen(false)
   }
 

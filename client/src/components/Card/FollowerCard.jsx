@@ -9,11 +9,13 @@ import { formatFullname } from '@/utils/helpers'
 import { useSelector } from 'react-redux'
 import { cancelFriendAPI, getRequests, sendFriendAPI } from '@/apis/user/userAPI'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 const FollowerCard = ({ userNoFriend, id }) => {
   const [existRequest, setExistRequest] = useState(null)
   const [changeButton, setChangeButton] = useState(true)
   const { user } = useSelector((state) => state.auth)
+  const navigate = useNavigate()
 
   const handleSendFriendRequest = async () => {
     try {
@@ -36,7 +38,9 @@ const FollowerCard = ({ userNoFriend, id }) => {
   return (
     <List sx={{ bgcolor: 'background.paper' }} key={id}>
       <ListItem>
-        <ListItemAvatar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <ListItemAvatar
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+          onClick={() => navigate(`/${userNoFriend._id}`)}>
           <Avatar alt={userNoFriend.lastname} src={userNoFriend.avatar} sx={{ height: 46, width: 46 }} />
         </ListItemAvatar>
         <ListItemText primary={formatFullname(userNoFriend.firstname, userNoFriend.lastname)} secondary={`@${userNoFriend.firstname}`} />

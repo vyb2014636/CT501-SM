@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -8,22 +8,21 @@ import PhotoOutlinedIcon from '@mui/icons-material/PhotoOutlined'
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import FlexRow from '@/components/Flex/FlexRow'
-import { useSelector } from 'react-redux'
 import { formatFullname } from '@/utils/helpers'
 import ModalShare from '@/components/Modal/ModalPost'
 import axiosIntercept from '@/apis/axiosIntercept'
 
-const CardShare = () => {
-  const { user } = useSelector((state) => state.auth)
+const CardShare = ({ user }) => {
   const handleTestRefreshToken = async () => {
     const response = await axiosIntercept.get('/auth/refreshToken')
   }
+
   return (
     <Box sx={{ display: 'flex', bgcolor: 'background.paper', borderRadius: '12px', p: 4, gap: 3 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 3 }}>
         <FlexRow>
           <Avatar alt={user && formatFullname(user?.firstname, user?.lastname)} src={user && user.avatar} sx={{ width: 48, height: 48 }} />
-          <ModalShare>
+          <ModalShare user={user}>
             <Button
               sx={{
                 width: '100%',
@@ -42,7 +41,7 @@ const CardShare = () => {
         <Divider />
         <FlexRow justifyContent='end'>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
-            <ModalShare>
+            <ModalShare user={user}>
               <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
                 <PhotoOutlinedIcon color='primary' size='small' />
                 <Typography color='primary' fontWeight='bold'>

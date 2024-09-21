@@ -1,5 +1,6 @@
 import ApiError from '~/middlewares/ApiError'
 import FriendRequest from '~/models/friendRequest'
+import User from '~/models/user'
 
 const getRequests = async (to) => {
   const requests = await FriendRequest.find({ to, status: 'pending' }).populate('from', 'firstname lastname avatar') // Lấy thông tin người gửi
@@ -26,8 +27,77 @@ const cancelFriendRequest = async (from, to) => {
   return request
 }
 
+const rejectFriendRequest = async (myId, requestId) => {
+  if (!requestId) throw new ApiError(404, 'Lời mời không tồn tại')
+
+  const response = await FriendRequest.findOneAndDelete({ _id: requestId, to: myId, status: 'pending' })
+
+  if (!response) return res.status(404).json({ message: 'Không tìm từ chối được' })
+
+  return response
+}
+
+const checkFriendshipStatus = async (checkUserId, myId) => {
+  if (!checkUserId) throw new ApiError(404, 'Không tìm thấy người dùng')
+  let status = ''
+
+  if (checkUserId === myId) {
+    status = 'isMe'
+    return status
+  }
+
+  const [myUser, checkUser] = await Promise.all([User.findById(myId).select('friends'), User.findById(checkUserId).select('friends')])
+
+  if (!checkUser) throw new ApiError(404, 'Không tìm thấy người dùng được kiểm tra')
+
+  const isFriend = myUser.friends.includes(checkUserId)
+  const hasRequestToMe = await FriendRequest.findOne({ from: checkUserId, to: myId })
+  const hasRequestFromMe = await FriendRequest.findOne({ from: myId, to: checkUserId })
+
+  if (isFriend) {
+    status = 'friends'
+  } else if (hasRequestToMe) {
+    status = 'waitMe'
+  } else if (hasRequestFromMe) {
+    status = 'waitAccept'
+  } else {
+    status = 'noRelationship'
+  }
+
+  return status
+}
+
+const acceptFriendRequest = async (userId, requestId) => {
+  // Tìm và cập nhật yêu cầu kết bạn
+  const request = await FriendRequest.findById(requestId)
+  if (!request) throw new ApiError(404, 'Yêu cầu kết bạn không tồn tại.')
+
+  if (request.to.toString() !== userId.toString()) throw new ApiError(403, 'Bạn không có quyền chấp nhận yêu cầu này.')
+
+  request.status = 'accepted'
+  await request.save()
+
+  // Cập nhật danh sách bạn bè của cả hai người dùng
+  const [userFrom, userTo] = await Promise.all([User.findById(request.from), User.findById(request.to)])
+
+  if (!userFrom || !userTo) throw new ApiError(404, 'Một hoặc cả hai người dùng không tồn tại.')
+
+  // Thêm người nhận vào danh sách bạn bè của người gửi
+  userFrom.friends.push(request.to)
+  await userFrom.save()
+
+  // Thêm người gửi vào danh sách bạn bè của người nhận
+  userTo.friends.push(request.from)
+  await userTo.save()
+  const response = await FriendRequest.findByIdAndDelete(requestId)
+  return response
+}
+
 export const requestFriendService = {
   getRequests,
   sendFriendRequest,
-  cancelFriendRequest
+  cancelFriendRequest,
+  checkFriendshipStatus,
+  rejectFriendRequest,
+  acceptFriendRequest
 }

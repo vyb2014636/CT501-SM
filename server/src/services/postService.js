@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import ApiError from '~/middlewares/ApiError'
 import Post from '~/models/post'
 import User from '~/models/user'

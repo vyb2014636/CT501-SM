@@ -127,7 +127,6 @@ const logout = async (req, res, next) => {
 const refreshAccessToken = async (req, res, next) => {
   const refreshToken = req.cookies
   const { id } = req.user
-  console.log(refreshToken)
   if (!refreshToken) throw new ApiError(500, 'Bạn chưa chứng thực')
 
   try {
