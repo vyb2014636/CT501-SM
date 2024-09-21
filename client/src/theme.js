@@ -70,16 +70,6 @@ const theme = extendTheme({
         }
       }
     }
-
-    // MuiInputLabel: {
-    //   styleOverrides: {
-    //     root: ({ theme }) => {
-    //       return {
-    //         color: theme.palette.primary.main
-    //       }
-    //     }
-    //   }
-    // }
   }
 })
 

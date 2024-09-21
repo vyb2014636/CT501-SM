@@ -6,6 +6,8 @@ const router = express.Router()
 
 router
   .get('/', verifyToken, requestFriendControler.getRequests)
+  .get('/requests-to-me', verifyToken, requestFriendControler.getRequestsToMe)
+  .get('/requests-my-sent', verifyToken, requestFriendControler.getRequestMySent)
   .get('/friendship/:checkUserId', verifyToken, requestFriendControler.checkFriendshipStatus)
   .post('/sendRequest', verifyToken, requestFriendControler.sendFriendRequest)
   .post('/cancelRequest', verifyToken, requestFriendControler.cancelFriendRequest)

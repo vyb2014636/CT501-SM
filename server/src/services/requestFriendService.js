@@ -9,22 +9,41 @@ const getRequests = async (to) => {
   return requests
 }
 const sendFriendRequest = async (from, to) => {
-  // Kiểm tra xem yêu cầu đã tồn tại chưa
   const existingRequest = await FriendRequest.findOne({ from, to, status: 'pending' })
 
   if (existingRequest) throw new ApiError(400, 'Yêu cầu kết bạn đang được xử lý')
 
-  // Tạo yêu cầu kết bạn mới
   const request = await FriendRequest.create({ from, to })
   return request
 }
 const cancelFriendRequest = async (from, to) => {
-  // Kiểm tra xem yêu cầu đã tồn tại chưa
   const request = await FriendRequest.findOneAndDelete({ from, to, status: 'pending' })
 
   if (!request) return res.status(404).json({ message: 'Không tìm thấy yêu cầu kết bạn này' })
 
   return request
+}
+
+const acceptFriendRequest = async (myId, requestId) => {
+  const request = await FriendRequest.findById(requestId)
+  if (!request) throw new ApiError(404, 'Yêu cầu kết bạn không tồn tại.')
+
+  if (request.to.toString() !== myId.toString()) throw new ApiError(403, 'Bạn không có quyền chấp nhận yêu cầu này.')
+
+  request.status = 'accepted'
+  await request.save()
+
+  const [userFrom, userTo] = await Promise.all([User.findById(request.from), User.findById(request.to)])
+
+  if (!userFrom || !userTo) throw new ApiError(404, 'Một hoặc cả hai người dùng không tồn tại.')
+
+  userFrom.friends.push(request.to)
+  await userFrom.save()
+
+  userTo.friends.push(request.from)
+  await userTo.save()
+  const response = await FriendRequest.findByIdAndDelete(requestId)
+  return response
 }
 
 const rejectFriendRequest = async (myId, requestId) => {
@@ -37,60 +56,43 @@ const rejectFriendRequest = async (myId, requestId) => {
   return response
 }
 
-const checkFriendshipStatus = async (checkUserId, myId) => {
-  if (!checkUserId) throw new ApiError(404, 'Không tìm thấy người dùng')
+const checkFriendshipStatus = async (targetUserId, myId) => {
+  if (!targetUserId) throw new ApiError(404, 'Không tìm thấy người dùng')
   let status = ''
-
-  if (checkUserId === myId) {
+  let request = null
+  if (targetUserId === myId) {
     status = 'isMe'
-    return status
+    return { status, request }
   }
 
-  const [myUser, checkUser] = await Promise.all([User.findById(myId).select('friends'), User.findById(checkUserId).select('friends')])
+  const [myUser, checkUser] = await Promise.all([User.findById(myId).select('friends'), User.findById(targetUserId).select('friends')])
 
   if (!checkUser) throw new ApiError(404, 'Không tìm thấy người dùng được kiểm tra')
 
-  const isFriend = myUser.friends.includes(checkUserId)
-  const hasRequestToMe = await FriendRequest.findOne({ from: checkUserId, to: myId })
-  const hasRequestFromMe = await FriendRequest.findOne({ from: myId, to: checkUserId })
-
+  const isFriend = myUser.friends.includes(targetUserId)
+  const hasRequestToMe = await FriendRequest.findOne({ from: targetUserId, to: myId })
+  const hasRequestFromMe = await FriendRequest.findOne({ from: myId, to: targetUserId })
   if (isFriend) {
     status = 'friends'
   } else if (hasRequestToMe) {
     status = 'waitMe'
+    request = hasRequestToMe._id
   } else if (hasRequestFromMe) {
     status = 'waitAccept'
+    request = hasRequestFromMe
   } else {
     status = 'noRelationship'
   }
-
-  return status
+  return { status, request }
 }
 
-const acceptFriendRequest = async (userId, requestId) => {
-  // Tìm và cập nhật yêu cầu kết bạn
-  const request = await FriendRequest.findById(requestId)
-  if (!request) throw new ApiError(404, 'Yêu cầu kết bạn không tồn tại.')
-
-  if (request.to.toString() !== userId.toString()) throw new ApiError(403, 'Bạn không có quyền chấp nhận yêu cầu này.')
-
-  request.status = 'accepted'
-  await request.save()
-
-  // Cập nhật danh sách bạn bè của cả hai người dùng
-  const [userFrom, userTo] = await Promise.all([User.findById(request.from), User.findById(request.to)])
-
-  if (!userFrom || !userTo) throw new ApiError(404, 'Một hoặc cả hai người dùng không tồn tại.')
-
-  // Thêm người nhận vào danh sách bạn bè của người gửi
-  userFrom.friends.push(request.to)
-  await userFrom.save()
-
-  // Thêm người gửi vào danh sách bạn bè của người nhận
-  userTo.friends.push(request.from)
-  await userTo.save()
-  const response = await FriendRequest.findByIdAndDelete(requestId)
-  return response
+const getRequestsToMe = async (myId) => {
+  const requests = await FriendRequest.find({ to: myId }).populate('from')
+  return
+}
+const getRequestMySent = async (myId) => {
+  const requests = await FriendRequest.find({ from: myId }).populate('to')
+  return
 }
 
 export const requestFriendService = {
@@ -99,5 +101,7 @@ export const requestFriendService = {
   cancelFriendRequest,
   checkFriendshipStatus,
   rejectFriendRequest,
-  acceptFriendRequest
+  acceptFriendRequest,
+  getRequestsToMe,
+  getRequestMySent
 }

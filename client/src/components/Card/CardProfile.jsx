@@ -9,23 +9,24 @@ import img from '@/assets/postPic1.jpg'
 import FlexRow from '@/components/Flex/FlexRow'
 import FlexColumn from '@/components/Flex/FlexColumn'
 import { formatFullname } from '@/utils/helpers'
-import { Button } from '@mui/material'
-import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined'
+import Button from '@mui/material/Button'
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
-import PersonRemoveAlt1OutlinedIcon from '@mui/icons-material/PersonRemoveAlt1Outlined' // Icon Hủy kết bạn
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined' // Icon Hủy lời mời
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined' // Icon Đồng ý
-import { checkFriendshipAPI } from '@/apis/user/userAPI'
+import { acceptAddFriendAPI, cancelAddFriendAPI, cancelFriendAPI, checkFriendshipAPI, sendFriendAPI } from '@/apis/user/userAPI'
+import FriendshipButton from '../Button/FriendshipButton'
 
 const CardProfile = ({ user, totalPosts }) => {
   const [value, setValue] = useState(0)
   const [statusFriendship, setStatusFriendship] = useState('')
+  const [isRequestId, setIsRequestId] = useState(null)
+
+  const fetchFriendshipStatus = async () => {
+    const response = await checkFriendshipAPI(user._id)
+    setStatusFriendship(response.status)
+    if (response?.requestId) setIsRequestId(response.requestId)
+    else setIsRequestId(null)
+  }
 
   useEffect(() => {
-    const fetchFriendshipStatus = async () => {
-      const response = await checkFriendshipAPI(user._id)
-      setStatusFriendship(response.status)
-    }
     fetchFriendshipStatus()
   }, [user._id])
 
@@ -33,45 +34,21 @@ const CardProfile = ({ user, totalPosts }) => {
     setValue(newValue)
   }
 
-  // Hàm xử lý logic button
-  const renderFriendshipButton = () => {
-    switch (statusFriendship) {
-      case 'friends':
-        return (
-          <Button variant='contained' sx={{ display: 'flex', alignItems: 'center', gap: 2, width: 152 }} color='info'>
-            <PersonRemoveAlt1OutlinedIcon />
-            <Typography variant='body1' fontWeight='bold'>
-              Hủy kết bạn
-            </Typography>
-          </Button>
-        )
-      case 'waitAccept':
-        return (
-          <Button variant='contained' sx={{ display: 'flex', alignItems: 'center', gap: 2, width: 152 }}>
-            <CancelOutlinedIcon />
-            <Typography variant='body1' fontWeight='bold'>
-              Hủy lời mời
-            </Typography>
-          </Button>
-        )
-      case 'waitMe':
-        return (
-          <Button variant='contained' sx={{ display: 'flex', alignItems: 'center', gap: 2, width: 120 }}>
-            <CheckOutlinedIcon />
-            <Typography variant='body1' fontWeight='bold'>
-              Đồng ý
-            </Typography>
-          </Button>
-        )
-      default:
-        return (
-          <Button variant='contained' sx={{ display: 'flex', alignItems: 'center', gap: 2, width: 138 }}>
-            <PersonAddAlt1OutlinedIcon />
-            <Typography variant='body1' fontWeight='bold'>
-              Thêm bạn
-            </Typography>
-          </Button>
-        )
+  const handleClickCancel = async () => {
+    try {
+      if (statusFriendship === 'friends') {
+        await cancelFriendAPI(user._id)
+      } else if (statusFriendship === 'waitAccept') {
+        await cancelAddFriendAPI({ to: user._id })
+      } else if (statusFriendship === 'waitMe') {
+        await acceptAddFriendAPI(isRequestId)
+      } else {
+        await sendFriendAPI({ to: user._id })
+      }
+
+      await fetchFriendshipStatus()
+    } catch (error) {
+      console.error('Error updating friendship status:', error)
     }
   }
 
@@ -108,9 +85,9 @@ const CardProfile = ({ user, totalPosts }) => {
       </Box>
 
       <FlexRow justifyContent='center' gap={2} my={2}>
-        {statusFriendship.toString() !== 'isMe' && (
+        {statusFriendship && statusFriendship.toString() !== 'isMe' && (
           <>
-            {renderFriendshipButton()}
+            <FriendshipButton statusFriendship={statusFriendship} handleClickCancel={handleClickCancel} />
             <Button variant='outlined' sx={{ display: 'flex', alignItems: 'center', gap: 2, width: 126 }}>
               <SendOutlinedIcon />
               <Typography variant='body1' fontWeight='bold'>

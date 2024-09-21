@@ -18,7 +18,7 @@ export const getRequests = async () => {
   return response
 }
 
-export const cancelFriendAPI = async (to) => {
+export const cancelAddFriendAPI = async (to) => {
   const response = await axiosIntercept.post('requestFriend/cancelRequest', to)
   return response
 }
@@ -29,4 +29,17 @@ export const acceptAddFriendAPI = async (requestId) => {
 export const rejectAddFriendAPI = async (requestId) => {
   const response = await axiosIntercept.post('requestFriend/rejectRequest', { requestId: requestId })
   return response
+}
+export const cancelFriendAPI = async (toUser) => {
+  const response = await axiosIntercept.put('user/unFriend', { targetId: toUser })
+  return response
+}
+
+export const requestsToMe = async () => {
+  const requests = await axiosIntercept.get('requestFriend/requests-to-me')
+  return requests
+}
+export const requestsMysent = async () => {
+  const requests = await axiosIntercept.get('requestFriend/requests-my-sent')
+  return requests
 }

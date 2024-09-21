@@ -45,33 +45,6 @@ const ListPosts = ({ userId = null }) => {
 
   const handleReload = () => setNewPosts([])
 
-  const renderPosts = () => {
-    if (loading && posts.length === 0) {
-      return [...Array(3)].map((_, i) => <SkeletonPosts key={i} />)
-    }
-    if (!loading && posts.length === 0) {
-      return (
-        <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
-          Không có bài viết nào được đăng
-        </Typography>
-      )
-    }
-
-    return (
-      <>
-        {(userId === user?._id || !userId) && <CardShare user={userPosts || user} />}
-        {posts.map((post) => (
-          <Post key={post._id} post={post} />
-        ))}
-        {!loading && posts.length !== 0 && posts.length >= totalPosts && (
-          <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
-            Đã hết bài viết
-          </Typography>
-        )}
-      </>
-    )
-  }
-
   if (userId && status === 'failed') return <NotFoundPage />
 
   return (
@@ -84,9 +57,27 @@ const ListPosts = ({ userId = null }) => {
         </Box>
       )}
 
-      {userId && userPosts && <CardProfile user={userPosts} totalPosts={totalPosts} />}
-
-      {renderPosts()}
+      {loading && posts.length === 0 ? (
+        [...Array(3)].map((_, i) => <SkeletonPosts key={i} />)
+      ) : (
+        <>
+          {userId && userPosts && <CardProfile user={userPosts} totalPosts={totalPosts} />}
+          {(userId === user?._id || !userId) && <CardShare user={userPosts || user} />}
+          {!loading && posts.length === 0 && (
+            <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
+              Không có bài viết nào được đăng
+            </Typography>
+          )}
+          {posts.map((post) => (
+            <Post key={post._id} post={post} />
+          ))}
+          {!loading && posts.length !== 0 && posts.length >= totalPosts && (
+            <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
+              Đã hết bài viết
+            </Typography>
+          )}
+        </>
+      )}
     </Box>
   )
 }

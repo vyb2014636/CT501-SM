@@ -1,4 +1,3 @@
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline'
 import ModalMedia from '@/components/Modal/ModalMedia'
 import Masonry from '@mui/lab/Masonry'
 import Box from '@mui/material/Box'

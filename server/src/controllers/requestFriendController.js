@@ -48,7 +48,6 @@ const cancelFriendRequest = async (req, res, next) => {
 
 const rejectFriendRequest = async (req, res, next) => {
   try {
-    console.log(requestId)
     const { requestId } = req.body
     const myId = req.user.id
 
@@ -64,12 +63,41 @@ const rejectFriendRequest = async (req, res, next) => {
   }
 }
 
+const getRequestsToMe = async (req, res, next) => {
+  try {
+    const myId = req.user.id
+    const requestToMe = await requestFriendService.getRequestsToMe(myId)
+
+    return res.status(200).json({
+      success: requests ? true : false,
+      message: requests ? 'Danh sách yêu cầu kết bạn' : 'Không có yêu cầu',
+      requestToMe
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+const getRequestMySent = async (req, res, next) => {
+  try {
+    const myId = req.user.id
+    const requestFromMe = await requestFriendService.getRequestMySent(myId)
+
+    return res.status(200).json({
+      success: requests ? true : false,
+      message: requests ? 'Danh sách yêu cầu kết bạn' : 'Không có yêu cầu',
+      requestFromMe
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const checkFriendshipStatus = async (req, res, next) => {
   try {
     const { checkUserId } = req.params
     const myId = req.user.id
-    const status = await requestFriendService.checkFriendshipStatus(checkUserId, myId)
-    res.status(200).json({ status })
+    const { status, requestId } = await requestFriendService.checkFriendshipStatus(checkUserId, myId)
+    res.status(200).json({ status, requestId })
   } catch (error) {
     next(error)
   }
@@ -95,5 +123,7 @@ export const requestFriendControler = {
   cancelFriendRequest,
   checkFriendshipStatus,
   rejectFriendRequest,
-  acceptFriendRequest
+  acceptFriendRequest,
+  getRequestsToMe,
+  getRequestMySent
 }

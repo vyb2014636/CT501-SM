@@ -1,3 +1,4 @@
+import User from '~/models/user'
 import { userService } from '~/services/userService'
 
 const unFriend = async (req, res, next) => {
