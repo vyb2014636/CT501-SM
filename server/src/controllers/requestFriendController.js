@@ -35,11 +35,11 @@ const cancelFriendRequest = async (req, res, next) => {
     const { to } = req.body
     const from = req.user.id
 
-    // Tạo yêu cầu kết bạn mới
     const request = await requestFriendService.cancelFriendRequest(from, to)
 
     return res.status(200).json({
-      message: 'Yêu cầu hủy kết bạn thành công.'
+      message: 'Yêu cầu hủy kết bạn thành công.',
+      request
     })
   } catch (error) {
     next(error)

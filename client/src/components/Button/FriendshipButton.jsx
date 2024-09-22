@@ -5,8 +5,29 @@ import PersonRemoveAlt1OutlinedIcon from '@mui/icons-material/PersonRemoveAlt1Ou
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined'
+import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
+import { acceptAddFriendAPI, cancelAddFriendAPI, cancelFriendAPI, checkFriendshipAPI, sendFriendAPI } from '@/apis/user/userAPI'
 
-const FriendshipButton = ({ statusFriendship, handleClickCancel }) => {
+const FriendshipButton = ({ statusFriendship, requestId, user, fetchFriendshipStatus }) => {
+  const handleClickCancel = async () => {
+    console.log(requestId)
+    try {
+      if (statusFriendship === 'friends') {
+        await cancelFriendAPI(user._id)
+      } else if (statusFriendship === 'waitAccept') {
+        await cancelAddFriendAPI({ to: user._id })
+      } else if (statusFriendship === 'waitMe') {
+        await acceptAddFriendAPI(requestId)
+      } else {
+        await sendFriendAPI({ to: user._id })
+      }
+
+      await fetchFriendshipStatus()
+    } catch (error) {
+      console.error('Error updating friendship status:', error)
+    }
+  }
+
   const renderButton = () => {
     if (statusFriendship === 'friends')
       return (
@@ -49,7 +70,17 @@ const FriendshipButton = ({ statusFriendship, handleClickCancel }) => {
     return <></>
   }
 
-  return renderButton()
+  return (
+    <>
+      {renderButton()}
+      <Button variant='outlined' sx={{ display: 'flex', alignItems: 'center', gap: 2, width: 126 }}>
+        <SendOutlinedIcon />
+        <Typography variant='body1' fontWeight='bold'>
+          Nhắn tin
+        </Typography>
+      </Button>
+    </>
+  )
 }
 
 export default FriendshipButton

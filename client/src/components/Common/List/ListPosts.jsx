@@ -1,27 +1,19 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import Post from '../Post/Post'
+import NotFoundPage from '@/pages/Error/NotFoundPage'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchAllPosts } from '@/features/post/postThunk'
-import SkeletonPosts from '@/components/Skeleton/SkeletonPosts'
-import { Box, Button, Typography } from '@mui/material'
 import { scrollbarStyleMui } from '@/styles/styles'
-import CardShare from '@/components/Card/CardShare'
-import { resetPostState } from '@/features/post/postSlice'
-import NotFoundPage from '@/pages/Error/NotFoundPage'
-import CardProfile from '@/components/Card/CardProfile'
 
-const ListPosts = ({ userId = null }) => {
+const ListPosts = ({ userId = null, children }) => {
+  const { posts, totalPosts, status, userPosts, loading } = useSelector((state) => state.post)
   const [newPosts, setNewPosts] = useState([])
   const pageRef = useRef(1)
   const scrollBoxRef = useRef(null)
-  const { posts, totalPosts, status, userPosts, loading } = useSelector((state) => state.post)
-  const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(resetPostState())
-    dispatch(fetchAllPosts({ page: pageRef.current, userId }))
-  }, [dispatch, userId])
 
   const handleScroll = useCallback(() => {
     const scrollBox = scrollBoxRef.current
@@ -57,26 +49,19 @@ const ListPosts = ({ userId = null }) => {
         </Box>
       )}
 
-      {loading && posts.length === 0 ? (
-        [...Array(3)].map((_, i) => <SkeletonPosts key={i} />)
-      ) : (
-        <>
-          {userId && userPosts && <CardProfile user={userPosts} totalPosts={totalPosts} />}
-          {(userId === user?._id || !userId) && <CardShare user={userPosts || user} />}
-          {!loading && posts.length === 0 && (
-            <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
-              Không có bài viết nào được đăng
-            </Typography>
-          )}
-          {posts.map((post) => (
-            <Post key={post._id} post={post} />
-          ))}
-          {!loading && posts.length !== 0 && posts.length >= totalPosts && (
-            <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
-              Đã hết bài viết
-            </Typography>
-          )}
-        </>
+      {children}
+      {!loading && posts.length === 0 && (
+        <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
+          Không có bài viết nào được đăng
+        </Typography>
+      )}
+      {posts.map((post) => (
+        <Post key={post._id} post={post} />
+      ))}
+      {!loading && posts.length !== 0 && posts.length >= totalPosts && (
+        <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
+          Đã hết bài viết
+        </Typography>
       )}
     </Box>
   )

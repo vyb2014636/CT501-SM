@@ -59,11 +59,7 @@ const rejectFriendRequest = async (myId, requestId) => {
 const checkFriendshipStatus = async (targetUserId, myId) => {
   if (!targetUserId) throw new ApiError(404, 'Không tìm thấy người dùng')
   let status = ''
-  let request = null
-  if (targetUserId === myId) {
-    status = 'isMe'
-    return { status, request }
-  }
+  let requestId = null
 
   const [myUser, checkUser] = await Promise.all([User.findById(myId).select('friends'), User.findById(targetUserId).select('friends')])
 
@@ -76,14 +72,14 @@ const checkFriendshipStatus = async (targetUserId, myId) => {
     status = 'friends'
   } else if (hasRequestToMe) {
     status = 'waitMe'
-    request = hasRequestToMe._id
+    requestId = hasRequestToMe._id
   } else if (hasRequestFromMe) {
     status = 'waitAccept'
-    request = hasRequestFromMe
+    requestId = hasRequestFromMe._id
   } else {
     status = 'noRelationship'
   }
-  return { status, request }
+  return { status, requestId }
 }
 
 const getRequestsToMe = async (myId) => {

@@ -14,6 +14,8 @@ import PrivateRoute from './PrivateRoute'
 import Verify from '@/pages/Auth/Verify/Verify'
 import NotFoundPage from '@/pages/Error/NotFoundPage'
 import PublicRoute from './PublicRoute'
+import Other from '@/pages/Profile/Other/Other'
+import Person from '@/pages/Profile/Person/Person'
 
 function Routing() {
   return (
@@ -27,7 +29,10 @@ function Routing() {
           <Route path='/admin' element={<Dashboard />} />
           <Route path='/admin/setting' element={<Setting />} />
         </Route>
-        <Route path='/:userId' element={<Profile />} />
+        <Route path='/:userId' element={<Profile />}>
+          <Route path='/:userId' element={<Other />} />
+          <Route path='/:userId/person' element={<Person />} />
+        </Route>
       </Route>
       <Route element={<PublicRoute />}>
         <Route path='/auth' element={<Auth />}>

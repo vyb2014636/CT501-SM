@@ -1,9 +1,5 @@
 import axiosIntercept from '@/apis/axiosIntercept'
 
-export const sendFriendAPI = async (to) => {
-  const response = await axiosIntercept.post('requestFriend/sendRequest', to)
-  return response
-}
 export const getListSuggestion = async () => {
   const response = await axiosIntercept.get('user/noFriends')
   return response
@@ -15,6 +11,11 @@ export const checkFriendshipAPI = async (checkUserId) => {
 
 export const getRequests = async () => {
   const response = await axiosIntercept.get('requestFriend/')
+  return response
+}
+
+export const sendFriendAPI = async (to) => {
+  const response = await axiosIntercept.post('requestFriend/sendRequest', to)
   return response
 }
 
