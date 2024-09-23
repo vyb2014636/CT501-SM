@@ -21,16 +21,16 @@ const getPosts = async (loggedInId, userId, limit, skip) => {
       path: 'sharedPost',
       populate: {
         path: 'byPost',
-        select: 'firstname lastname email background'
+        select: 'firstname lastname email avatar background'
       }
     })
     .populate({
       path: 'byPost',
-      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
+      select: 'firstname lastname email avatar background' // Chỉ lấy các trường cần thiết
     })
     .populate({
       path: 'sharesBy',
-      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
+      select: 'firstname lastname email avatar background' // Chỉ lấy các trường cần thiết
     })
     .sort({ createdAt: -1 })
     .skip(skip)

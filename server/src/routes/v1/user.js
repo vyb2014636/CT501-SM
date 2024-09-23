@@ -1,4 +1,5 @@
 import express from 'express'
+import uploadCloud from '~/config/cloudinary.config'
 import { userController } from '~/controllers/userController'
 import verifyToken from '~/middlewares/verifyToken'
 
@@ -12,5 +13,6 @@ router
     })
   })
   .put('/unFriend', verifyToken, userController.unFriend)
+  .put('/uploadAvatar', verifyToken, uploadCloud.single('avatar'), userController.uploadAvatar)
 
 export const user = router

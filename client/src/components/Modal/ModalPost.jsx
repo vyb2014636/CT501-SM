@@ -1,5 +1,4 @@
 import { useState, cloneElement } from 'react'
-
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
@@ -8,7 +7,6 @@ import ImageIcon from '@mui/icons-material/Image'
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import SlowMotionVideoOutlinedIcon from '@mui/icons-material/SlowMotionVideoOutlined'
-import { useSelector } from 'react-redux'
 import { formatFullname } from '@/utils/helpers'
 import { scrollbarStyles, styleModal } from '@/styles/styles'
 import VisuallyHiddenInput from '../Inputs/VisuallyHiddenInput'
@@ -105,6 +103,7 @@ const ModalPost = ({ children, user }) => {
               })}
             </Box>
           </CardContent>
+
           <CardContent>
             <Box>
               <IconButton component='label' role={undefined} variant='contained' tabIndex={-1} color='primary'>

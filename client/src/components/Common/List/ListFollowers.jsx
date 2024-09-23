@@ -5,7 +5,7 @@ import FollowerCard from '../../Card/FollowerCard'
 import { getListSuggestion } from '@/apis/user/userAPI'
 import { toast } from 'react-toastify'
 
-const ListFollowers = () => {
+const ListSuggetion = () => {
   const [suggestions, setSuggestions] = useState(null)
   const fetchListNoFriends = async () => {
     try {
@@ -38,4 +38,4 @@ const ListFollowers = () => {
   )
 }
 
-export default ListFollowers
+export default ListSuggetion

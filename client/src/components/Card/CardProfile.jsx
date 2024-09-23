@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import Divider from '@mui/material/Divider'
-import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Typography from '@mui/material/Typography'
-import img from '@/assets/postPic1.jpg'
 import FlexRow from '@/components/Flex/FlexRow'
 import FlexColumn from '@/components/Flex/FlexColumn'
 import { formatFullname } from '@/utils/helpers'
-
-const CardProfile = ({ user, totalPosts, children }) => {
+import MyAvartarBackground from '../Common/AvatarBackground/MyAvartarBackground'
+import OtherAvartarBackground from '../Common/AvatarBackground/OtherAvartarBackground'
+import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined'
+const CardProfile = ({ user, totalPosts, children, myCardProfile = null }) => {
   const [value, setValue] = useState(0)
 
   const handleChange = (event, newValue) => {
@@ -19,30 +20,7 @@ const CardProfile = ({ user, totalPosts, children }) => {
 
   return (
     <FlexColumn sx={{ backgroundColor: 'background.paper', height: 500, borderRadius: '12px 12px 0 0 ', mb: 2 }}>
-      <Box
-        sx={{
-          backgroundImage: `url('${img}')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          height: '50%',
-          borderRadius: '12px 12px 0 0',
-          position: 'relative'
-        }}>
-        <Avatar
-          src={user?.avatar}
-          sx={{
-            width: 80,
-            height: 80,
-            border: '4px solid',
-            borderColor: 'background.paper',
-            position: 'absolute',
-            bottom: '-40px',
-            left: '50%',
-            transform: 'translateX(-50%)'
-          }}
-        />
-      </Box>
-
+      {myCardProfile ? <MyAvartarBackground user={user} /> : <OtherAvartarBackground user={user} />}
       <Box sx={{ textAlign: 'center', mt: 10 }}>
         <Typography variant='h5' fontWeight='bold'>
           {formatFullname(user?.firstname, user?.lastname)}
@@ -50,6 +28,14 @@ const CardProfile = ({ user, totalPosts, children }) => {
       </Box>
 
       <FlexRow justifyContent='center' gap={2} my={2}>
+        {myCardProfile && (
+          <Button variant='contained' sx={{ display: 'flex', alignItems: 'center', gap: 2, width: 210 }}>
+            <Typography variant='body1' fontWeight='bold'>
+              Chỉnh sửa thông tin
+            </Typography>
+            <BorderColorOutlinedIcon />
+          </Button>
+        )}
         {children}
       </FlexRow>
 

@@ -37,13 +37,13 @@ const Other = () => {
   }, [])
 
   return loading && posts.length === 0 ? (
-    <Box sx={{ flex: 1, p: 4, mx: 4, ...scrollbarStyleMui }}>
+    <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
       {[...Array(3)].map((_, i) => (
         <SkeletonPosts key={i} />
       ))}
     </Box>
   ) : (
-    <ListPosts userId={userId}>
+    <ListPosts userId={userId} pageRef={pageRef}>
       <CardProfile user={userPosts} totalPosts={totalPosts}>
         <FriendshipButton statusFriendship={statusFriendship} requestId={requestId} user={userPosts} fetchFriendshipStatus={fetchFriendshipStatus} />
       </CardProfile>

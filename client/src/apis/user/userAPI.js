@@ -44,3 +44,12 @@ export const requestsMysent = async () => {
   const requests = await axiosIntercept.get('requestFriend/requests-my-sent')
   return requests
 }
+
+export const uploadAvatar = async (formData) => {
+  const response = await axiosIntercept.put('user/uploadAvatar', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  return response
+}

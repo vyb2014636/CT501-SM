@@ -22,12 +22,21 @@ import { useSelector } from 'react-redux'
 import renderMedia from '@/components/Common/Mansory/MansoryMedia'
 import { useNavigate } from 'react-router-dom'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
+import FlexRow from '@/components/Flex/FlexRow'
+import { styleCardGeneral, styleThreeButton } from '@/styles/stylePost/style'
+import { useProfileNavigation } from '@/hooks/useProfileNavigation'
+import PostHeader from '../PostHeader/PostHeader'
+import PostContent from '../PostContent/PostContent'
+import PostInteract from '../PostInteract/PostInteract'
 
 const PostShare = ({ noMedia, post, isLiked, handleClickLike }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const navigate = useNavigate()
   const { user } = useSelector((state) => state.auth)
   const open = Boolean(anchorEl)
+
+  const handleProfileClick = useProfileNavigation()
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
@@ -38,74 +47,13 @@ const PostShare = ({ noMedia, post, isLiked, handleClickLike }) => {
 
   return (
     <>
-      <Card sx={{ mx: 'auto', my: 2, borderRadius: '16px', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
-        <CardHeader
-          avatar={
-            <div onClick={() => navigate(`/${post?.byPost?._id}`)}>
-              <Avatar src={post?.byPost?.avatar} alt='Profile Picture' sx={{ width: 52, height: 52, cursor: 'pointer' }} />
-            </div>
-          }
-          action={
-            <>
-              <IconButton aria-haspopup='true' aria-expanded={open ? 'true' : undefined} onClick={handleClick}>
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                id='option-post'
-                anchorEl={anchorEl}
-                open={open}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right'
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
-                onClose={handleClose}>
-                {post?.byPost._id === user._id && (
-                  <MenuItem onClick={handleClose}>
-                    <DeleteOutlinedIcon />
-                    <Typography ml={1}>Xóa</Typography>
-                  </MenuItem>
-                )}
-                <MenuItem onClick={handleClose}>
-                  <FavoriteBorderOutlinedIcon />
-                  <Typography ml={1}>Yêu thích</Typography>
-                </MenuItem>
-              </Menu>
-            </>
-          }
-          title={
-            <Typography variant='h6' fontWeight='bold'>
-              {formatFullname(post?.byPost?.firstname, post?.byPost?.lastname)}
-            </Typography>
-          }
-          subheader={new Date(post?.createdAt).toLocaleString()}
-        />
-        <CardContent>
-          <Typography variant='body1'>{post.describe}❤️</Typography>
-        </CardContent>
+      <Card sx={styleCardGeneral}>
+        <PostHeader userPost={post.byPost} post={post} visibleMenu />
+        <PostContent describe={post.describe} />
 
         <Card sx={{ mx: 'auto', m: 2, borderRadius: '16px', border: '1px solid', borderColor: 'background.default' }}>
-          <CardHeader
-            avatar={
-              <div onClick={() => navigate(`/${post?.sharedPost?.byPost?._id}`)}>
-                <Avatar src={post?.sharedPost?.byPost.avatar} alt='Profile Picture' sx={{ width: 52, height: 52, cursor: 'pointer' }} />
-              </div>
-            }
-            title={
-              <Typography variant='h6' fontWeight='bold'>
-                {formatFullname(post?.sharedPost?.byPost?.firstname, post?.sharedPost?.byPost?.lastname)}
-              </Typography>
-            }
-            subheader={new Date(post?.sharedPost.createdAt).toLocaleString()}
-          />
-          {/* Nội dung bài đăng */}
-          <CardContent>
-            <Typography variant='body1'>{post?.sharedPost.describe}❤️</Typography>
-          </CardContent>
-          {/* Hình ảnh trong bài đăng */}
+          <PostHeader userPost={post.sharedPost.byPost} post={post?.sharedPost} />
+          <PostContent describe={post.sharedPost.describe} />
           {!noMedia && renderMedia(post?.sharedPost)}
         </Card>
 
@@ -113,31 +61,7 @@ const PostShare = ({ noMedia, post, isLiked, handleClickLike }) => {
           <Typography variant='body2'>{post.likes?.length} người thích</Typography>
         </CardContent>
         <Divider />
-
-        <CardActions disableSpacing sx={{ width: '100%' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }} width='100%'>
-            <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }} onClick={handleClickLike}>
-              {isLiked ? <ThumbUpIcon color='primary' /> : <ThumbUpOffAltIcon color='primary' />}
-              <Typography variant='body1' fontWeight='bold'>
-                Thích
-              </Typography>
-            </Button>
-
-            <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
-              <ChatBubbleOutlineIcon />
-              <Typography variant='body1' fontWeight='bold'>
-                Bình luận
-              </Typography>
-            </Button>
-
-            <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
-              <ShareIcon />
-              <Typography variant='body1' fontWeight='bold'>
-                Chia sẻ
-              </Typography>
-            </Button>
-          </Box>
-        </CardActions>
+        <PostInteract isLiked={isLiked} handleClickLike={handleClickLike} styleThreeButton={styleThreeButton} />
       </Card>
     </>
   )

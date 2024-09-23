@@ -18,6 +18,7 @@ const renderMedia = (post) => {
 
   let media = [...images, ...videos]
   const mediaCount = media?.length
+
   return (
     <>
       {mediaCount < 3 && (
@@ -33,6 +34,7 @@ const renderMedia = (post) => {
                 />
               ) : (
                 <img
+                  loading='lazy'
                   src={image.url}
                   alt={`Post image ${index + 1}`}
                   style={{ width: '100%', objectFit: 'cover', height: '100%', cursor: 'pointer' }}
@@ -56,6 +58,7 @@ const renderMedia = (post) => {
                 />
               ) : (
                 <img
+                  loading='lazy'
                   src={image.url}
                   alt={`Post image ${index + 1}`}
                   style={{ width: '100%', objectFit: 'fill', height: '100%', cursor: 'pointer' }}
@@ -67,7 +70,6 @@ const renderMedia = (post) => {
         </Masonry>
       )}
 
-      {/* Phần hiển thị 2 ảnh cuối với 2 cột */}
       {mediaCount > 3 && (
         <Masonry columns={mediaCount === 4 ? 1 : 2} spacing={0} sx={{ maxHeigh: '250px' }}>
           {media?.slice(3, 5).map((image, index) => (
@@ -80,6 +82,7 @@ const renderMedia = (post) => {
                 />
               ) : (
                 <img
+                  loading='lazy'
                   src={image.url}
                   alt={`Post image ${index + 1}`}
                   style={{ width: '100%', objectFit: 'fill', height: mediaCount === 4 ? '300px' : '240px', cursor: 'pointer' }}

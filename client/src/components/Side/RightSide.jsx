@@ -8,11 +8,7 @@ const RightSide = ({ children }) => {
       sx={{
         width: 400,
         p: 2,
-        display: { xs: 'none', lg: 'block' },
-        position: 'sticky',
-        height: '100%',
-        overflowY: 'auto',
-        overflowX: 'hidden'
+        display: { xs: 'none', lg: 'block' }
       }}>
       <RightBar />
       {children}

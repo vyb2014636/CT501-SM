@@ -21,14 +21,14 @@ const Person = () => {
   }, [dispatch])
 
   return loading && posts.length === 0 ? (
-    <Box sx={{ flex: 1, p: 4, mx: 4, ...scrollbarStyleMui }}>
+    <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
       {[...Array(3)].map((_, i) => (
         <SkeletonPosts key={i} />
       ))}
     </Box>
   ) : (
-    <ListPosts userId={userId}>
-      <CardProfile user={userPosts} totalPosts={totalPosts} />
+    <ListPosts userId={userId} pageRef={pageRef}>
+      <CardProfile user={userPosts} totalPosts={totalPosts} myCardProfile />
       <CardShare user={userPosts} />
     </ListPosts>
   )

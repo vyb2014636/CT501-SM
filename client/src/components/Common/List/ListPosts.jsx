@@ -8,10 +8,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchAllPosts } from '@/features/post/postThunk'
 import { scrollbarStyleMui } from '@/styles/styles'
 
-const ListPosts = ({ userId = null, children }) => {
+const ListPosts = ({ userId = null, children, pageRef }) => {
   const { posts, totalPosts, status, userPosts, loading } = useSelector((state) => state.post)
   const [newPosts, setNewPosts] = useState([])
-  const pageRef = useRef(1)
   const scrollBoxRef = useRef(null)
   const dispatch = useDispatch()
 
@@ -40,7 +39,7 @@ const ListPosts = ({ userId = null, children }) => {
   if (userId && status === 'failed') return <NotFoundPage />
 
   return (
-    <Box sx={{ flex: 1, p: 4, mx: 4, ...scrollbarStyleMui }} ref={scrollBoxRef}>
+    <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }} ref={scrollBoxRef}>
       {newPosts.length > 0 && (
         <Box textAlign='center' my={2}>
           <Button variant='contained' color='primary' onClick={handleReload}>

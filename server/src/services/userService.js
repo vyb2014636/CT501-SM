@@ -19,6 +19,13 @@ const getListUserNoFriend = async (myId) => {
   return suggestions
 }
 
+const uploadAvatar = async (myId, avatar) => {
+  if (!avatar) throw new ApiError(401, 'Bạn chưa chọn ảnh')
+  const updatedUser = await User.findByIdAndUpdate(myId, { avatar: avatar }, { new: true })
+  return updatedUser
+}
+
 export const userService = {
-  getListUserNoFriend
+  getListUserNoFriend,
+  uploadAvatar
 }

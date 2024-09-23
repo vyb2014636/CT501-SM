@@ -11,6 +11,7 @@ import FlexRow from '@/components/Flex/FlexRow'
 import { formatFullname } from '@/utils/helpers'
 import ModalShare from '@/components/Modal/ModalPost'
 import axiosIntercept from '@/apis/axiosIntercept'
+import ButtonFlexStar from '../Button/ButtonFlexStar'
 
 const CardShare = ({ user }) => {
   const handleTestRefreshToken = async () => {
@@ -23,7 +24,7 @@ const CardShare = ({ user }) => {
         <FlexRow>
           <Avatar alt={user && formatFullname(user?.firstname, user?.lastname)} src={user && user.avatar} sx={{ width: 48, height: 48 }} />
           <ModalShare user={user}>
-            <Button
+            <ButtonFlexStar
               sx={{
                 width: '100%',
                 height: '100%',
@@ -35,7 +36,7 @@ const CardShare = ({ user }) => {
                 justifyContent: 'flex-start'
               }}>
               Hãy nêu lên suy nghĩ của bạn
-            </Button>
+            </ButtonFlexStar>
           </ModalShare>
         </FlexRow>
         <Divider />
