@@ -2,24 +2,27 @@ import React, { useState, useCallback } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
-import { CircularProgress } from '@mui/material' // Import spinner
-import { styleModal } from '@/styles/styles'
-import VisuallyHiddenInput from '../Inputs/VisuallyHiddenInput'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import Cropper from 'react-easy-crop'
 import getCroppedImg from '@/utils/getCroppedImg'
-import { toast } from 'react-toastify'
-import { uploadAvatar } from '@/apis/user/userAPI'
-import { updateUser } from '@/features/auth/authSlice'
+import VisuallyHiddenInput from '../Inputs/VisuallyHiddenInput'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
+import { uploadBackground } from '@/apis/user/userAPI'
+import { updateUser } from '@/features/auth/authSlice'
+import { styleModal } from '@/styles/styles'
+import FlexRow from '../Flex/FlexRow'
+import { Divider } from '@mui/material'
+import { CircularProgress } from '@mui/material' // Import spinner
 
-const ModalEditAvatar = ({ openModal, setOpenModal }) => {
+const ModalEditBackground = ({ openModal, setOpenModal }) => {
   const [selectedImage, setSelectedImage] = useState(null)
-  const dispatch = useDispatch()
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [cropPreview, setCropPreview] = useState(null)
   const [loading, setLoading] = useState(false)
+
+  const dispatch = useDispatch()
 
   const handleCloseModal = () => {
     if (selectedImage) {
@@ -62,27 +65,28 @@ const ModalEditAvatar = ({ openModal, setOpenModal }) => {
     setLoading(true)
     const blob = await fetch(cropPreview).then((r) => r.blob())
     const formData = new FormData()
-    formData.append('avatar', blob)
+    formData.append('background', blob)
 
     try {
-      const response = await uploadAvatar(formData)
+      const response = await uploadBackground(formData)
       dispatch(updateUser(response.user))
       toast.success(response.message)
     } catch (error) {
       toast.error(error.message)
     } finally {
       resetModal()
-      setLoading(false) // Stop loading
+      setLoading(false)
     }
   }
 
   return (
-    <Modal open={openModal} onClose={handleCloseModal} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+    <Modal open={openModal} onClose={handleCloseModal}>
       <Box sx={{ ...styleModal, height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <Button component='label' role={undefined} variant='contained' tabIndex={-1} startIcon={<CloudUploadIcon />}>
           Chọn ảnh đại diện
           <VisuallyHiddenInput type='file' accept='image/*' onChange={handleImageChange} />
         </Button>
+        <Divider />
 
         {selectedImage && (
           <Box sx={{ position: 'relative', width: '100%', height: '200px', mt: 2 }}>
@@ -90,39 +94,29 @@ const ModalEditAvatar = ({ openModal, setOpenModal }) => {
               image={selectedImage}
               crop={crop}
               zoom={zoom}
-              aspect={1}
-              cropShape='round'
+              aspect={16 / 9}
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={handleCropComplete}
+              cropSize={{ width: 627, height: 200 }}
+              objectFit='horizontal-cover'
             />
           </Box>
         )}
-
+        <Divider />
         {cropPreview && (
-          <>
-            <Box
-              component='img'
-              src={cropPreview}
-              alt='Cropped Avatar'
-              sx={{
-                mt: 2,
-                width: 80,
-                height: 80,
-                borderRadius: '50%',
-                objectFit: 'cover',
-                border: '2px solid',
-                borderColor: 'background.paper'
-              }}
-            />
-            <Button variant='contained' onClick={handleUpload} sx={{ mt: 2 }} disabled={loading}>
-              {loading ? <CircularProgress size={24} /> : 'Lưu ảnh'} {/* Show spinner if loading */}
+          <FlexRow sx={{ mt: 2 }} gap={2}>
+            <Button variant='outlined' onClick={handleCloseModal} disabled={!cropPreview}>
+              Hủy
             </Button>
-          </>
+            <Button variant='contained' onClick={handleUpload} disabled={loading}>
+              {loading ? <CircularProgress size={24} /> : 'Lưu ảnh'}
+            </Button>
+          </FlexRow>
         )}
       </Box>
     </Modal>
   )
 }
 
-export default ModalEditAvatar
+export default ModalEditBackground

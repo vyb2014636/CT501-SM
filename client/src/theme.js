@@ -2,7 +2,8 @@ import { experimental_extendTheme as extendTheme } from '@mui/material/styles'
 
 const theme = extendTheme({
   myApp: {
-    heightHeader: '58px'
+    heighHeader: '58px',
+    heighBackground: '200px'
   },
   colorSchemes: {
     light: {

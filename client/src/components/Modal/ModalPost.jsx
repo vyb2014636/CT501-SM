@@ -57,6 +57,7 @@ const ModalPost = ({ children, user }) => {
     videos.forEach((video) => formData.append('videos', video))
     await postAPI(formData)
     setOpen(false)
+    handleClose()
   }
 
   return (

@@ -1,0 +1,31 @@
+{
+  "provinces": [
+    { "code": "01", "name": "Hà Nội" },
+    { "code": "02", "name": "Hồ Chí Minh" },
+    { "code": "03", "name": "Đà Nẵng" }
+  ],
+  "districts": {
+    "01": [
+      { "code": "001", "name": "Quận Hoàn Kiếm" },
+      { "code": "002", "name": "Quận Ba Đình" }
+    ],
+    "02": [
+      { "code": "001", "name": "Quận 1" },
+      { "code": "002", "name": "Quận 2" }
+    ],
+    "03": [
+      { "code": "001", "name": "Quận Hải Châu" },
+      { "code": "002", "name": "Quận Thanh Khê" }
+    ]
+  },
+  "wards": {
+    "001": [
+      { "code": "001", "name": "Phường Hàng Đào" },
+      { "code": "002", "name": "Phường Hàng Buồm" }
+    ],
+    "002": [
+      { "code": "001", "name": "Phường Trúc Bạch" },
+      { "code": "002", "name": "Phường Ngọc Hà" }
+    ]
+  }
+}

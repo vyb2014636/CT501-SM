@@ -38,8 +38,18 @@ const uploadAvatar = async (req, res, next) => {
   } catch (error) {}
 }
 
+const uploadBackground = async (req, res, next) => {
+  try {
+    const myId = req.user.id
+    const background = req.file.path
+    const response = await userService.uploadBackground(myId, background)
+    res.status(200).json({ message: response ? 'Thay đổi thành công' : 'Thay đổi ảnh thất bại', user: response })
+  } catch (error) {}
+}
+
 export const userController = {
   getSuggestions,
   unFriend,
-  uploadAvatar
+  uploadAvatar,
+  uploadBackground
 }

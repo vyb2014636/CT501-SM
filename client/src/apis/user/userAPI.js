@@ -53,3 +53,12 @@ export const uploadAvatar = async (formData) => {
   })
   return response
 }
+
+export const uploadBackground = async (formData) => {
+  const response = await axiosIntercept.put('user/uploadBackground', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  return response
+}

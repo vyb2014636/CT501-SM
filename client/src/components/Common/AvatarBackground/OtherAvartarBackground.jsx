@@ -6,7 +6,7 @@ const OtherAvartarBackground = ({ user }) => {
   return (
     <Box
       sx={{
-        backgroundImage: `url('${img}')`,
+        backgroundImage: `url('${user.background || img}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '50%',

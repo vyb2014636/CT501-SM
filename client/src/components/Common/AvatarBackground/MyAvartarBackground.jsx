@@ -10,14 +10,17 @@ import ModalAvartar from '@/components/Modal/ModalAvartar'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import ModalEditAvartar from '@/components/Modal/ModalEditAvatar'
+import ModalEditBackground from '@/components/Modal/ModalEditBackground'
 
 const MyAvartarBackground = ({ user, myCardProfile }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const [openViewAvatar, setOpenViewAvatar] = useState(false)
   const [openEditAvatar, setOpenEditAvatar] = useState(false)
+  const [openEditBackground, setOpenEditBackground] = useState(false)
 
   const handleOpenViewAvatar = () => setOpenViewAvatar(true)
   const handleOpenEditAvatar = () => setOpenEditAvatar(true)
+  const handleOpenEditBackground = () => setOpenEditBackground(true)
 
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -31,10 +34,10 @@ const MyAvartarBackground = ({ user, myCardProfile }) => {
     <>
       <Box
         sx={{
-          backgroundImage: `url('${img}')`,
+          backgroundImage: `url('${user.background || img}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          height: '50%',
+          height: '200px',
           borderRadius: '12px 12px 0 0',
           position: 'relative'
         }}>
@@ -86,7 +89,7 @@ const MyAvartarBackground = ({ user, myCardProfile }) => {
             <PhotoLibraryOutlinedIcon />
             <Typography fontWeight={1000}> Chỉnh sửa ảnh đại diện</Typography>
           </MenuItem>
-          <MenuItem sx={{ gap: 2 }}>
+          <MenuItem onClick={handleOpenEditBackground} sx={{ gap: 2 }}>
             <WallpaperOutlinedIcon />
             <Typography fontWeight={1000}>Chỉnh sửa ảnh bìa</Typography>
           </MenuItem>
@@ -94,6 +97,7 @@ const MyAvartarBackground = ({ user, myCardProfile }) => {
       </Box>
       <ModalAvartar openViewAvatar={openViewAvatar} setOpenViewAvatar={setOpenViewAvatar} avatar={user.avatar} />
       <ModalEditAvartar openModal={openEditAvatar} setOpenModal={setOpenEditAvatar} myId={user._id} />
+      <ModalEditBackground openModal={openEditBackground} setOpenModal={setOpenEditBackground} myId={user._id} />
     </>
   )
 }
