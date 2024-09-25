@@ -17,15 +17,7 @@ import EditProfileForm from '../Form/EditProfileForm'
 
 const CardProfile = ({ user, totalPosts, children, myCardProfile = false }) => {
   const [value, setValue] = useState(0)
-  const [isEditOpen, setIsEditOpen] = useState(false)
 
-  const handleEditClick = () => setIsEditOpen(true)
-  const handleCloseEdit = () => setIsEditOpen(false)
-
-  const handleEditSubmit = (formData) => {
-    console.log('Updated data:', formData)
-    handleCloseEdit()
-  }
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
@@ -43,13 +35,11 @@ const CardProfile = ({ user, totalPosts, children, myCardProfile = false }) => {
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-        {myCardProfile ? <EditInfoButton onClick={handleEditClick} /> : <FlexRow gap={2}>{children}</FlexRow>}
+        {myCardProfile ? <EditInfoButton user={user} /> : <FlexRow gap={2}>{children}</FlexRow>}
       </Box>
 
       <ProfileStat friendsCount={friends?.length} totalPosts={totalPosts} />
       <ProfileTabs value={value} handleChange={handleChange} />
-
-      <EditProfileForm open={isEditOpen} onClose={handleCloseEdit} user={user} onSubmit={handleEditSubmit} />
     </FlexColumn>
   )
 }

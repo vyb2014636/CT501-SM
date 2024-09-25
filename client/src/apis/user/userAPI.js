@@ -62,3 +62,8 @@ export const uploadBackground = async (formData) => {
   })
   return response
 }
+export const uploadInfo = async (formData) => {
+  console.log(formData)
+  const response = await axiosIntercept.put('user/uploadInfo', formData)
+  return response
+}

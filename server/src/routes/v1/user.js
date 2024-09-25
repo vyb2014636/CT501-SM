@@ -13,6 +13,7 @@ router
     })
   })
   .put('/unFriend', verifyToken, userController.unFriend)
+  .put('/uploadInfo', verifyToken, userController.uploadInfo)
   .put('/uploadAvatar', verifyToken, uploadCloud.single('avatar'), userController.uploadAvatar)
   .put('/uploadBackground', verifyToken, uploadCloud.single('background'), userController.uploadBackground)
 

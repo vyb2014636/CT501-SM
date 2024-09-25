@@ -50,8 +50,11 @@ var userSchema = new mongoose.Schema(
     address: String,
     refreshToken: String,
     friends: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
-    listPosts: [{ type: mongoose.Types.ObjectId, ref: 'Post' }],
-    listPostsShare: [{ type: mongoose.Types.ObjectId, ref: 'Post' }]
+    address: {
+      province: String, // Tham chiếu đến Province
+      district: String, // Tham chiếu đến District
+      ward: String // Tham chiếu đến Ward
+    }
   },
   {
     timestamps: true

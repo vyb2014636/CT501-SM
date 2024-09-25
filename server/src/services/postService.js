@@ -6,11 +6,11 @@ const getPosts = async (loggedInId, userId, limit, skip) => {
   let filter = { byPost: loggedInId }
   let user = null
   if (!userId) {
-    user = await User.findById(loggedInId).populate('friends').select('-password')
+    user = await User.findById(loggedInId).populate('friends address.province address.district address.ward').select('-password')
     const friendIds = user?.friends.map((friend) => friend._id)
     filter = { byPost: { $in: [loggedInId, ...friendIds] } }
   } else {
-    user = await User.findById(userId).populate('friends').select('-password')
+    user = await User.findById(userId).populate('friends address.province address.district address.ward').select('-password')
     filter = { byPost: userId }
     if (!user) throw new ApiError(404, 'Không tìm thấy')
   }

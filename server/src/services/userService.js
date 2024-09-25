@@ -29,9 +29,28 @@ const uploadBackground = async (myId, background) => {
   const updatedUser = await User.findByIdAndUpdate(myId, { background }, { new: true })
   return updatedUser
 }
+const uploadInfo = async (myId, reqBody) => {
+  if (!reqBody || Object.keys(reqBody).length === 0) throw new ApiError(400, 'Dữ liệu gửi lên không được rỗng')
+  const { firstname, lastname, address } = reqBody
+
+  const updateData = {
+    firstname,
+    lastname,
+    address
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(myId, updateData, { new: true })
+
+  if (!updatedUser) {
+    throw new ApiError(404, 'Không tìm thấy người dùng')
+  }
+
+  return updatedUser
+}
 
 export const userService = {
   getListUserNoFriend,
   uploadAvatar,
-  uploadBackground
+  uploadBackground,
+  uploadInfo
 }
