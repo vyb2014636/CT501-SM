@@ -29,9 +29,9 @@ const EditInfoButton = ({ user }) => {
     if (JSON.stringify(formData) !== JSON.stringify(initialFormData)) {
       const confirmClose = window.confirm('Bạn có muốn bỏ thay đổi không?')
       if (confirmClose) {
-        setFormData(initialFormData) // Reset lại dữ liệu
+        setFormData(initialFormData)
       } else {
-        return // Không đóng dialog nếu người dùng không muốn bỏ thay đổi
+        return
       }
     }
     setOpen(false)
@@ -54,7 +54,8 @@ const EditInfoButton = ({ user }) => {
       try {
         await uploadInfo(data)
         toast.success('Cập nhật thông tin thành công!')
-        handleClose()
+        setInitialFormData(formData) // Cập nhật lại initialFormData sau khi lưu thành công
+        setOpen(false) // Đóng form sau khi lưu thành công
       } catch (error) {
         toast.error('Cập nhật thông tin thất bại.')
       }
@@ -79,7 +80,7 @@ const EditInfoButton = ({ user }) => {
         </Typography>
         <BorderColorOutlinedIcon />
       </Button>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open}>
         <DialogTitle>Chỉnh sửa thông tin của bạn</DialogTitle>
         <DialogContent>
           <EditProfileForm formData={formData} setFormData={setFormData} onChange={handleChange} initialFormData={initialFormData} />

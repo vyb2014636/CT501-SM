@@ -81,9 +81,62 @@ const sharePost = async (req, res, next) => {
   }
 }
 
+const getComments = async (req, res, next) => {
+  try {
+    const { postId, limit = 10, page = 1 } = req.query
+
+    const { comments } = await postService.getComments(postId, page, limit)
+
+    return res.status(200).json({
+      message: 'Danh sách comment',
+      comments
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const addComment = async (req, res, next) => {
+  try {
+    const { postId, content } = req.body
+    const myId = req.user.id
+    const post = await postService.addComment(postId, content, myId)
+
+    res.status(201).json({ message: 'Đăng bình luận thành công', post })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getReplies = async (req, res, next) => {
+  const { postId, commentId, page = 1, limit = 3 } = req.query
+
+  try {
+    const { replies, hasMoreReplies } = await postService.getReplies(postId, commentId, page, limit)
+    res.status(200).json({ replies, hasMoreReplies })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const addReply = async (req, res, next) => {
+  try {
+    const myId = req.user.id
+    const { postId, commentId, content } = req.body
+    const replies = await postService.addReply(postId, commentId, content, myId)
+    res.status(200).json(replies)
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const postController = {
   createPost,
   getPosts,
   sharePost,
-  likePost
+  likePost,
+  getComments,
+  addComment,
+  getReplies,
+  addReply
 }

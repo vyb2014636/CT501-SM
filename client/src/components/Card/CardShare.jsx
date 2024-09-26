@@ -9,7 +9,7 @@ import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import FlexRow from '@/components/Flex/FlexRow'
 import { formatFullname } from '@/utils/helpers'
-import ModalShare from '@/components/Modal/ModalPost'
+import ModalPost from '@/components/Modal/ModalPost'
 import axiosIntercept from '@/apis/axiosIntercept'
 import ButtonFlexStar from '../Button/ButtonFlexStar'
 
@@ -23,7 +23,7 @@ const CardShare = ({ user }) => {
       <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 3 }}>
         <FlexRow>
           <Avatar alt={user && formatFullname(user?.firstname, user?.lastname)} src={user && user.avatar} sx={{ width: 48, height: 48 }} />
-          <ModalShare user={user}>
+          <ModalPost user={user}>
             <ButtonFlexStar
               sx={{
                 width: '100%',
@@ -37,30 +37,30 @@ const CardShare = ({ user }) => {
               }}>
               Hãy nêu lên suy nghĩ của bạn
             </ButtonFlexStar>
-          </ModalShare>
+          </ModalPost>
         </FlexRow>
         <Divider />
         <FlexRow justifyContent='end'>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
-            <ModalShare user={user}>
+            <ModalPost user={user}>
               <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
                 <PhotoOutlinedIcon color='primary' size='small' />
                 <Typography color='primary' fontWeight='bold'>
                   Hình ảnh
                 </Typography>
               </Button>
-            </ModalShare>
+            </ModalPost>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
-            <ModalShare>
+            <ModalPost>
               <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
                 <PlayCircleOutlineIcon color='primary' size='small' />
                 <Typography color='primary' fontWeight='bold'>
                   Video
                 </Typography>
               </Button>
-            </ModalShare>
+            </ModalPost>
           </Box>
           <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }} onClick={handleTestRefreshToken}>
             <LocationOnOutlinedIcon color='primary' size='small' />

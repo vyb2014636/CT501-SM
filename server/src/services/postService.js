@@ -46,16 +46,16 @@ const likePost = async (userId, postId) => {
       path: 'sharedPost',
       populate: {
         path: 'byPost',
-        select: 'firstname lastname email background'
+        select: 'firstname lastname email background avatar'
       }
     })
     .populate({
       path: 'byPost',
-      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
+      select: 'firstname lastname email background avatar' // Chỉ lấy các trường cần thiết
     })
     .populate({
       path: 'sharesBy',
-      select: 'firstname lastname email background' // Chỉ lấy các trường cần thiết
+      select: 'firstname lastname email background avatar' // Chỉ lấy các trường cần thiết
     })
 
   if (!post) throw new ApiError(404, 'Không tìm thấy bài post')
@@ -105,8 +105,105 @@ const sharePost = async (postId, userId, describe) => {
   return sharedPost
 }
 
+const getComments = async (postID, page, limit) => {
+  // 1. Tìm bài post
+  const post = await Post.findById(postID)
+    .populate({
+      path: 'sharedPost',
+      populate: {
+        path: 'byPost',
+        select: 'firstname lastname email background'
+      }
+    })
+    .populate({
+      path: 'byPost',
+      select: 'firstname lastname email background avatar' // Chỉ lấy các trường cần thiết
+    })
+    .populate({
+      path: 'sharesBy',
+      select: 'firstname lastname email background avatar' // Chỉ lấy các trường cần thiết
+    })
+
+  const slicedComments = post.comments.slice((page - 1) * limit, page * limit)
+
+  await Post.populate(slicedComments, {
+    path: 'user replies.user',
+    select: 'firstname lastname avatar'
+  })
+
+  return {
+    ...post.toObject(),
+    comments: slicedComments
+  }
+}
+
+const addComment = async (postID, content, myId) => {
+  const post = await Post.findById(postID)
+  if (!post) {
+    throw new ApiError(404, 'Không tìm thấy bài post')
+  }
+
+  post.comments.push({
+    user: myId,
+    content
+  })
+
+  await post.save()
+
+  const populatedPost = await post.populate('comments.user comments.replies.user comments.likes')
+
+  return populatedPost
+}
+
+export const getReplies = async (postId, commentId, page, limit) => {
+  const post = await Post.findById(postId).populate('comments.user comments.replies.user comments.likes')
+  const comment = post.comments.id(commentId)
+
+  const startIndex = (page - 1) * limit
+  const replies = comment.replies.slice(startIndex, startIndex + limit)
+
+  const hasMoreReplies = comment.replies.length > startIndex + limit
+
+  return { replies, hasMoreReplies }
+}
+
+const addReply = async (postId, commentId, content, myId) => {
+  const post = await Post.findById(postId)
+  if (!post) {
+    throw new Error('Post not found')
+  }
+
+  const comment = post.comments.id(commentId)
+  if (!comment) {
+    throw new Error('Comment not found')
+  }
+
+  // Thêm phản hồi mới với thời gian tạo
+  comment.replies.push({
+    user: myId,
+    content,
+    createdAt: new Date() // Gán thời gian hiện tại
+  })
+
+  await post.save()
+
+  // Sắp xếp các phản hồi theo thời gian mới nhất
+  comment.replies.sort((a, b) => b.createdAt - a.createdAt) // Sắp xếp theo thời gian giảm dần
+
+  // Tìm và trả về bình luận đã được populate
+  const populatedPost = await post.populate({
+    path: 'comments.replies.user',
+    select: 'firstname lastname avatar'
+  })
+  return populatedPost.comments.id(commentId)
+}
+
 export const postService = {
   getPosts,
   sharePost,
-  likePost
+  likePost,
+  getComments,
+  addComment,
+  getReplies,
+  addReply
 }

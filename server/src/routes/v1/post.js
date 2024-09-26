@@ -16,5 +16,11 @@ router
     ]),
     postController.createPost
   )
-router.post('/share', verifyToken, postController.sharePost).put('/like', verifyToken, postController.likePost)
+router
+  .get('/comments/replies', verifyToken, postController.getReplies)
+  .get('/comments', verifyToken, postController.getComments)
+  .post('/share', verifyToken, postController.sharePost)
+  .post('/addComment', verifyToken, postController.addComment)
+  .post('/addReply', verifyToken, postController.addReply)
+  .put('/like', verifyToken, postController.likePost)
 export const post = router

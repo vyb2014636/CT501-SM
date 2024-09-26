@@ -1,5 +1,20 @@
 import mongoose from 'mongoose'
-// Declare the Schema of the Mongo model
+
+const commentSchema = new mongoose.Schema({
+  user: { type: mongoose.Types.ObjectId, ref: 'User' },
+  content: String,
+  likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
+  replies: [
+    {
+      user: { type: mongoose.Types.ObjectId, ref: 'User' },
+      content: String,
+      likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
+      createdAt: { type: Date, default: Date.now }
+    }
+  ],
+  createdAt: { type: Date, default: Date.now }
+})
+
 var postSchema = new mongoose.Schema(
   {
     byPost: {
@@ -12,33 +27,17 @@ var postSchema = new mongoose.Schema(
     },
     images: {
       type: Array
-    }, // Array để chứa các đường dẫn hình ảnh
+    },
     videos: {
       type: Array
-    }, // URLs of images stored on Cloudinary
+    },
     sharedPost: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Post'
-    }, //bài post này chia sẻ từ bài nào nếu không có thì không có ai chia sẻ
+    },
     sharesBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    comment: [
-      {
-        user: { type: mongoose.Types.ObjectId, ref: 'User' },
-        content: String,
-        like: Boolean
-      }
-    ],
-    likes: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: 'User'
-      }
-    ],
-    // byDislike: [
-    //   {
-    //     user: { type: mongoose.Types.ObjectId, ref: 'User' }
-    //   }
-    // ],
+    comments: [commentSchema],
+    likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
     createdAt: { type: Date, default: Date.now }
   },
   {

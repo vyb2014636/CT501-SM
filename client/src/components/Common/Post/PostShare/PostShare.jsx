@@ -61,7 +61,7 @@ const PostShare = ({ noMedia, post, isLiked, handleClickLike }) => {
           <Typography variant='body2'>{post.likes?.length} người thích</Typography>
         </CardContent>
         <Divider />
-        <PostInteract isLiked={isLiked} handleClickLike={handleClickLike} styleThreeButton={styleThreeButton} />
+        <PostInteract isLiked={isLiked} handleClickLike={handleClickLike} styleThreeButton={styleThreeButton} post={post} />
       </Card>
     </>
   )
