@@ -52,7 +52,6 @@ export const commentSlice = createSlice({
         }
       })
       .addCase(fetchRepliesForComment.fulfilled, (state, action) => {
-        // Tìm bài post có chứa bình luận tương ứng
         const comment = state.comments.find((comment) => comment._id === action.meta.arg.commentId)
         if (comment) {
           comment.replies = [...comment.replies, ...action.payload.replies]

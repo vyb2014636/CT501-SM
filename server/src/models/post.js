@@ -1,17 +1,17 @@
 import mongoose from 'mongoose'
 
+const replySchema = new mongoose.Schema({
+  user: { type: mongoose.Types.ObjectId, ref: 'User' },
+  content: String,
+  likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
+  createdAt: { type: Date, default: Date.now }
+})
+
 const commentSchema = new mongoose.Schema({
   user: { type: mongoose.Types.ObjectId, ref: 'User' },
   content: String,
   likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
-  replies: [
-    {
-      user: { type: mongoose.Types.ObjectId, ref: 'User' },
-      content: String,
-      likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
-      createdAt: { type: Date, default: Date.now }
-    }
-  ],
+  replies: [replySchema],
   createdAt: { type: Date, default: Date.now }
 })
 
@@ -31,20 +31,64 @@ var postSchema = new mongoose.Schema(
     videos: {
       type: Array
     },
-    sharedPost: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Post'
-    },
+    sharedPost: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
     sharesBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [commentSchema],
     likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
     createdAt: { type: Date, default: Date.now }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 )
-postSchema.index({ createdAt: -1 }) // Thêm index trên trường createdAt
+postSchema.index({ createdAt: -1 })
 
-//Export the model
-export default mongoose.model('Post', postSchema)
+postSchema.statics.findByIdPopulates = function (postId) {
+  return this.findById(postId)
+    .populate({
+      path: 'sharedPost',
+      populate: {
+        path: 'byPost',
+        select: 'firstname lastname email background avatar'
+      }
+    })
+    .populate({
+      path: 'byPost',
+      select: 'firstname lastname email background avatar'
+    })
+    .populate({
+      path: 'sharesBy',
+      select: 'firstname lastname email background avatar'
+    })
+}
+
+postSchema.statics.findByIdPopulateSharePost = function (postId) {
+  return this.findById(postId).populate({
+    path: 'sharedPost',
+    populate: {
+      path: 'byPost',
+      select: 'firstname lastname email background avatar'
+    }
+  })
+}
+
+postSchema.statics.populateFields = function (query) {
+  return query
+    .populate({
+      path: 'sharedPost',
+      populate: {
+        path: 'byPost',
+        select: 'firstname lastname email background avatar'
+      }
+    })
+    .populate({
+      path: 'byPost',
+      select: 'firstname lastname email background avatar'
+    })
+    .populate({
+      path: 'sharesBy',
+      select: 'firstname lastname email background avatar'
+    })
+}
+
+const Post = mongoose.model('Post', postSchema)
+
+export default Post

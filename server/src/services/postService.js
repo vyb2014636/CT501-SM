@@ -5,59 +5,30 @@ import User from '~/models/user'
 const getPosts = async (loggedInId, userId, limit, skip) => {
   let filter = { byPost: loggedInId }
   let user = null
+
   if (!userId) {
-    user = await User.findById(loggedInId).populate('friends address.province address.district address.ward').select('-password')
+    user = await User.findByIdPopulateAddress(loggedInId)
     const friendIds = user?.friends.map((friend) => friend._id)
     filter = { byPost: { $in: [loggedInId, ...friendIds] } }
   } else {
-    user = await User.findById(userId).populate('friends address.province address.district address.ward').select('-password')
+    user = await User.findByIdPopulateAddress(userId)
     filter = { byPost: userId }
     if (!user) throw new ApiError(404, 'Không tìm thấy')
   }
+
   const totalPosts = await Post.find(filter).countDocuments()
 
-  const posts = await Post.find(filter)
-    .populate({
-      path: 'sharedPost',
-      populate: {
-        path: 'byPost',
-        select: 'firstname lastname email avatar background'
-      }
-    })
-    .populate({
-      path: 'byPost',
-      select: 'firstname lastname email avatar background' // Chỉ lấy các trường cần thiết
-    })
-    .populate({
-      path: 'sharesBy',
-      select: 'firstname lastname email avatar background' // Chỉ lấy các trường cần thiết
-    })
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .lean()
+  let postsQuery = Post.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit)
+
+  postsQuery = Post.populateFields(postsQuery)
+
+  const posts = await postsQuery.lean()
 
   return { posts, totalPosts, user }
 }
 
 const likePost = async (userId, postId) => {
-  const post = await Post.findById(postId)
-    .populate({
-      path: 'sharedPost',
-      populate: {
-        path: 'byPost',
-        select: 'firstname lastname email background avatar'
-      }
-    })
-    .populate({
-      path: 'byPost',
-      select: 'firstname lastname email background avatar' // Chỉ lấy các trường cần thiết
-    })
-    .populate({
-      path: 'sharesBy',
-      select: 'firstname lastname email background avatar' // Chỉ lấy các trường cần thiết
-    })
-
+  const post = await Post.findByIdPopulates(postId)
   if (!post) throw new ApiError(404, 'Không tìm thấy bài post')
 
   const isLiked = post.likes.includes(userId)
@@ -77,8 +48,7 @@ const likePost = async (userId, postId) => {
 }
 
 const sharePost = async (postId, userId, describe) => {
-  // Lấy bài viết gốc nếu bài viết này là một bài chia sẻ
-  const post = await Post.findById(postId).populate('sharedPost')
+  const post = await Post.findByIdPopulateSharePost(postId)
 
   if (!post) throw new Error('Bài đăng bạn muốn chia sẻ không tồn tại')
 
@@ -106,29 +76,13 @@ const sharePost = async (postId, userId, describe) => {
 }
 
 const getComments = async (postID, page, limit) => {
-  // 1. Tìm bài post
-  const post = await Post.findById(postID)
-    .populate({
-      path: 'sharedPost',
-      populate: {
-        path: 'byPost',
-        select: 'firstname lastname email background'
-      }
-    })
-    .populate({
-      path: 'byPost',
-      select: 'firstname lastname email background avatar' // Chỉ lấy các trường cần thiết
-    })
-    .populate({
-      path: 'sharesBy',
-      select: 'firstname lastname email background avatar' // Chỉ lấy các trường cần thiết
-    })
+  const post = await Post.findByIdPopulates(postID)
 
   const slicedComments = post.comments.slice((page - 1) * limit, page * limit)
 
   await Post.populate(slicedComments, {
     path: 'user replies.user',
-    select: 'firstname lastname avatar'
+    select: 'firstname lastname avatar '
   })
 
   return {
@@ -139,9 +93,8 @@ const getComments = async (postID, page, limit) => {
 
 const addComment = async (postID, content, myId) => {
   const post = await Post.findById(postID)
-  if (!post) {
-    throw new ApiError(404, 'Không tìm thấy bài post')
-  }
+
+  if (!post) throw new ApiError(404, 'Không tìm thấy bài post')
 
   post.comments.push({
     user: myId,
@@ -178,19 +131,16 @@ const addReply = async (postId, commentId, content, myId) => {
     throw new Error('Comment not found')
   }
 
-  // Thêm phản hồi mới với thời gian tạo
   comment.replies.push({
     user: myId,
     content,
-    createdAt: new Date() // Gán thời gian hiện tại
+    createdAt: new Date()
   })
 
   await post.save()
 
-  // Sắp xếp các phản hồi theo thời gian mới nhất
   comment.replies.sort((a, b) => b.createdAt - a.createdAt) // Sắp xếp theo thời gian giảm dần
 
-  // Tìm và trả về bình luận đã được populate
   const populatedPost = await post.populate({
     path: 'comments.replies.user',
     select: 'firstname lastname avatar'

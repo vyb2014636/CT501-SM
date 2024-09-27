@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axiosIntercept from '@/apis/axiosIntercept'
 
-export const fetchComments = createAsyncThunk('post/comments', async ({ postId, page }, { rejectWithValue }) => {
+export const fetchComments = createAsyncThunk('post/getComments', async ({ postId, page }, { rejectWithValue }) => {
   try {
     const response = await axiosIntercept.get('post/comments', { params: { postId, page } })
     return response

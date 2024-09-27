@@ -12,6 +12,7 @@ import { toast } from 'react-toastify'
 import { uploadAvatar } from '@/apis/user/userAPI'
 import { updateUser } from '@/features/auth/authSlice'
 import { useDispatch } from 'react-redux'
+import TitleModal from '../Common/Title/TitleModal'
 
 const ModalEditAvatar = ({ openModal, setOpenModal }) => {
   const [selectedImage, setSelectedImage] = useState(null)
@@ -78,7 +79,8 @@ const ModalEditAvatar = ({ openModal, setOpenModal }) => {
 
   return (
     <Modal open={openModal} onClose={handleCloseModal} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
-      <Box sx={{ ...styleModal, height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ ...styleModal, height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <TitleModal title='Chỉnh sửa ảnh đại diện' />
         <Button component='label' role={undefined} variant='contained' tabIndex={-1} startIcon={<CloudUploadIcon />}>
           Chọn ảnh đại diện
           <VisuallyHiddenInput type='file' accept='image/*' onChange={handleImageChange} />

@@ -61,6 +61,10 @@ var userSchema = new mongoose.Schema(
   }
 )
 
+userSchema.statics.findByIdPopulateAddress = function (userId) {
+  return this.findById(userId).populate('friends address.province address.district address.ward').select('-password')
+}
+
 // userSchema.pre('save', async function (next) {
 //   if (!this.isModified('password')) {
 //     //Kiểm tra xem đã băm hay chưa
@@ -71,5 +75,6 @@ var userSchema = new mongoose.Schema(
 //   next()
 // })
 
-//Export the model
-export default mongoose.model('User', userSchema)
+const User = mongoose.model('User', userSchema)
+
+export default User
