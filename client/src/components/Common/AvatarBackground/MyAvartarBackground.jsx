@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 import img from '@/assets/postPic1.jpg'
 import { Avatar, Box, Button, Popover, Typography } from '@mui/material'
-import FlexColumn from '@/components/Flex/FlexColumn'
-import ButtonFlexStar from '@/components/Button/ButtonFlexStar'
+import FlexColumn from '@/components/Common/Flex/FlexColumn'
+import ButtonFlexStar from '@/components/AppBar/Button/ButtonFlexStar'
 import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined'
 import WallpaperOutlinedIcon from '@mui/icons-material/WallpaperOutlined'
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
-import ModalAvartar from '@/components/Modal/ModalAvartar'
+import ModalAvartar from '@/components/profile/Modal/ModalAvartar'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import ModalEditAvartar from '@/components/Modal/ModalEditAvatar'
-import ModalEditBackground from '@/components/Modal/ModalEditBackground'
+import ModalEditAvartar from '@/components/profile/Modal/ModalEditAvatar'
+import ModalEditBackground from '@/components/profile/Modal/ModalEditBackground'
 
 const MyAvartarBackground = ({ user, myCardProfile }) => {
   const [anchorEl, setAnchorEl] = useState(null)

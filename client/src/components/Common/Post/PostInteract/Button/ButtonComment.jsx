@@ -3,16 +3,16 @@ import { Button, Divider, Modal, Typography } from '@mui/material'
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 import React, { memo, useState } from 'react'
 import { styleModal } from '@/styles/styles'
-import FlexColumn from '../Flex/FlexColumn'
+import FlexColumn from '../../../Flex/FlexColumn'
 import { toast } from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
 import { addComment, fetchComments } from '@/features/comment/commentThunk'
 import { resetCommentState } from '@/features/comment/commentSlice'
-import TitleModal from '../Common/Title/TitleModal'
-import CommentForm from '../Form/CommentForm'
-import Comments from '../Common/Comment/Comments'
+import TitleModal from '../../../Modal/Title/TitleModal'
+import CommentForm from '../../../Form/CommentForm'
+import Comments from '../../../Comment/Comments'
 
-const ModalComment = ({ post }) => {
+const ButtonComment = ({ post }) => {
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
   const [newComment, setNewComment] = useState('')
@@ -60,6 +60,7 @@ const ModalComment = ({ post }) => {
           <Comments comments={comments} dispatch={dispatch} post={post} />
 
           <Divider />
+
           <CommentForm user={user} handleSendComment={handleSendComment} setNewComment={setNewComment} newComment={newComment} />
         </FlexColumn>
       </Modal>
@@ -67,4 +68,4 @@ const ModalComment = ({ post }) => {
   )
 }
 
-export default memo(ModalComment)
+export default memo(ButtonComment)

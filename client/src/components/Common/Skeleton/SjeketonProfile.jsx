@@ -3,8 +3,8 @@ import Divider from '@mui/material/Divider'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import img from '@/assets/postPic1.jpg'
-import FlexRow from '@/components/Flex/FlexRow'
-import FlexColumn from '@/components/Flex/FlexColumn'
+import FlexRow from '@/components/Common/Flex/FlexRow'
+import FlexColumn from '@/components/Common/Flex/FlexColumn'
 import Skeleton from '@mui/material/Skeleton'
 
 const SkeletonProfile = () => {

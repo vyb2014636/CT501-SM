@@ -9,7 +9,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn'
 import SlowMotionVideoOutlinedIcon from '@mui/icons-material/SlowMotionVideoOutlined'
 import { formatFullname } from '@/utils/helpers'
 import { scrollbarStyles, styleModal } from '@/styles/styles'
-import VisuallyHiddenInput from '../Inputs/VisuallyHiddenInput'
+import VisuallyHiddenInput from '../Input/VisuallyHiddenInput'
 import { postAPI } from '@/apis/post/postsAPI'
 
 const ModalPost = ({ children, user }) => {

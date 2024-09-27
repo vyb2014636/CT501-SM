@@ -1,9 +1,23 @@
 import { Avatar, Box, Button, Typography } from '@mui/material'
-import FavoriteIcon from '@mui/icons-material/Favorite'
 import React from 'react'
-import { formatFullname } from '@/utils/helpers'
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
+import FavoriteIcon from '@mui/icons-material/Favorite' // Import thêm icon Favorite
 
-const ReplyItem = ({ user, reply }) => {
+import { formatFullname } from '@/utils/helpers'
+import { useDispatch, useSelector } from 'react-redux'
+import { likeReply } from '@/features/comment/commentThunk'
+
+const ReplyItem = ({ postId, commentId, user, reply }) => {
+  const dispatch = useDispatch()
+
+  const currentUser = useSelector((state) => state.auth.user)
+
+  const isLiked = reply.likes?.includes(currentUser._id)
+
+  const handleLikeReply = () => {
+    dispatch(likeReply({ postId, commentId, replyId: reply._id }))
+  }
+
   return (
     <Box display='flex' alignItems='flex-start' mt={1} ml={8} key={reply._id}>
       <Avatar src={user.avatar} sx={{ width: 30, height: 30 }} />
@@ -17,10 +31,10 @@ const ReplyItem = ({ user, reply }) => {
           </Typography>
         </Box>
         <Box display='flex' alignItems='center'>
-          <Button size='small' color='primary'>
-            <FavoriteIcon fontSize='small' />
+          <Button size='small' color='primary' onClick={handleLikeReply}>
+            {isLiked ? <FavoriteIcon fontSize='small' /> : <FavoriteBorderOutlinedIcon fontSize='small' />}
             <Typography variant='caption' ml={0.5}>
-              Thích
+              {reply.likes.length} Thích
             </Typography>
           </Button>
         </Box>

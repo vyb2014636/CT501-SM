@@ -1,4 +1,4 @@
-import FlexRow from '@/components/Flex/FlexRow'
+import FlexRow from '@/components/Common/Flex/FlexRow'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'

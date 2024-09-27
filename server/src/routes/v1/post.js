@@ -23,4 +23,6 @@ router
   .post('/addComment', verifyToken, postController.addComment)
   .post('/addReply', verifyToken, postController.addReply)
   .put('/like', verifyToken, postController.likePost)
+  .put('/likeComment', verifyToken, postController.likeComment)
+  .put('/likeReply', verifyToken, postController.likeReply)
 export const post = router

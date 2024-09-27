@@ -7,11 +7,11 @@ import Divider from '@mui/material/Divider'
 import PhotoOutlinedIcon from '@mui/icons-material/PhotoOutlined'
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
-import FlexRow from '@/components/Flex/FlexRow'
+import FlexRow from '@/components/Common/Flex/FlexRow'
 import { formatFullname } from '@/utils/helpers'
-import ModalPost from '@/components/Modal/ModalPost'
+import ModalPost from '@/components/Common/Modal/ModalPost'
 import axiosIntercept from '@/apis/axiosIntercept'
-import ButtonFlexStar from '../Button/ButtonFlexStar'
+import ButtonFlexStar from '../../AppBar/Button/ButtonFlexStar'
 
 const CardShare = ({ user }) => {
   const handleTestRefreshToken = async () => {

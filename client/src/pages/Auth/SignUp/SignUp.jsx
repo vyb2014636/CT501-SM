@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Box, Button, CircularProgress, TextField, Typography } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
-import FlexRow from '@/components/Flex/FlexRow'
+import FlexRow from '@/components/Common/Flex/FlexRow'
 import { validateField } from '@/utils/validation'
 import { toast } from 'react-toastify'
 import { setFalse, setValues } from '@/utils/helpers'

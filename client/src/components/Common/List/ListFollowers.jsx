@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import FollowerCard from '../../Card/FollowerCard'
+import FollowerCard from '../Card/FollowerCard'
 import { getListSuggestion } from '@/apis/user/userAPI'
 import { toast } from 'react-toastify'
 

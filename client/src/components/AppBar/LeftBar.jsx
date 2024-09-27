@@ -1,9 +1,9 @@
 import React from 'react'
-import FlexBetween from '@/components/Flex/FlexBetween'
+import FlexBetween from '@/components/Common/Flex/FlexBetween'
 import { useMediaQuery } from '@mui/material'
 import MenuMobile from '@components/Mobile/MenuMobile'
 import Logo from '@/components/Common/Logo/Logo'
-import Search from '@/components/Inputs/Search'
+import Search from '@/components/Common/Input/Search'
 
 const LeftBar = () => {
   const isNonScreenMobile = useMediaQuery('(min-width: 950px)')

@@ -1,6 +1,6 @@
-import CardShare from '@/components/Card/CardShare'
+import CardShare from '@/components/Common/Card/CardShare'
 import ListPosts from '@/components/Common/List/ListPosts'
-import SkeletonPosts from '@/components/Skeleton/SkeletonPosts'
+import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
 import { resetPostState } from '@/features/post/postSlice'
 import { fetchAllPosts } from '@/features/post/postThunk'
 import React, { useEffect, useRef } from 'react'

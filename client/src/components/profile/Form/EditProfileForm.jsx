@@ -1,5 +1,5 @@
 import TextField from '@mui/material/TextField'
-import FlexRow from '../Flex/FlexRow'
+import FlexRow from '../../Common/Flex/FlexRow'
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined'
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined'
 import { useState } from 'react'

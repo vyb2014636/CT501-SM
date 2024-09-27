@@ -29,9 +29,24 @@ export const fetchRepliesForComment = createAsyncThunk('post/replies', async ({ 
 })
 
 export const addReplyForComment = createAsyncThunk('post/addReply', async ({ postId, commentId, content }, { rejectWithValue }) => {
-  console.log(postId)
   try {
     const response = await axiosIntercept.post('post/addReply', { postId: postId, commentId: commentId, content: content })
+    return response
+  } catch (error) {
+    rejectWithValue(error.message)
+  }
+})
+export const likeComment = createAsyncThunk('post/likeComment', async ({ postId, commentId }, { rejectWithValue }) => {
+  try {
+    const response = await axiosIntercept.put('post/likeComment', { postId: postId, commentId: commentId })
+    return response
+  } catch (error) {
+    rejectWithValue(error.message)
+  }
+})
+export const likeReply = createAsyncThunk('post/likeReply', async ({ postId, commentId, replyId }, { rejectWithValue }) => {
+  try {
+    const response = await axiosIntercept.put('post/likeReply', { postId: postId, commentId: commentId, replyId: replyId })
     return response
   } catch (error) {
     rejectWithValue(error.message)

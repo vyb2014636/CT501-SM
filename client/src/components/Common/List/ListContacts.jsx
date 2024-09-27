@@ -1,16 +1,11 @@
 import React from 'react'
-import FlexBetween from '@components/Flex/FlexBetween'
+import FlexBetween from '@/components/Common/Flex/FlexBetween'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import List from '@mui/material/List'
-import ContactCard from '../../Card/ContactCard'
+import ContactCard from '../Card/ContactCard'
 import { useSelector } from 'react-redux'
-
-// const contacts = [
-//   { name: 'Nguyễn Văn A', imgSrc: '/path/to/image1.jpg' },
-//   { name: 'Trần Thị B', imgSrc: '/path/to/image2.jpg' }
-// ]
 
 const ListContacts = () => {
   const { user } = useSelector((state) => state.auth)

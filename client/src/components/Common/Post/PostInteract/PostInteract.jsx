@@ -4,10 +4,9 @@ import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import ShareIcon from '@mui/icons-material/Share'
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
-import ModalComment from '@/components/Modal/ModalComment'
+import ButtonComment from '@/components/Common/Post/PostInteract/Button/ButtonComment'
 
 const PostInteract = ({ isLiked, handleClickLike, styleThreeButton, post }) => {
   const memoizedHandleClickLike = useCallback(() => {
@@ -24,7 +23,7 @@ const PostInteract = ({ isLiked, handleClickLike, styleThreeButton, post }) => {
           </Typography>
         </Button>
 
-        <ModalComment post={post} />
+        <ButtonComment post={post} />
 
         <Button sx={styleThreeButton}>
           <ShareIcon />

@@ -1,5 +1,5 @@
-import FlexCenter from '@/components/Flex/FlexCenter'
-import LeftSection from '@/components/Section/LeftSection'
+import FlexCenter from '@/components/Common/Flex/FlexCenter'
+import LeftSection from '@/components/auth/Section/LeftSection'
 import { styleBoxFlexAuth, styleForm } from '@/styles/styleAuth/style'
 import { Box, Container } from '@mui/material'
 import React from 'react'

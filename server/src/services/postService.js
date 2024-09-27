@@ -108,7 +108,7 @@ const addComment = async (postID, content, myId) => {
   return populatedPost
 }
 
-export const getReplies = async (postId, commentId, page, limit) => {
+const getReplies = async (postId, commentId, page, limit) => {
   const post = await Post.findById(postId).populate('comments.user comments.replies.user comments.likes')
   const comment = post.comments.id(commentId)
 
@@ -122,14 +122,11 @@ export const getReplies = async (postId, commentId, page, limit) => {
 
 const addReply = async (postId, commentId, content, myId) => {
   const post = await Post.findById(postId)
-  if (!post) {
-    throw new Error('Post not found')
-  }
+  if (!post) throw new ApiError(404, 'Không tìm thấy')
 
   const comment = post.comments.id(commentId)
-  if (!comment) {
-    throw new Error('Comment not found')
-  }
+
+  if (!comment) throw new ApiError(404, 'Không tìm thấy')
 
   comment.replies.push({
     user: myId,
@@ -139,13 +136,71 @@ const addReply = async (postId, commentId, content, myId) => {
 
   await post.save()
 
-  comment.replies.sort((a, b) => b.createdAt - a.createdAt) // Sắp xếp theo thời gian giảm dần
+  comment.replies.sort((a, b) => b.createdAt - a.createdAt)
 
   const populatedPost = await post.populate({
     path: 'comments.replies.user',
     select: 'firstname lastname avatar'
   })
   return populatedPost.comments.id(commentId)
+}
+
+const likeComment = async (postId, commentId, userId) => {
+  const post = await Post.findById(postId)
+  if (!post) throw new ApiError(404, 'Post not found')
+
+  const comment = post.comments.id(commentId)
+  if (!comment) throw new ApiError(404, 'Comment not found')
+
+  const isLiked = comment.likes.includes(userId)
+  if (isLiked) {
+    comment.likes = comment.likes.filter((id) => id.toString() !== userId)
+  } else {
+    comment.likes.push(userId)
+  }
+
+  await post.save()
+
+  const populatedPost = await post.populate({
+    path: 'comments.user',
+    select: 'firstname lastname avatar'
+  })
+
+  return {
+    message: isLiked ? 'Bỏ like thành công' : 'Like thành công',
+    comment: populatedPost.comments.id(commentId)
+  }
+}
+
+const likeReply = async (postId, commentId, replyId, userId) => {
+  const post = await Post.findById(postId)
+  if (!post) throw new ApiError(404, 'Post not found')
+
+  const comment = post.comments.id(commentId)
+  if (!comment) throw new ApiError(404, 'Comment not found')
+
+  const reply = comment.replies.id(replyId)
+  if (!reply) throw new ApiError(404, 'Reply not found')
+
+  const isLiked = reply.likes.includes(userId)
+  if (isLiked) {
+    reply.likes = reply.likes.filter((id) => id.toString() !== userId)
+  } else {
+    reply.likes.push(userId)
+  }
+
+  await post.save()
+
+  const populatedPost = await post.populate({
+    path: 'comments.replies.user',
+    select: 'firstname lastname avatar'
+  })
+
+  return {
+    message: isLiked ? 'Bỏ like phản hồi thành công' : 'Like phản hồi thành công',
+    comment: populatedPost.comments.id(commentId),
+    reply: populatedPost.comments.id(commentId).replies.id(replyId)
+  }
 }
 
 export const postService = {
@@ -155,5 +210,7 @@ export const postService = {
   getComments,
   addComment,
   getReplies,
-  addReply
+  addReply,
+  likeComment,
+  likeReply
 }

@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined'
-import EditProfileForm from '../Form/EditProfileForm'
+import EditProfileForm from '../../profile/Form/EditProfileForm'
 import { useEffect, useState } from 'react'
 import { uploadInfo } from '@/apis/user/userAPI'
 import { toast } from 'react-toastify'

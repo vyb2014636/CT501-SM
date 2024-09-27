@@ -1,6 +1,6 @@
 // src/features/postSlice.js
 import { createSlice } from '@reduxjs/toolkit'
-import { addComment, addReplyForComment, fetchComments, fetchRepliesForComment } from './commentThunk'
+import { addComment, addReplyForComment, fetchComments, fetchRepliesForComment, likeComment, likeReply } from './commentThunk'
 
 export const commentSlice = createSlice({
   name: 'comment',
@@ -56,6 +56,24 @@ export const commentSlice = createSlice({
         if (comment) {
           comment.replies = [...comment.replies, ...action.payload.replies]
           comment.hasMoreReplies = action.payload.hasMoreReplies // Cờ đánh dấu còn phản hồi hay không
+        }
+      })
+      .addCase(likeComment.fulfilled, (state, action) => {
+        const { updatedComment } = action.payload
+        const comment = state.comments.find((comment) => comment._id === updatedComment._id)
+        if (comment) {
+          comment.likes = updatedComment.likes
+        }
+      })
+      .addCase(likeReply.fulfilled, (state, action) => {
+        const { updatedComment, updatedReply } = action.payload
+        const comment = state.comments.find((comment) => comment._id === updatedComment._id)
+        if (comment) {
+          console.log(1)
+          const reply = comment.replies.find((r) => r._id === updatedReply._id)
+          if (reply) {
+            reply.likes = updatedReply.likes
+          }
         }
       })
   }

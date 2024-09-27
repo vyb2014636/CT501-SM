@@ -4,7 +4,7 @@ import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import { CircularProgress } from '@mui/material' // Import spinner
 import { styleModal } from '@/styles/styles'
-import VisuallyHiddenInput from '../Inputs/VisuallyHiddenInput'
+import VisuallyHiddenInput from '../../Common/Input/VisuallyHiddenInput'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import Cropper from 'react-easy-crop'
 import getCroppedImg from '@/utils/getCroppedImg'
@@ -12,7 +12,7 @@ import { toast } from 'react-toastify'
 import { uploadAvatar } from '@/apis/user/userAPI'
 import { updateUser } from '@/features/auth/authSlice'
 import { useDispatch } from 'react-redux'
-import TitleModal from '../Common/Title/TitleModal'
+import TitleModal from '../../Common/Modal/Title/TitleModal'
 
 const ModalEditAvatar = ({ openModal, setOpenModal }) => {
   const [selectedImage, setSelectedImage] = useState(null)

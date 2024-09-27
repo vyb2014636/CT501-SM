@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
-import Logo from '../Common/Logo/Logo'
+import Logo from '../../Common/Logo/Logo'
 
 const LeftSection = () => {
   return (

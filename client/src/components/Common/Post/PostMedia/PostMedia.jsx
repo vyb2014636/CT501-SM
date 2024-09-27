@@ -1,10 +1,10 @@
-import ModalMedia from '@/components/Modal/ModalMedia'
+import ModalMedia from '@/components/Common/Modal/ModalMedia'
 import Masonry from '@mui/lab/Masonry'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 
-const renderMedia = (post) => {
+const PostMedia = (post) => {
   const [openModal, setOpenModal] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -124,4 +124,4 @@ const renderMedia = (post) => {
   )
 }
 
-export default renderMedia
+export default PostMedia

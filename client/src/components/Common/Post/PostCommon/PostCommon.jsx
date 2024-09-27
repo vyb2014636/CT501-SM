@@ -4,7 +4,7 @@ import Divider from '@mui/material/Divider'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 
-import renderMedia from '@/components/Common/Mansory/MansoryMedia'
+import renderMedia from '@/components/Common/Post/PostMedia/PostMedia'
 import { styleCardGeneral, styleThreeButton } from '@/styles/stylePost/style'
 import PostContent from '../PostContent/PostContent'
 import PostInteract from '../PostInteract/PostInteract'
