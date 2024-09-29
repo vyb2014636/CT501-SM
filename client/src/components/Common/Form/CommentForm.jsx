@@ -1,7 +1,9 @@
 import React from 'react'
-import FlexRow from '../Flex/FlexRow'
-import { Avatar, Button, TextField } from '@mui/material'
+import Button from '@mui/material/Button'
+import Avatar from '@mui/material/Avatar'
+import TextField from '@mui/material/TextField'
 import SendIcon from '@mui/icons-material/Send'
+import FlexRow from '../Flex/FlexRow'
 
 const CommentForm = ({ user, handleSendComment, setNewComment, newComment }) => {
   return (

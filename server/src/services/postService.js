@@ -78,6 +78,7 @@ const sharePost = async (postId, userId, describe) => {
 const getComments = async (postID, page, limit) => {
   const post = await Post.findByIdPopulates(postID)
 
+  const totalComments = post.comments.length
   const slicedComments = post.comments.slice((page - 1) * limit, page * limit)
 
   await Post.populate(slicedComments, {
@@ -85,9 +86,11 @@ const getComments = async (postID, page, limit) => {
     select: 'firstname lastname avatar '
   })
 
+  const hasMoreComments = page * limit < totalComments
   return {
     ...post.toObject(),
-    comments: slicedComments
+    comments: slicedComments,
+    hasMoreComments
   }
 }
 

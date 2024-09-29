@@ -11,7 +11,8 @@ export const postSlice = createSlice({
     message: null,
     userPosts: null,
     error: false,
-    loading: true
+    loading: true,
+    hasMorePosts: true
   },
   reducers: {
     resetPostState: (state) => {
@@ -21,6 +22,7 @@ export const postSlice = createSlice({
       state.message = null
       state.userPosts = null
       state.loading = true
+      state.hasMorePosts = true
     }
   },
   extraReducers: (builder) => {
@@ -36,6 +38,7 @@ export const postSlice = createSlice({
         state.userPosts = action.payload.user
         state.error = false
         state.loading = false
+        state.hasMorePosts = action.payload.hasMorePosts
       })
       .addCase(fetchAllPosts.rejected, (state, action) => {
         state.status = 'failed'

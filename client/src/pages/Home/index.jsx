@@ -2,11 +2,11 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
-import { useMediaQuery } from '@mui/material'
-import LeftSide from '@/components/Common/Side/LeftSide'
-import ListFollowers from '@/components/Common/List/ListFollowers'
-import ListContacts from '@/components/Common/List/ListContacts'
-import RightSide from '@/components/Common/Side/RightSide'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import LeftSide from '@/components/Layout/LeftSide/LeftSide'
+import RightSide from '@/components/Layout/RightSide/RightSide'
+import ContactList from '@/components/Common/List/ContactList'
+import SuggestionList from '@/components/Common/List/SuggestionList'
 
 const Home = () => {
   const isNonScreenMobile = useMediaQuery('(min-width: 950px)')
@@ -15,11 +15,11 @@ const Home = () => {
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', overflow: 'hidden' }}>
       <Box sx={{ display: 'flex', flexDirection: isNonScreenMobile ? 'row' : 'column', height: '100vh' }}>
         <LeftSide>
-          <ListFollowers />
+          <SuggestionList />
         </LeftSide>
         <Outlet />
         <RightSide>
-          <ListContacts />
+          <ContactList />
         </RightSide>
       </Box>
     </Container>

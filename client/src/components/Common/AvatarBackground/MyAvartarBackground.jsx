@@ -1,28 +1,24 @@
 import React, { useState } from 'react'
-import img from '@/assets/postPic1.jpg'
-import { Avatar, Box, Button, Popover, Typography } from '@mui/material'
-import FlexColumn from '@/components/Common/Flex/FlexColumn'
-import ButtonFlexStar from '@/components/AppBar/Button/ButtonFlexStar'
+import { Avatar, Box, Menu, MenuItem, Typography } from '@mui/material'
 import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined'
 import WallpaperOutlinedIcon from '@mui/icons-material/WallpaperOutlined'
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
-import ModalAvartar from '@/components/profile/Modal/ModalAvartar'
-import Menu from '@mui/material/Menu'
-import MenuItem from '@mui/material/MenuItem'
-import ModalEditAvartar from '@/components/profile/Modal/ModalEditAvatar'
-import ModalEditBackground from '@/components/profile/Modal/ModalEditBackground'
+import ViewAvatarModal from '@components/user/Modal/ViewAvatarModel'
+import EditAvatarModal from '@components/user/Modal/EditAvatarModal'
+import EditBackgroundModal from '@components/user/Modal/EditBackgroundModal'
+import img from '@/assets/postPic1.jpg'
 
 const MyAvartarBackground = ({ user, myCardProfile }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const [openViewAvatar, setOpenViewAvatar] = useState(false)
   const [openEditAvatar, setOpenEditAvatar] = useState(false)
   const [openEditBackground, setOpenEditBackground] = useState(false)
+  const open = Boolean(anchorEl)
 
   const handleOpenViewAvatar = () => setOpenViewAvatar(true)
   const handleOpenEditAvatar = () => setOpenEditAvatar(true)
   const handleOpenEditBackground = () => setOpenEditBackground(true)
 
-  const open = Boolean(anchorEl)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
@@ -95,9 +91,9 @@ const MyAvartarBackground = ({ user, myCardProfile }) => {
           </MenuItem>
         </Menu>
       </Box>
-      <ModalAvartar openViewAvatar={openViewAvatar} setOpenViewAvatar={setOpenViewAvatar} avatar={user.avatar} />
-      <ModalEditAvartar openModal={openEditAvatar} setOpenModal={setOpenEditAvatar} myId={user._id} />
-      <ModalEditBackground openModal={openEditBackground} setOpenModal={setOpenEditBackground} myId={user._id} />
+      <ViewAvatarModal openViewAvatar={openViewAvatar} setOpenViewAvatar={setOpenViewAvatar} avatar={user.avatar} />
+      <EditAvatarModal openModal={openEditAvatar} setOpenModal={setOpenEditAvatar} myId={user._id} />
+      <EditBackgroundModal openModal={openEditBackground} setOpenModal={setOpenEditBackground} myId={user._id} />
     </>
   )
 }

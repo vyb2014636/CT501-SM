@@ -1,10 +1,12 @@
-import { Avatar, Box, Button, Typography } from '@mui/material'
 import React from 'react'
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
-import FavoriteIcon from '@mui/icons-material/Favorite' // Import thêm icon Favorite
-
-import { formatFullname } from '@/utils/helpers'
 import { useDispatch, useSelector } from 'react-redux'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Avatar from '@mui/material/Avatar'
+import Typography from '@mui/material/Typography'
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
+import { formatFullname } from '@/utils/helpers'
 import { likeReply } from '@/features/comment/commentThunk'
 
 const ReplyItem = ({ postId, commentId, user, reply }) => {

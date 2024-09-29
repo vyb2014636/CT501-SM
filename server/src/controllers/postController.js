@@ -39,11 +39,14 @@ const getPosts = async (req, res, next) => {
   const skip = (page - 1) * limit
   try {
     const { posts, totalPosts, user } = await postService.getPosts(id, userId, limit, skip)
+    const hasMorePosts = page * limit < totalPosts
+
     return res.status(200).json({
       message: posts.length > 0 ? 'Danh sách bài đăng' : 'Không có bài đăng nào',
       posts,
       totalPosts,
-      user
+      user,
+      hasMorePosts
     })
   } catch (error) {
     next(error)
@@ -83,13 +86,14 @@ const sharePost = async (req, res, next) => {
 
 const getComments = async (req, res, next) => {
   try {
-    const { postId, limit = 10, page = 1 } = req.query
+    const { postId, limit = 5, page = 1 } = req.query
 
-    const { comments } = await postService.getComments(postId, page, limit)
+    const { comments, hasMoreComments } = await postService.getComments(postId, page, limit)
 
     return res.status(200).json({
       message: 'Danh sách comment',
-      comments
+      comments,
+      hasMoreComments
     })
   } catch (error) {
     next(error)

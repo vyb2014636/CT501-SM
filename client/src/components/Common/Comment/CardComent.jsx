@@ -1,9 +1,11 @@
 import React from 'react'
-import { Avatar, Box, Button, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Avatar from '@mui/material/Avatar'
+import Typography from '@mui/material/Typography'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
-import FavoriteIcon from '@mui/icons-material/Favorite' //
-
 import ReplyIcon from '@mui/icons-material/Reply'
+import FavoriteIcon from '@mui/icons-material/Favorite'
 import { useDispatch } from 'react-redux'
 import { likeComment } from '@/features/comment/commentThunk'
 import { formatFullname } from '@/utils/helpers'

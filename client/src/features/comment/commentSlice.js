@@ -9,6 +9,7 @@ export const commentSlice = createSlice({
     status: 'idle',
     error: false,
     loading: true,
+    hasMoreComments: true, // Thêm cờ để biết còn bình luận để fetch hay không
     ofPost: null
   },
   reducers: {
@@ -17,6 +18,7 @@ export const commentSlice = createSlice({
       state.status = 'idle'
       state.error = false
       state.loading = true
+      state.hasMoreComments = true
       state.ofPost = null
     }
   },
@@ -31,6 +33,7 @@ export const commentSlice = createSlice({
         state.status = 'succeeded'
         state.error = false
         state.loading = false
+        state.hasMoreComments = action.payload.hasMoreComments
       })
       .addCase(fetchComments.rejected, (state, action) => {
         state.status = 'failed'

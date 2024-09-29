@@ -1,9 +1,9 @@
 import React from 'react'
 import Avatar from '@mui/material/Avatar'
-import ListItem from '@mui/material/ListItem'
-import ListItemAvatar from '@mui/material/ListItemAvatar'
-import ListItemText from '@mui/material/ListItemText'
 import Divider from '@mui/material/Divider'
+import ListItem from '@mui/material/ListItem'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemAvatar from '@mui/material/ListItemAvatar'
 import { formatFullname } from '@/utils/helpers'
 
 const ContactCard = ({ contacts, contact, index }) => {

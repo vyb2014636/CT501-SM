@@ -1,0 +1,42 @@
+import React, { useState } from 'react'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import FlexRow from '@/components/Common/Flex/FlexRow'
+import FlexColumn from '@/components/Common/Flex/FlexColumn'
+import EditInfoButton from '@/components/Common/Button/EditInfoButton'
+import MyAvartarBackground from '@components/Common/AvatarBackground/MyAvartarBackground'
+import OtherAvartarBackground from '@components/Common/AvatarBackground/OtherAvartarBackground'
+import ProfileStat from '../Stat/ProfileStat'
+import ProfileTabs from '../Tabs/ProfileTabs'
+import { formatFullname } from '@/utils/helpers'
+
+const ProfileCard = ({ user, totalPosts, children, myCardProfile = false }) => {
+  const [value, setValue] = useState(0)
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue)
+  }
+
+  const { firstname, lastname, friends } = user || {}
+
+  return (
+    <FlexColumn sx={{ backgroundColor: 'background.paper', height: 500, borderRadius: '12px 12px 0 0', mb: 2 }}>
+      {myCardProfile ? <MyAvartarBackground user={user} /> : <OtherAvartarBackground user={user} />}
+
+      <Box sx={{ textAlign: 'center', mt: 10 }}>
+        <Typography variant='h5' fontWeight='bold'>
+          {formatFullname(firstname, lastname)}
+        </Typography>
+      </Box>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+        {myCardProfile ? <EditInfoButton user={user} /> : <FlexRow gap={2}>{children}</FlexRow>}
+      </Box>
+
+      <ProfileStat friendsCount={friends?.length} totalPosts={totalPosts} />
+      <ProfileTabs value={value} handleChange={handleChange} />
+    </FlexColumn>
+  )
+}
+
+export default ProfileCard

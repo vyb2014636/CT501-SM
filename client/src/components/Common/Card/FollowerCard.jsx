@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+import List from '@mui/material/List'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
-import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import { formatFullname } from '@/utils/helpers'
-import { cancelAddFriendAPI, cancelFriendAPI, sendFriendAPI } from '@/apis/user/userAPI'
-import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import { cancelAddFriendAPI, sendFriendAPI } from '@/apis/user/userAPI'
 
 const FollowerCard = ({ userNoFriend, id }) => {
   const [changeButton, setChangeButton] = useState(true)

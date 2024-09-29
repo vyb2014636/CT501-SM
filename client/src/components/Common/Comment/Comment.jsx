@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
-import { Box, Button } from '@mui/material'
-import { addReplyForComment } from '@/features/comment/commentThunk'
 import { toast } from 'react-toastify'
-import ReplyForm from '@/components/Common/Form/ReplyForm'
-import ReplyItem from './Reply/ReplyItem'
-import CardComment from './CardComent'
 import { useSelector } from 'react-redux'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import ReplyForm from '@components/Common/Form/ReplyForm'
+import CardComment from '@components/Common/Comment/CardComent'
+import ReplyItem from '@components/Common/Comment/Reply/ReplyItem'
+import { addReplyForComment } from '@/features/comment/commentThunk'
 
-export const Comment = ({ post, comment, user, dispatch }) => {
+const Comment = ({ post, comment, user, dispatch }) => {
   const [showReplyInput, setShowReplyInput] = useState(false)
   const [replyText, setReplyText] = useState('')
   const [showReplies, setShowReplies] = useState(false)
@@ -56,3 +57,5 @@ export const Comment = ({ post, comment, user, dispatch }) => {
     </Box>
   )
 }
+
+export default Comment

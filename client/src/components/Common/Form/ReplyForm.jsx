@@ -1,6 +1,8 @@
-import { Box, IconButton, TextField } from '@mui/material'
 import React from 'react'
+import Box from '@mui/material/Box'
 import SendIcon from '@mui/icons-material/Send'
+import TextField from '@mui/material/TextField'
+import IconButton from '@mui/material/IconButton'
 
 const ReplyForm = ({ replyText, setReplyText, handleSendReply, comment }) => {
   return (

@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from 'react'
-import PostShare from './PostShare/PostShare'
-import PostCommon from './PostCommon/PostCommon'
+import SharePost from './SharePost/SharePost'
+import CommonPost from './CommonPost/CommonPost'
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleLikePost } from '@/features/post/postThunk'
 
@@ -17,9 +17,9 @@ const Post = ({ post }) => {
   return (
     <>
       {post.sharedPost ? (
-        <PostShare post={post} isLiked={isLiked} handleClickLike={handleClickLike} />
+        <SharePost post={post} isLiked={isLiked} handleClickLike={handleClickLike} />
       ) : (
-        <PostCommon post={post} isLiked={isLiked} handleClickLike={handleClickLike} />
+        <CommonPost post={post} isLiked={isLiked} handleClickLike={handleClickLike} />
       )}
     </>
   )

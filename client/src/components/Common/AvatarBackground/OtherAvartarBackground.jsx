@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import img from '@/assets/postPic1.jpg'
-import { Avatar, Box } from '@mui/material'
+import Box from '@mui/material/Box'
+import Avatar from '@mui/material/Avatar'
 
 const OtherAvartarBackground = ({ user }) => {
   return (
