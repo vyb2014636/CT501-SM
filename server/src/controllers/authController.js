@@ -18,7 +18,7 @@ const register = async (req, res, next) => {
     const otpHash = await bcrypt.hash(OTP, 10)
     const hashPassword = await bcrypt.hash(password, 10)
     const html = VERIFICATION_EMAIL_TEMPLATE.replace('{verificationCode}', OTP)
-    const otpExpired = Date.now() + 1 * 60 * 1000 // 2 phút từ bây giờ
+    const otpExpired = Date.now() + 1 * 60 * 1000
 
     const newUser = await User.create({
       email,
@@ -30,13 +30,6 @@ const register = async (req, res, next) => {
     })
 
     await sendMail({ email, html, subject: 'Mã xác thực tài khoản' })
-
-    // setTimeout(async () => {
-    //   const user = await User.findOne({ email })
-    //   if (user && !user.isVerify) {
-    //     await User.deleteOne({ email })
-    //   }
-    // }, 60000)
 
     return res.status(200).json({
       success: true,

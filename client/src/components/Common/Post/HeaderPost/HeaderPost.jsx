@@ -22,17 +22,22 @@ const PostHeader = ({ userPost, post, visibleMenu }) => {
 
   return (
     <CardHeader
+      sx={{ py: 2 }}
       avatar={
-        <Box
+        <Avatar
+          src={userPost.avatar}
+          alt='Profile Picture'
+          sx={{ width: 44, height: 44, cursor: 'pointer', '&:hover': { opacity: 0.6, transition: 'opacity 0.3s ease' } }}
           onClick={() => handleProfileClick(userPost._id, user._id)}
-          sx={{
-            '&:hover': {
-              opacity: 0.8,
-              transition: 'opacity 0.3s ease'
-            }
-          }}>
-          <Avatar src={userPost.avatar} alt='Profile Picture' sx={{ width: 52, height: 52, cursor: 'pointer' }} />
-        </Box>
+        />
+      }
+      title={
+        <Typography
+          variant='h6'
+          sx={{ cursor: 'pointer', '&:hover': { opacity: 0.6, transition: 'opacity 0.3s ease' }, fontWeight: 'bold' }}
+          onClick={() => handleProfileClick(userPost._id, user._id)}>
+          {formatFullname(userPost.firstname, userPost.lastname)}
+        </Typography>
       }
       action={
         visibleMenu && (
@@ -66,11 +71,6 @@ const PostHeader = ({ userPost, post, visibleMenu }) => {
             </Menu>
           </>
         )
-      }
-      title={
-        <Typography variant='h6' fontWeight='bold'>
-          {formatFullname(userPost.firstname, userPost.lastname)}
-        </Typography>
       }
       subheader={new Date(post.createdAt).toLocaleString()}
     />

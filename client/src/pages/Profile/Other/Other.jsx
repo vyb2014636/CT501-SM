@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import FriendshipButton from '@/components/Common/Button/FriendshipButton'
 import ProfileCard from '@/components/user/Card/ProfileCard'
+import { Typography } from '@mui/material'
 
 const Other = () => {
   const { userId } = useParams()
@@ -41,10 +42,6 @@ const Other = () => {
         <SkeletonPosts key={i} />
       ))}
     </Box>
-  ) : posts?.length === 0 ? (
-    <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
-      Không có bài viết nào được đăng
-    </Typography>
   ) : (
     <ListPosts userId={userId} pageRef={pageRef}>
       <ProfileCard user={userPosts} totalPosts={totalPosts}>

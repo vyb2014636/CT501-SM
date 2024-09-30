@@ -1,5 +1,6 @@
 import ApiError from '~/middlewares/ApiError'
 import FriendRequest from '~/models/friendRequest'
+import Post from '~/models/post'
 import User from '~/models/user'
 
 const getListUserNoFriend = async (myId) => {
@@ -41,6 +42,8 @@ const uploadInfo = async (myId, reqBody) => {
 
   const updatedUser = await User.findByIdAndUpdate(myId, updateData, { new: true })
 
+  updatedUser.save()
+
   if (!updatedUser) {
     throw new ApiError(404, 'Không tìm thấy người dùng')
   }
@@ -48,9 +51,34 @@ const uploadInfo = async (myId, reqBody) => {
   return updatedUser
 }
 
+const searchUser = async (query) => {
+  // Chuyển đổi query thành lowercase và tách các từ
+  const searchTerms = query.toLowerCase().trim().split(' ')
+
+  const regex = searchTerms.map((term) => `(${term})`).join('.*') // Kết hợp các từ với .* ở giữa
+
+  const users = await User.find({
+    $or: [
+      {
+        fullname: { $regex: regex, $options: 'i' }
+      },
+      {
+        normalizedFullName: { $regex: regex, $options: 'i' }
+      }
+    ]
+  }).limit(5)
+
+  const posts = await Post.find({
+    describe: { $regex: query, $options: 'i' }
+  }).limit(3)
+
+  return { users, posts }
+}
+
 export const userService = {
   getListUserNoFriend,
   uploadAvatar,
   uploadBackground,
-  uploadInfo
+  uploadInfo,
+  searchUser
 }

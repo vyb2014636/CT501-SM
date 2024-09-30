@@ -8,6 +8,7 @@ import { fetchAllPosts } from '@/features/post/postThunk'
 import { scrollbarStyleMui } from '@/styles/styles'
 import useScrollInfinite from '@/hooks/useScrollInfinite'
 import SkeletonPosts from '../Skeleton/SkeletonPosts'
+import EmptyPost from '../Post/EmptyPost/EmptyPost'
 
 const PostList = ({ userId = null, children, pageRef }) => {
   const { posts, totalPosts, status, loading, hasMorePosts } = useSelector((state) => state.post)
@@ -27,6 +28,8 @@ const PostList = ({ userId = null, children, pageRef }) => {
   return (
     <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }} ref={scrollPostsRef}>
       {children}
+
+      <EmptyPost totalPosts={totalPosts} />
 
       {posts.map((post) => (
         <Post key={post._id} post={post} />

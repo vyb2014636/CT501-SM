@@ -72,7 +72,7 @@ const likePost = async (req, res, next) => {
 
 const sharePost = async (req, res, next) => {
   try {
-    const userId = req.user.id.toString() // Lấy ID của người dùng hiện tại
+    const userId = req.user.id
     const { postId, describe } = req.body
     const post = await postService.sharePost(postId, userId, describe)
     return res.status(200).json({

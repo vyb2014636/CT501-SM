@@ -39,26 +39,22 @@ const EditInfoButton = ({ user }) => {
 
   const handleSave = async () => {
     const { firstname, lastname, province, district, ward } = formData
-    if (!province || !district || !ward) {
-      toast.error('Không được để rỗng')
-    } else {
-      const data = {
-        firstname,
-        lastname,
-        address: {
-          province,
-          district,
-          ward
-        }
+    const data = {
+      firstname,
+      lastname,
+      address: {
+        province,
+        district,
+        ward
       }
-      try {
-        await uploadInfo(data)
-        toast.success('Cập nhật thông tin thành công!')
-        setInitialFormData(formData) // Cập nhật lại initialFormData sau khi lưu thành công
-        setOpen(false) // Đóng form sau khi lưu thành công
-      } catch (error) {
-        toast.error('Cập nhật thông tin thất bại.')
-      }
+    }
+    try {
+      await uploadInfo(data)
+      toast.success('Cập nhật thông tin thành công!')
+      setInitialFormData(formData) // Cập nhật lại initialFormData sau khi lưu thành công
+      setOpen(false) // Đóng form sau khi lưu thành công
+    } catch (error) {
+      toast.error('Cập nhật thông tin thất bại.')
     }
   }
 

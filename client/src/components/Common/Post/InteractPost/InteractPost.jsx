@@ -3,10 +3,10 @@ import CardActions from '@mui/material/CardActions'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import ShareIcon from '@mui/icons-material/Share'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
-import ButtonComment from '@/components/Common/Button/CommentButton'
+import CommentButton from '@/components/Common/Button/CommentButton'
+import ShareButton from '../../Button/ShareButton'
 
 const InteractPost = ({ isLiked, handleClickLike, styleThreeButton, post }) => {
   const memoizedHandleClickLike = useCallback(() => {
@@ -23,14 +23,9 @@ const InteractPost = ({ isLiked, handleClickLike, styleThreeButton, post }) => {
           </Typography>
         </Button>
 
-        <ButtonComment post={post} />
+        <CommentButton post={post} />
 
-        <Button sx={styleThreeButton}>
-          <ShareIcon />
-          <Typography variant='body1' fontWeight='bold'>
-            Chia sẻ
-          </Typography>
-        </Button>
+        <ShareButton post={post} />
       </Box>
     </CardActions>
   )

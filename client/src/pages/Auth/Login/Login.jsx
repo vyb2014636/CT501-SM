@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { login } from '@/features/auth/authThunk'
 import { toast } from 'react-toastify'
 import { styleForm } from '@/styles/styleAuth/style'
+import LoginForm from '@/components/user/Form/LoginForm'
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' })
@@ -36,38 +37,7 @@ const Login = () => {
         Đăng nhập
       </Typography>
 
-      <form onSubmit={handleSubmit}>
-        <TextField
-          fullWidth
-          margin='normal'
-          label='Email'
-          variant='outlined'
-          value={credentials?.email}
-          onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-        />
-        <TextField
-          fullWidth
-          margin='normal'
-          label='Mật khẩu'
-          variant='outlined'
-          type='password'
-          value={credentials?.password}
-          onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-        />
-
-        <Typography variant='body2' color='textSecondary' textAlign='center' mt={2}>
-          Bạn chưa có tài khoản? <Link to='/auth/signup'>Đăng ký</Link>
-        </Typography>
-
-        <Button
-          type='submit'
-          fullWidth
-          variant='contained'
-          sx={{ mt: 3, background: !disabled ? 'linear-gradient(to right, #673ab7, #2196f3)' : undefined }}
-          disabled={disabled}>
-          Đăng nhập
-        </Button>
-      </form>
+      <LoginForm handleSubmit={handleSubmit} credentials={credentials} setCredentials={setCredentials} disabled={disabled} />
     </Box>
   )
 }

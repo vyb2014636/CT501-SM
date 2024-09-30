@@ -26,3 +26,7 @@ export const postAPI = async (formData) => {
   })
   return response
 }
+export const sharePostAPI = async (postId, describe) => {
+  const response = await axiosIntercept.post('post/share', { postId, describe })
+  return response
+}

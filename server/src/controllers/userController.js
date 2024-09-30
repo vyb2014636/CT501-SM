@@ -57,10 +57,22 @@ const uploadBackground = async (req, res, next) => {
   } catch (error) {}
 }
 
+const searchUser = async (req, res, next) => {
+  const { query } = req.query
+  try {
+    const { users, posts } = await userService.searchUser(query)
+
+    res.status(200).json({ message: 'danh sách', users, posts })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const userController = {
   getSuggestions,
   unFriend,
   uploadAvatar,
   uploadBackground,
-  uploadInfo
+  uploadInfo,
+  searchUser
 }

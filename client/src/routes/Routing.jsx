@@ -7,7 +7,7 @@ import Profile from '@/pages/Profile'
 import Dashboard from '@/pages/Admin/Dashboard/Dashboard'
 import Setting from '@/pages/Admin/Setting/Setting'
 import Login from '@/pages/Auth/Login/Login'
-import SignUp from '@/pages/Auth/SignUp/SignUp'
+import Register from '@/pages/Auth/Register/Register'
 import Favorites from '@/pages/Home/Content/Favorites/Favorites'
 import Main from '@/pages/Home/Content/Main/Main'
 import PrivateRoute from './PrivateRoute'
@@ -16,6 +16,7 @@ import NotFoundPage from '@/pages/Error/NotFoundPage'
 import PublicRoute from './PublicRoute'
 import Other from '@/pages/Profile/Other/Other'
 import Person from '@/pages/Profile/Person/Person'
+import Search from '@/pages/Search'
 
 function Routing() {
   return (
@@ -33,11 +34,12 @@ function Routing() {
           <Route path='/:userId' element={<Other />} />
           <Route path='/:userId/person' element={<Person />} />
         </Route>
+        <Route path='/search/:query' element={<Search />} />
       </Route>
       <Route element={<PublicRoute />}>
         <Route path='/auth' element={<Auth />}>
           <Route path='/auth' element={<Login />} />
-          <Route path='/auth/signup' element={<SignUp />} />
+          <Route path='/auth/signup' element={<Register />} />
           <Route path='/auth/verify' element={<Verify />} />
         </Route>
       </Route>

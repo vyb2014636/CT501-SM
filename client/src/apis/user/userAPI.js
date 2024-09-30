@@ -67,3 +67,8 @@ export const uploadInfo = async (formData) => {
   const response = await axiosIntercept.put('user/uploadInfo', formData)
   return response
 }
+
+export const searchAPI = async (query) => {
+  const response = await axiosIntercept.get('user/search', { params: { query: query } })
+  return response
+}

@@ -11,6 +11,12 @@ var userSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    fullname: {
+      type: String
+    },
+    normalizedFullName: {
+      type: String
+    },
     email: {
       type: String,
       required: true,
@@ -51,9 +57,9 @@ var userSchema = new mongoose.Schema(
     refreshToken: String,
     friends: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
     address: {
-      province: String, // Tham chiếu đến Province
-      district: String, // Tham chiếu đến District
-      ward: String // Tham chiếu đến Ward
+      province: String,
+      district: String,
+      ward: String
     }
   },
   {
@@ -64,16 +70,15 @@ var userSchema = new mongoose.Schema(
 userSchema.statics.findByIdPopulateAddress = function (userId) {
   return this.findById(userId).populate('friends address.province address.district address.ward').select('-password')
 }
+userSchema.pre('save', function (next) {
+  this.fullname = `${this.firstname} ${this.lastname}`
+  this.normalizedFullName = removeDiacritics(`${this.firstname} ${this.lastname}`).toLowerCase()
+  next()
+})
 
-// userSchema.pre('save', async function (next) {
-//   if (!this.isModified('password')) {
-//     //Kiểm tra xem đã băm hay chưa
-//     next()
-//   }
-//   const salt = await bcrypt.genSaltSync(10)
-//   this.password = await bcrypt.hash(this.password, salt)
-//   next()
-// })
+const removeDiacritics = (str) => {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+}
 
 const User = mongoose.model('User', userSchema)
 

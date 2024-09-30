@@ -19,15 +19,13 @@ export const scrollbarStyles = {
     width: '8px' // Độ rộng của scrollbar
   },
   '&::-webkit-scrollbar-thumb': {
-    backgroundColor: '#c1c1c1', // Màu sắc của scrollbar thumb
-    borderRadius: '8px' // Bo tròn scrollbar
+    backgroundColor: 'background.default',
+    borderRadius: '8px'
   },
   '&::-webkit-scrollbar-thumb:hover': {
-    backgroundColor: '#9e9e9e' // Màu khi hover vào scrollbar thumb
+    backgroundColor: 'background.paper'
   },
-  '&::-webkit-scrollbar-track': {
-    backgroundColor: '#f1f1f1' // Màu nền track của scrollbar
-  }
+  '&::-webkit-scrollbar': { width: 5 }
 }
 
 export const scrollbarStyleMui = {
@@ -36,4 +34,13 @@ export const scrollbarStyleMui = {
   '&::-webkit-scrollbar-thumb': { bgcolor: 'background.paper' },
   '&::-webkit-scrollbar-thumb:hover': { bgcolor: '#bfc2cf' },
   '&::-webkit-scrollbar': { width: 5 }
+}
+export const scrollbarTextFieldStyleMui = {
+  '& textarea': {
+    // Tùy chỉnh cho textarea bên trong TextField
+    overflowY: 'auto',
+    '&::-webkit-scrollbar-thumb': { bgcolor: 'background.default' },
+    '&::-webkit-scrollbar-thumb:hover': { bgcolor: '#bfc2cf' },
+    '&::-webkit-scrollbar': { width: 5 }
+  }
 }
