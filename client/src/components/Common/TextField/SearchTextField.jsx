@@ -93,7 +93,7 @@ const SearchTextField = () => {
           <List>
             {/* {loading && <CircularProgress />} */}
             {users.map((userSearch) => (
-              <ListItem key={userSearch._id} onClick={() => handleProfileClick(user._id, userSearch._id)} button>
+              <ListItem key={userSearch._id} onClick={() => handleProfileClick(userSearch._id, user._id)} button>
                 <ListItemAvatar>
                   <Avatar src={userSearch.avatar} />
                 </ListItemAvatar>

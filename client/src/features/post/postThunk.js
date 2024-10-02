@@ -7,6 +7,15 @@ export const fetchAllPosts = createAsyncThunk('post/allPost', async ({ page, use
   else return rejectWithValue(error)
 })
 
+export const fetchPost = createAsyncThunk('post/post', async (postId, { rejectWithValue }) => {
+  const response = await axiosIntercept.get(`/post/post/${postId}`)
+  try {
+    return response
+  } catch (error) {
+    rejectWithValue(error)
+  }
+})
+
 export const toggleLikePost = createAsyncThunk('post/like', async (postId, { rejectWithValue }) => {
   const response = await axiosIntercept.put('/post/like', { postId })
   if (!response.statusCode) return response

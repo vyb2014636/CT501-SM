@@ -6,9 +6,9 @@ import Typography from '@mui/material/Typography'
 
 import renderMedia from '@/components/Common/Post/MediaPost/MediaPost'
 import { styleCardGeneral, styleThreeButton } from '@/styles/stylePost/style'
-import PostContent from '../ContentPost/ContentPost'
-import PostInteract from '../InteractPost/InteractPost'
-import PostHeader from '../HeaderPost/HeaderPost'
+import PostContent from '../../Post/ContentPost/ContentPost'
+import PostInteract from '../../Post/InteractPost/InteractPost'
+import PostHeader from '../../Post/HeaderPost/HeaderPost'
 
 const CommonPost = ({ noMedia, post, isLiked, handleClickLike }) => {
   return (

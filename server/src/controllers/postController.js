@@ -1,33 +1,19 @@
-import Post from '~/models/post'
-import ApiError from '~/middlewares/ApiError'
 import { postService } from '~/services/postService'
 
 const createPost = async (req, res, next) => {
   const { describe } = req.body
-  const id = req.user.id
+  const myId = req.user.id
+  const images = req?.files?.images ? req?.files?.images?.map((file) => file.path) : []
+  const videos = req?.files?.videos ? req?.files?.videos?.map((file) => file.path) : []
 
   try {
-    // Lấy các URL hình ảnh và video
-    const images = req?.files?.images ? req?.files?.images?.map((file) => file.path) : []
-    const videos = req?.files?.videos ? req?.files?.videos?.map((file) => file.path) : []
-    // Kiểm tra số lượng video
-    if (videos?.length > 2) throw new ApiError(400, 'Không thể upload quá 2 video')
+    const newPost = await postService.createPost(describe, myId, images, videos)
 
-    // Tạo bài post mới
-    const newPost = await Post.create({
-      describe,
-      byPost: id,
-      images,
-      videos
-    })
-
-    // Trả về kết quả
     return res.status(201).json({
       message: newPost ? 'Đăng thành công' : 'Post thất bại',
       post: newPost || 'Post thất bại'
     })
   } catch (error) {
-    // Chuyển lỗi cho middleware xử lý lỗi
     next(error)
   }
 }
@@ -52,7 +38,20 @@ const getPosts = async (req, res, next) => {
     next(error)
   }
 }
+const getPost = async (req, res, next) => {
+  const { postId } = req.params
 
+  try {
+    const post = await postService.getPost(postId)
+
+    return res.status(200).json({
+      message: 'Bài đăng bạn tìm',
+      post
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 const likePost = async (req, res, next) => {
   const { postId } = req.body
   const { id } = req.user
@@ -85,9 +84,8 @@ const sharePost = async (req, res, next) => {
 }
 
 const getComments = async (req, res, next) => {
+  const { postId, limit = 5, page = 1 } = req.query
   try {
-    const { postId, limit = 5, page = 1 } = req.query
-
     const { comments, hasMoreComments } = await postService.getComments(postId, page, limit)
 
     return res.status(200).json({
@@ -170,5 +168,6 @@ export const postController = {
   getReplies,
   addReply,
   likeComment,
-  likeReply
+  likeReply,
+  getPost
 }

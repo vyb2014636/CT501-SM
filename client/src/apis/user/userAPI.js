@@ -72,3 +72,8 @@ export const searchAPI = async (query) => {
   const response = await axiosIntercept.get('user/search', { params: { query: query } })
   return response
 }
+
+export const fetchAllSearchAPI = async (query) => {
+  const response = await axiosIntercept.get('user/searchAll', { params: { query: query } })
+  return response
+}

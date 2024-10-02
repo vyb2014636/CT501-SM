@@ -19,14 +19,14 @@ export const addComment = createAsyncThunk('post/addComment', async ({ postId, c
   }
 })
 
-export const fetchRepliesForComment = createAsyncThunk('post/replies', async ({ postId, commentId, page }, { rejectWithValue }) => {
-  try {
-    const response = await axiosIntercept.get('post/comments/replies', { params: { postId, commentId, page } })
-    return response
-  } catch (error) {
-    rejectWithValue(error.message)
-  }
-})
+// export const fetchRepliesForComment = createAsyncThunk('post/replies', async ({ postId, commentId, page }, { rejectWithValue }) => {
+//   try {
+//     const response = await axiosIntercept.get('post/comments/replies', { params: { postId, commentId, page } })
+//     return response
+//   } catch (error) {
+//     rejectWithValue(error.message)
+//   }
+// })
 
 export const addReplyForComment = createAsyncThunk('post/addReply', async ({ postId, commentId, content }, { rejectWithValue }) => {
   try {

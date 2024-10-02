@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import Box from '@mui/material/Box'
@@ -15,9 +15,9 @@ const Comment = ({ post, comment, user, dispatch }) => {
   const [replyCount, setReplyCount] = useState(3)
   const currentUser = useSelector((state) => state.auth.user)
 
-  const isLiked = comment.likes.includes(currentUser._id)
-
-  const handleReplyClick = () => {
+  console.log(comment)
+  const isLiked = comment.likes.some((like) => like._id === currentUser._id)
+  const handleClickReply = () => {
     setShowReplyInput(!showReplyInput)
   }
 
@@ -38,7 +38,7 @@ const Comment = ({ post, comment, user, dispatch }) => {
 
   return (
     <Box display='flex' flexDirection='column' mb={2}>
-      <CardComment user={user} comment={comment} handleReplyClick={handleReplyClick} postId={post._id} isLiked={isLiked} />
+      <CardComment user={user} comment={comment} handleClickReply={handleClickReply} postId={post._id} isLiked={isLiked} />
 
       {showReplyInput && <ReplyForm replyText={replyText} setReplyText={setReplyText} handleSendReply={handleSendReply} comment={comment} />}
 
@@ -47,7 +47,11 @@ const Comment = ({ post, comment, user, dispatch }) => {
           .slice(0, replyCount)
           .map((reply) => <ReplyItem key={reply._id} postId={post._id} commentId={comment._id} user={reply.user} reply={reply} />)}
 
-      {comment.replies?.length > 0 && <Button onClick={handleShowReplies}>{showReplies ? 'Ẩn phản hồi' : 'Xem phản hồi'}</Button>}
+      {comment.replies?.length > 0 && (
+        <Button size='small' onClick={handleShowReplies}>
+          {showReplies ? 'Ẩn phản hồi' : 'Xem phản hồi'}
+        </Button>
+      )}
 
       {showReplies && comment.replies.length > replyCount && (
         <Button onClick={() => setReplyCount(replyCount + 3)} sx={{ mt: 1, ml: 4 }}>
@@ -58,4 +62,4 @@ const Comment = ({ post, comment, user, dispatch }) => {
   )
 }
 
-export default Comment
+export default memo(Comment)

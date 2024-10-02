@@ -8,6 +8,7 @@ const router = express.Router()
 router
   .get('/noFriends', verifyToken, userController.getSuggestions)
   .get('/search', verifyToken, userController.searchUser)
+  .get('/searchAll', verifyToken, userController.getAllSearch)
   .get('/favorites', (req, res) => {
     return res.status(200).json({
       message: 'signup'

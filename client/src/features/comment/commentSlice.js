@@ -1,6 +1,6 @@
 // src/features/postSlice.js
 import { createSlice } from '@reduxjs/toolkit'
-import { addComment, addReplyForComment, fetchComments, fetchRepliesForComment, likeComment, likeReply } from './commentThunk'
+import { addComment, addReplyForComment, fetchComments, likeComment, likeReply } from './commentThunk'
 
 export const commentSlice = createSlice({
   name: 'comment',
@@ -9,7 +9,7 @@ export const commentSlice = createSlice({
     status: 'idle',
     error: false,
     loading: true,
-    hasMoreComments: true, // Thêm cờ để biết còn bình luận để fetch hay không
+    hasMoreComments: true,
     ofPost: null
   },
   reducers: {
@@ -48,19 +48,12 @@ export const commentSlice = createSlice({
       })
       .addCase(addReplyForComment.fulfilled, (state, action) => {
         const { _id, replies } = action.payload
-        console.log(action.payload)
         const comment = state.comments.find((c) => c._id === _id)
         if (comment) {
           comment.replies = replies
         }
       })
-      .addCase(fetchRepliesForComment.fulfilled, (state, action) => {
-        const comment = state.comments.find((comment) => comment._id === action.meta.arg.commentId)
-        if (comment) {
-          comment.replies = [...comment.replies, ...action.payload.replies]
-          comment.hasMoreReplies = action.payload.hasMoreReplies // Cờ đánh dấu còn phản hồi hay không
-        }
-      })
+
       .addCase(likeComment.fulfilled, (state, action) => {
         const { updatedComment } = action.payload
         const comment = state.comments.find((comment) => comment._id === updatedComment._id)
@@ -72,7 +65,6 @@ export const commentSlice = createSlice({
         const { updatedComment, updatedReply } = action.payload
         const comment = state.comments.find((comment) => comment._id === updatedComment._id)
         if (comment) {
-          console.log(1)
           const reply = comment.replies.find((r) => r._id === updatedReply._id)
           if (reply) {
             reply.likes = updatedReply.likes

@@ -1,6 +1,49 @@
 import ApiError from '~/middlewares/ApiError'
+import Notification from '~/models/notification'
 import Post from '~/models/post'
 import User from '~/models/user'
+
+const notifyFriendsAboutPost = async (userId, postId, type) => {
+  const user = await User.findById(userId).populate('friends')
+
+  const notifications = user.friends.map((friend) => ({
+    type: type,
+    sender: userId,
+    receiver: friend._id,
+    postId
+  }))
+
+  await Notification.insertMany(notifications)
+}
+
+const createPost = async (describe, myId, images, videos) => {
+  // try {
+  // } catch (error) {
+  //   throw
+  // }
+  if (videos?.length > 2) throw new ApiError(400, 'Không thể upload quá 2 video')
+
+  const newPost = await Post.create({
+    describe,
+    byPost: myId,
+    images,
+    videos
+  })
+
+  await notifyFriendsAboutPost(myId, newPost._id, 'newPost')
+
+  return newPost
+}
+
+const getPost = async (postId) => {
+  let postQuery = Post.findById(postId)
+
+  postQuery = Post.populateFields(postQuery)
+  const post = await postQuery.lean()
+  if (!post) throw new ApiError(404, 'Bài viết không tồn tại')
+
+  return post
+}
 
 const getPosts = async (loggedInId, userId, limit, skip) => {
   let filter = { byPost: loggedInId }
@@ -47,7 +90,7 @@ const likePost = async (userId, postId) => {
   return { message, post, quantity }
 }
 
-const sharePost = async (postId, userId, describe) => {
+const sharePost = async (postId, myId, describe) => {
   const post = await Post.findByIdPopulateSharePost(postId)
 
   if (!post) throw new Error('Bài đăng bạn muốn chia sẻ không tồn tại')
@@ -55,22 +98,24 @@ const sharePost = async (postId, userId, describe) => {
   const originalPost = post.sharedPost ? post.sharedPost : post
 
   // Kiểm tra nếu người dùng đã chia sẻ bài viết này rồi
-  if (originalPost.byPost === userId) {
+  if (originalPost.byPost === myId) {
     throw new Error('Bạn không thể tự chia sẻ bài viết của chính mình')
   }
 
   // Tạo một bài chia sẻ mới
   const sharedPost = new Post({
-    byPost: userId,
+    byPost: myId,
     describe,
     sharedPost: originalPost._id
   })
 
   await sharedPost.save()
 
-  // Thêm người dùng vào danh sách người đã chia sẻ
-  originalPost.sharesBy.push(userId)
+  originalPost.sharesBy.push(myId)
+
   await originalPost.save()
+
+  await notifyFriendsAboutPost(myId, sharedPost._id, 'sharedPost')
 
   return sharedPost
 }
@@ -82,7 +127,7 @@ const getComments = async (postID, page, limit) => {
   const slicedComments = post.comments.slice((page - 1) * limit, page * limit)
 
   await Post.populate(slicedComments, {
-    path: 'user replies.user',
+    path: 'user replies.user likes',
     select: 'firstname lastname avatar '
   })
 
@@ -164,14 +209,17 @@ const likeComment = async (postId, commentId, userId) => {
 
   await post.save()
 
-  const populatedPost = await post.populate({
+  await post.populate({
     path: 'comments.user',
     select: 'firstname lastname avatar'
   })
-
+  await post.populate({
+    path: 'comments.likes',
+    select: 'firstname lastname avatar'
+  })
   return {
     message: isLiked ? 'Bỏ like thành công' : 'Like thành công',
-    comment: populatedPost.comments.id(commentId)
+    comment: post.comments.id(commentId)
   }
 }
 
@@ -207,6 +255,7 @@ const likeReply = async (postId, commentId, replyId, userId) => {
 }
 
 export const postService = {
+  createPost,
   getPosts,
   sharePost,
   likePost,
@@ -215,5 +264,6 @@ export const postService = {
   getReplies,
   addReply,
   likeComment,
-  likeReply
+  likeReply,
+  getPost
 }

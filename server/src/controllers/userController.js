@@ -60,19 +60,29 @@ const uploadBackground = async (req, res, next) => {
 const searchUser = async (req, res, next) => {
   const { query } = req.query
   try {
-    const { users, posts } = await userService.searchUser(query)
+    const { users, posts, hasMoreUsers } = await userService.searchUser(query)
 
-    res.status(200).json({ message: 'danh sách', users, posts })
+    res.status(200).json({ message: 'danh sách', users, posts, hasMoreUsers })
   } catch (error) {
     next(error)
   }
 }
+const getAllSearch = async (req, res, next) => {
+  const { query } = req.query
+  try {
+    const users = await userService.getAllSearch(query)
 
+    res.status(200).json({ message: 'danh sách tất cả người dùng bạn tìm', users })
+  } catch (error) {
+    next(error)
+  }
+}
 export const userController = {
   getSuggestions,
   unFriend,
   uploadAvatar,
   uploadBackground,
   uploadInfo,
-  searchUser
+  searchUser,
+  getAllSearch
 }

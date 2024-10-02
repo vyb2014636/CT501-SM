@@ -6,9 +6,9 @@ import Divider from '@mui/material/Divider'
 
 import renderMedia from '@/components/Common/Post/MediaPost/MediaPost'
 import { styleCardGeneral, styleThreeButton } from '@/styles/stylePost/style'
-import HeaderPost from '../HeaderPost/HeaderPost'
-import ContentPost from '../ContentPost/ContentPost'
-import InteractPost from '../InteractPost/InteractPost'
+import HeaderPost from '../../Post/HeaderPost/HeaderPost'
+import ContentPost from '../../Post/ContentPost/ContentPost'
+import InteractPost from '../../Post/InteractPost/InteractPost'
 
 const SharePost = ({ noMedia, post, isLiked, handleClickLike }) => {
   return (

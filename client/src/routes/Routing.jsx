@@ -17,6 +17,9 @@ import PublicRoute from './PublicRoute'
 import Other from '@/pages/Profile/Other/Other'
 import Person from '@/pages/Profile/Person/Person'
 import Search from '@/pages/Search'
+import Summary from '@/pages/Search/Summary/Summary'
+import AllUser from '@/pages/Search/AllUsers/AllUser'
+import ViewPost from '@/pages/Home/Content/ViewPost/ViewPost'
 
 function Routing() {
   return (
@@ -24,6 +27,7 @@ function Routing() {
       <Route element={<PrivateRoute />}>
         <Route path='/' element={<Home />}>
           <Route path='/' element={<Main />} />
+          <Route path='/post/:postId' element={<ViewPost />} />
           <Route path='favorite' element={<Favorites />} />
         </Route>
         <Route path='/admin' element={<Admin />}>
@@ -34,7 +38,10 @@ function Routing() {
           <Route path='/:userId' element={<Other />} />
           <Route path='/:userId/person' element={<Person />} />
         </Route>
-        <Route path='/search/:query' element={<Search />} />
+        <Route path='/search/:query' element={<Search />}>
+          <Route path='/search/:query' element={<Summary />} />
+          <Route path='/search/:query/people' element={<AllUser />} />
+        </Route>
       </Route>
       <Route element={<PublicRoute />}>
         <Route path='/auth' element={<Auth />}>

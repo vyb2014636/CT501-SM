@@ -52,10 +52,13 @@ const uploadInfo = async (myId, reqBody) => {
 }
 
 const searchUser = async (query) => {
-  // Chuyển đổi query thành lowercase và tách các từ
   const searchTerms = query.toLowerCase().trim().split(' ')
 
-  const regex = searchTerms.map((term) => `(${term})`).join('.*') // Kết hợp các từ với .* ở giữa
+  const regex = searchTerms.map((term) => `(${term})`).join('.*')
+
+  const totalUsers = await User.countDocuments({
+    $or: [{ fullname: { $regex: regex, $options: 'i' } }, { normalizedFullName: { $regex: regex, $options: 'i' } }]
+  })
 
   const users = await User.find({
     $or: [
@@ -66,13 +69,39 @@ const searchUser = async (query) => {
         normalizedFullName: { $regex: regex, $options: 'i' }
       }
     ]
-  }).limit(5)
+  }).limit(3)
 
-  const posts = await Post.find({
+  let postsQuery = Post.find({
     describe: { $regex: query, $options: 'i' }
   }).limit(3)
 
-  return { users, posts }
+  postsQuery = Post.populateFields(postsQuery)
+
+  const posts = await postsQuery.lean()
+
+  const limit = 3
+  const hasMoreUsers = limit < totalUsers
+
+  return { users, posts, hasMoreUsers }
+}
+
+const getAllSearch = async (query) => {
+  const searchTerms = query.toLowerCase().trim().split(' ')
+
+  const regex = searchTerms.map((term) => `(${term})`).join('.*')
+
+  const users = await User.find({
+    $or: [
+      {
+        fullname: { $regex: regex, $options: 'i' }
+      },
+      {
+        normalizedFullName: { $regex: regex, $options: 'i' }
+      }
+    ]
+  })
+
+  return users
 }
 
 export const userService = {
@@ -80,5 +109,6 @@ export const userService = {
   uploadAvatar,
   uploadBackground,
   uploadInfo,
-  searchUser
+  searchUser,
+  getAllSearch
 }

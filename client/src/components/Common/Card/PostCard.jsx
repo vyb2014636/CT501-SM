@@ -54,7 +54,7 @@ const PostCard = ({ user }) => {
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
-            <ModalPost>
+            <ModalPost user={user}>
               <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
                 <PlayCircleOutlineIcon color='primary' size='small' />
                 <Typography color='primary' fontWeight='bold'>

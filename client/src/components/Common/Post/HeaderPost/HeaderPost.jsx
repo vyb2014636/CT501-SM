@@ -12,14 +12,13 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { formatFullname } from '@/utils/helpers'
 import { useSelector } from 'react-redux'
-
+import { avatarStyleMui, titleAvatarStyleMui } from '@/styles/styles'
 const PostHeader = ({ userPost, post, visibleMenu }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const { user } = useSelector((state) => state.auth)
   const open = Boolean(anchorEl)
   const handleClick = (event) => setAnchorEl(event.currentTarget)
   const handleProfileClick = useProfileNavigation()
-
   return (
     <CardHeader
       sx={{ py: 2 }}
@@ -27,15 +26,12 @@ const PostHeader = ({ userPost, post, visibleMenu }) => {
         <Avatar
           src={userPost.avatar}
           alt='Profile Picture'
-          sx={{ width: 44, height: 44, cursor: 'pointer', '&:hover': { opacity: 0.6, transition: 'opacity 0.3s ease' } }}
-          onClick={() => handleProfileClick(userPost._id, user._id)}
+          sx={{ width: 44, height: 44, ...avatarStyleMui }}
+          onClick={() => handleProfileClick(userPost._id)}
         />
       }
       title={
-        <Typography
-          variant='h6'
-          sx={{ cursor: 'pointer', '&:hover': { opacity: 0.6, transition: 'opacity 0.3s ease' }, fontWeight: 'bold' }}
-          onClick={() => handleProfileClick(userPost._id, user._id)}>
+        <Typography variant='h6' sx={titleAvatarStyleMui} onClick={() => handleProfileClick(userPost._id)}>
           {formatFullname(userPost.firstname, userPost.lastname)}
         </Typography>
       }

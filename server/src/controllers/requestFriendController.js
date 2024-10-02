@@ -1,4 +1,3 @@
-import FriendRequest from '~/models/friendRequest'
 import { requestFriendService } from '~/services/requestFriendService'
 
 const getRequests = async (req, res, next) => {

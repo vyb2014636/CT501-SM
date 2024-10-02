@@ -36,7 +36,8 @@ const theme = extendTheme({
         },
         background: {
           default: '#18191a', // Màu nền tối
-          paper: '#242526'
+          paper: '#242526',
+          list: '#18191a'
         },
         text: {
           primary: '#e4e6eb', // Màu chữ sáng hơn trong chế độ tối

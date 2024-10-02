@@ -1,5 +1,4 @@
 import React, { memo, useRef, useState } from 'react'
-import { toast } from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
@@ -9,19 +8,18 @@ import Typography from '@mui/material/Typography'
 import Skeleton from '@mui/material/Skeleton'
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
 import FlexColumn from '../Flex/FlexColumn'
-import Comments from '../Comment/Comments'
 import CommentForm from '../Form/CommentForm'
 import TitleModal from '../Modal/Title/TitleModal'
-import { addComment, fetchComments } from '@/features/comment/commentThunk'
+import { fetchComments } from '@/features/comment/commentThunk'
 import { resetCommentState } from '@/features/comment/commentSlice'
 import { scrollbarStyles, styleModal } from '@/styles/styles'
 import { styleThreeButton } from '@/styles/stylePost/style'
 import useScrollInfinite from '@/hooks/useScrollInfinite'
+import Comment from '../Comment/Comment'
 
 const ButtonComment = ({ post }) => {
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
-  const [newComment, setNewComment] = useState('')
   const [page, setPage] = useState(1)
   const { comments, hasMoreComments, loading } = useSelector((state) => state.comment)
   const { user } = useSelector((state) => state.auth)
@@ -42,15 +40,6 @@ const ButtonComment = ({ post }) => {
     if (hasMoreComments && !loading) {
       setPage((prevPage) => prevPage + 1)
       dispatch(fetchComments({ postId: post._id, page: page + 1 }))
-    }
-  }
-
-  const handleSendComment = async () => {
-    try {
-      dispatch(addComment({ postId: post._id, content: newComment }))
-      setNewComment('')
-    } catch {
-      toast.error('Thất bại')
     }
   }
 
@@ -79,14 +68,16 @@ const ButtonComment = ({ post }) => {
                 Không có bình luận nào được đăng
               </Typography>
             ) : (
-              <Comments comments={comments} dispatch={dispatch} post={post} />
+              comments?.map((comment) => (
+                <Comment key={comment._id} post={post} comment={comment} user={comment.user} dispatch={dispatch} replies={comment.replies} />
+              ))
             )}
             {loading && comments.length > 0 && <Skeleton variant='rectangular' width='100%' height={60} animation='wave' />}
           </Box>
 
           <Divider />
 
-          <CommentForm user={user} handleSendComment={handleSendComment} setNewComment={setNewComment} newComment={newComment} />
+          <CommentForm user={user} post={post} />
         </FlexColumn>
       </Modal>
     </>

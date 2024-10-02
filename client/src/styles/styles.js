@@ -22,10 +22,8 @@ export const scrollbarStyles = {
     backgroundColor: 'background.default',
     borderRadius: '8px'
   },
-  '&::-webkit-scrollbar-thumb:hover': {
-    backgroundColor: 'background.paper'
-  },
-  '&::-webkit-scrollbar': { width: 5 }
+
+  '&::-webkit-scrollbar': { width: 10 }
 }
 
 export const scrollbarStyleMui = {
@@ -37,10 +35,20 @@ export const scrollbarStyleMui = {
 }
 export const scrollbarTextFieldStyleMui = {
   '& textarea': {
-    // Tùy chỉnh cho textarea bên trong TextField
     overflowY: 'auto',
     '&::-webkit-scrollbar-thumb': { bgcolor: 'background.default' },
     '&::-webkit-scrollbar-thumb:hover': { bgcolor: '#bfc2cf' },
     '&::-webkit-scrollbar': { width: 5 }
   }
+}
+
+export const avatarStyleMui = {
+  cursor: 'pointer',
+  '&:hover': { opacity: 0.8, transition: 'opacity 0.3s ease' }
+}
+
+export const titleAvatarStyleMui = {
+  cursor: 'pointer',
+  '&:hover': { opacity: 0.8, textDecoration: 'underline', transition: 'opacity 0.3s ease' },
+  fontWeight: 'bold'
 }

@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux'
 import { likeComment } from '@/features/comment/commentThunk'
 import { formatFullname } from '@/utils/helpers'
 
-const CardComment = ({ user, comment, handleReplyClick, postId, isLiked }) => {
+const CardComment = ({ user, comment, handleClickReply, postId, isLiked }) => {
   const dispatch = useDispatch()
 
   const handleLike = () => {
@@ -36,7 +36,7 @@ const CardComment = ({ user, comment, handleReplyClick, postId, isLiked }) => {
               {comment.likes.length} Thích
             </Typography>
           </Button>
-          <Button size='small' color='primary' onClick={handleReplyClick}>
+          <Button size='small' color='primary' onClick={handleClickReply}>
             <ReplyIcon fontSize='small' />
             <Typography variant='caption' ml={0.5}>
               Phản hồi
