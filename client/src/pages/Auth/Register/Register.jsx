@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import { styleForm } from '@/styles/styleAuth/style'
-import RegisterForm from '@/components/user/Form/RegisterForm'
+import RegisterForm from '@/components/Common/Form/RegisterForm'
 
 const Register = () => {
   return (

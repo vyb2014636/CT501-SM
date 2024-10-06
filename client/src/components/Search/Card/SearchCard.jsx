@@ -2,9 +2,9 @@ import React from 'react'
 import FlexRow from '../../Common/Flex/FlexRow'
 import { Avatar, Typography } from '@mui/material'
 import FlexColumn from '../../Common/Flex/FlexColumn'
-import FriendshipButton from '../../Common/Button/FriendshipButton'
 import { useProfileNavigation } from '@/hooks/useProfileNavigation'
 import { avatarStyleMui, titleAvatarStyleMui } from '@/styles/styles'
+import FriendshipButton from '@/components/Common/ProfileCard/Button/FriendshipButton'
 const SearchCard = ({ user }) => {
   const handleProfileClick = useProfileNavigation()
   return (

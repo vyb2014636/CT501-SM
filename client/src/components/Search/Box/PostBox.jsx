@@ -1,8 +1,8 @@
-import Post from '@/components/Common/Post/Post'
 import React, { useEffect } from 'react'
 import { Box, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { resetPostState, searchPosts } from '@/features/post/postSlice'
+import PostCard from '@/components/Common/PostCard/PostCard'
 
 const PostBox = ({ postsSearch }) => {
   const dispatch = useDispatch()
@@ -22,7 +22,7 @@ const PostBox = ({ postsSearch }) => {
         Bài viết liên quan
       </Typography>
       {posts.map((post) => (
-        <Post key={post._id} post={post} />
+        <PostCard key={post._id} post={post} />
       ))}
     </>
   )

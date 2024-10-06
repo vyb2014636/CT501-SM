@@ -3,10 +3,9 @@ import { fetchAllPosts } from '@/features/post/postThunk'
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import FriendshipButton from '@/components/Common/Button/FriendshipButton'
-import ProfileCard from '@/components/user/Card/ProfileCard'
 import LayoutMain from '@/components/Common/Main/LayoutMain'
 import NotFoundPage from '@/pages/Error/NotFoundPage'
+import ProfileCard from '@/components/Common/ProfileCard/ProfileCard'
 
 const Other = () => {
   const { userId } = useParams()
@@ -23,9 +22,7 @@ const Other = () => {
 
   return (
     <LayoutMain loading={loading} posts={posts} pageRef={pageRef}>
-      <ProfileCard user={userPosts} totalPosts={totalPosts}>
-        <FriendshipButton userId={userId} showChat />
-      </ProfileCard>
+      <ProfileCard user={userPosts} totalPosts={totalPosts} />
     </LayoutMain>
   )
 }

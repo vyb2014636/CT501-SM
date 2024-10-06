@@ -125,7 +125,6 @@ const getComments = async (postID, page, limit) => {
 
   const totalComments = post.comments.length
   const slicedComments = post.comments.slice((page - 1) * limit, page * limit)
-
   await Post.populate(slicedComments, {
     path: 'user replies.user likes',
     select: 'firstname lastname avatar '

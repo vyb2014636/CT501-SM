@@ -14,6 +14,8 @@ const getListNotification = async (myId, page, limit) => {
 
 const interactNotification = async (notificationId) => {
   const notification = await Notification.findByIdAndUpdate(notificationId, { status: 'read' }, { new: true })
+    .populate('sender', 'firstname lastname fullname avatar')
+    .populate('postId', 'describe')
 
   if (!notification) throw new ApiError(404, 'Không tìm thấy thông báo này')
 

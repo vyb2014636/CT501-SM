@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import CircularProgress from '@mui/material/CircularProgress'
-import FlexCenter from '@/components/Common/Flex/FlexCenter'
-import LeftSection from '@/components/user/Section/LeftSection'
-import { verifyEmailAPI } from '@/apis/auth/authAPI'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import { formatTime, setFalse, setValues } from '@/utils/helpers'
-import Swal from 'sweetalert2'
+import { useLocation } from 'react-router-dom'
+import { formatTime } from '@/utils/helpers'
 import { styleForm } from '@/styles/styleAuth/style'
-import VerifyForm from '@/components/user/Form/VerifyForm'
+import VerifyForm from '@/components/Common/Form/VerifyForm'
 
 const Verify = () => {
   const location = useLocation()

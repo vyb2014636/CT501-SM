@@ -1,4 +1,4 @@
-import Post from '@/components/Common/Post/Post'
+import PostCard from '@/components/Common/PostCard/PostCard'
 import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
 import { resetPostState } from '@/features/post/postSlice'
 import { fetchPost } from '@/features/post/postThunk'
@@ -19,10 +19,16 @@ const ViewPost = () => {
     } catch (error) {
       console.log(error)
     }
-  }, [dispatch])
+  }, [dispatch, postId])
   return (
     <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
-      {loading && !viewPost ? <SkeletonPosts /> : !loading && !viewPost ? <Typography>Không tồn tại bài đăng</Typography> : <Post post={viewPost} />}
+      {loading && !viewPost ? (
+        <SkeletonPosts />
+      ) : !loading && !viewPost ? (
+        <Typography>Không tồn tại bài đăng</Typography>
+      ) : (
+        <PostCard post={viewPost} />
+      )}
     </Box>
   )
 }

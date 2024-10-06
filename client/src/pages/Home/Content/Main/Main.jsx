@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import PostCard from '@/components/Common/Card/PostCard'
 import { fetchAllPosts } from '@/features/post/postThunk'
 import { resetPostState } from '@/features/post/postSlice'
 import LayoutMain from '@/components/Common/Main/LayoutMain'
+import PostBox from '@/components/Post/PostBox'
 
 const Main = () => {
   const dispatch = useDispatch()
@@ -21,7 +21,7 @@ const Main = () => {
 
   return (
     <LayoutMain loading={loading} posts={posts} pageRef={pageRef}>
-      <PostCard user={user} />
+      <PostBox user={user} />
     </LayoutMain>
   )
 }

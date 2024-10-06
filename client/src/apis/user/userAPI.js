@@ -31,7 +31,7 @@ export const rejectAddFriendAPI = async (requestId) => {
   const response = await axiosIntercept.post('requestFriend/rejectRequest', { requestId: requestId })
   return response
 }
-export const cancelFriendAPI = async (toUser) => {
+export const unFriendAPI = async (toUser) => {
   const response = await axiosIntercept.put('user/unFriend', { targetId: toUser })
   return response
 }
