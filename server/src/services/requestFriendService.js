@@ -5,8 +5,8 @@ import User from '~/models/user'
 
 const notifyFriendsAboutRequest = async (userId, toId, type) => {
   const notification = new Notification({
-    sender: userId,
-    receiver: toId,
+    sender: toId,
+    receiver: userId,
     type: type
   })
 
@@ -20,28 +20,47 @@ const getRequests = async (to) => {
   return requests
 }
 const sendFriendRequest = async (from, to) => {
-  const existingRequest = await FriendRequest.findOne({ from, to, status: 'pending' }).lean()
+  const existingFriendship = await FriendRequest.findOne({
+    $or: [
+      { from, to },
+      { from: to, to: from }
+    ]
+  })
 
-  if (existingRequest) throw new ApiError(400, 'Yêu cầu kết bạn đang được xử lý')
+  if (existingFriendship) {
+    if (existingFriendship.from.toString() === to && ['declined', 'cancelled', 'unfriended'].includes(existingFriendship.status)) {
+      existingFriendship.from = from
+      existingFriendship.to = to
+    }
+    existingFriendship.status = 'pending'
+    await existingFriendship.save()
+    return await existingFriendship.populate('from', 'firstname lastname avatar')
+  }
 
-  const request = await FriendRequest.create({ from, to })
-
-  return request
+  const newFriendship = new FriendRequest({ from, to })
+  await newFriendship.save()
+  return await newFriendship.populate('from', 'firstname lastname avatar')
 }
+
 const cancelFriendRequest = async (from, to) => {
-  const request = await FriendRequest.findOneAndDelete({ from, to, status: 'pending' }).lean()
-
-  if (!request) return res.status(404).json({ message: 'Không tìm thấy yêu cầu kết bạn này' })
-
-  return request
+  let friendship = await FriendRequest.findOne({ from, to })
+  if (friendship && friendship.status === 'pending') {
+    friendship.status = 'cancelled'
+    await friendship.save()
+    return friendship
+  } else {
+    throw new ApiError(400, 'Không có yêu cầu nào như vậy')
+  }
 }
 
-const acceptFriendRequest = async (myId, requestId) => {
-  const request = await FriendRequest.findById(requestId).lean()
+const acceptFriendRequest = async (from, to) => {
+  let request = await FriendRequest.findOne({ from, to, status: 'pending' })
 
   if (!request) throw new ApiError(404, 'Yêu cầu kết bạn không tồn tại.')
+  request.status = 'accepted'
+  await request.save()
 
-  if (request.to.toString() !== myId.toString()) throw new ApiError(403, 'Bạn không có quyền chấp nhận yêu cầu này.')
+  if (request.to.toString() !== to.toString()) throw new ApiError(403, 'Bạn không có quyền chấp nhận yêu cầu này.')
 
   const [userFrom, userTo] = await Promise.all([User.findById(request.from), User.findById(request.to)])
 
@@ -52,48 +71,78 @@ const acceptFriendRequest = async (myId, requestId) => {
 
   await Promise.all([userFrom.save(), userTo.save()])
 
-  const response = await FriendRequest.findByIdAndDelete(requestId)
-
-  await notifyFriendsAboutRequest(myId, request.from, 'friendRequestAccepted')
-
-  return response
-}
-
-const rejectFriendRequest = async (myId, requestId) => {
-  const request = await FriendRequest.findOneAndDelete({ _id: requestId, to: myId, status: 'pending' }).lean()
-
-  if (!request) throw new ApiError(404, 'Lời mời không tồn tại')
-
-  await notifyFriendsAboutRequest(myId, request.from, 'friendRequestReject')
+  await notifyFriendsAboutRequest(from, to, 'friendRequestAccepted')
 
   return request
 }
 
+const rejectFriendRequest = async (from, to) => {
+  let request = await FriendRequest.findOne({ from, to })
+
+  if (request && request.status === 'pending') {
+    request.status = 'declined'
+    await request.save()
+    await notifyFriendsAboutRequest(to, from, 'friendRequestReject')
+    return request
+  } else {
+    throw new ApiError(400, 'Không có yêu cầu nào như vậy')
+  }
+}
+
+const unFriend = async (from, to) => {
+  const existingFriendship = await FriendRequest.findOne({
+    $or: [
+      { from: from, to: to },
+      { from: to, to: from }
+    ]
+  })
+
+  if (existingFriendship) {
+    if (existingFriendship.from.toString() === to && existingFriendship.status === 'accepted') {
+      existingFriendship.from = from
+      existingFriendship.to = to
+    }
+    existingFriendship.status = 'unfriended'
+    await User.findByIdAndUpdate(from, { $pull: { friends: to } })
+    await User.findByIdAndUpdate(to, { $pull: { friends: from } })
+    await existingFriendship.save()
+    return existingFriendship
+  } else {
+    throw new ApiError(404, 'Không tìm thấy yêu cầu')
+  }
+}
+
 const checkFriendshipStatus = async (targetUserId, myId) => {
-  if (!targetUserId) throw new ApiError(404, 'Không tìm thấy người dùng')
+  const friendship = await FriendRequest.findOne({
+    $or: [
+      { from: myId, to: targetUserId },
+      { from: targetUserId, to: myId }
+    ]
+  })
 
-  const [myUser, checkUser] = await Promise.all([User.findById(myId).select('friends'), User.findById(targetUserId).select('friends')])
-
-  if (!checkUser) throw new ApiError(404, 'Không tìm thấy người dùng được kiểm tra')
-
-  const isFriend = myUser.friends.includes(targetUserId)
-  const hasRequestToMe = await FriendRequest.findOne({ from: targetUserId, to: myId }).lean()
-  const hasRequestFromMe = await FriendRequest.findOne({ from: myId, to: targetUserId }).lean()
-
-  let status = 'noRelationship'
-  let requestId = null
-
-  if (isFriend) {
-    status = 'friends'
-  } else if (hasRequestToMe) {
-    status = 'waitMe'
-    requestId = hasRequestToMe._id
-  } else if (hasRequestFromMe) {
-    status = 'waitAccept'
-    requestId = hasRequestFromMe._id
+  if (!friendship) {
+    return { status: null } // Không có mối quan hệ
   }
 
-  return { status, requestId }
+  // Nếu người dùng hiện tại là người gửi yêu cầu
+  if (friendship.from.toString() === myId) {
+    if (friendship.status === 'pending') {
+      return { status: 'pending' } // Đang gửi yêu cầu
+    } else if (friendship.status === 'accepted') {
+      return { status: 'accepted' } // Đã là bạn bè
+    }
+  }
+
+  // Nếu người dùng hiện tại là người nhận yêu cầu
+  if (friendship.to.toString() === myId) {
+    if (friendship.status === 'pending') {
+      return { status: 'incoming' } // Có yêu cầu đến
+    } else if (friendship.status === 'accepted') {
+      return { status: 'accepted' } // Đã là bạn bè
+    }
+  }
+
+  return { status: friendship.status }
 }
 
 export const requestFriendService = {
@@ -102,5 +151,6 @@ export const requestFriendService = {
   cancelFriendRequest,
   checkFriendshipStatus,
   rejectFriendRequest,
-  acceptFriendRequest
+  acceptFriendRequest,
+  unFriend
 }

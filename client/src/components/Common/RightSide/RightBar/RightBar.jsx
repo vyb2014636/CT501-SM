@@ -3,7 +3,7 @@ import React from 'react'
 import HomeButton from './Button/HomeButton'
 import ModeButton from './Button/ModeButton'
 import RequestButton from './Button/RequestButton'
-import NoticeButton from './Button/NoticeButton'
+import NoticeButton from '../../../Notification/Button/NoticeButton'
 import AccountButton from './Button/AccountMenu'
 
 const RightBar = () => {

@@ -6,40 +6,42 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined'
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
-import { acceptAddFriendAPI, cancelAddFriendAPI, unFriendAPI, checkFriendshipAPI, sendFriendAPI } from '@/apis/user/userAPI'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import FlexRow from '@/components/Common/Flex/FlexRow'
+import { checkFriendshipStatus } from '@/features/request/friendshipSlice'
+import { acceptFriendRequest, cancelFriendRequest, sendFriendRequest, unFriend } from '@/features/request/requestThunk'
+import { toast } from 'react-toastify'
 
 const styleFlexCenterButton = { display: 'flex', alignItems: 'center', gap: 2 }
 
 const FriendshipButton = ({ userId, showChat }) => {
-  const [statusFriendship, setStatusFriendship] = useState('')
-  const [requestId, setRequestId] = useState(null)
+  const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
+  const { status } = useSelector((state) => state.friendship)
 
   const handleClickCancel = async () => {
     try {
-      if (statusFriendship === 'friends') {
-        await unFriendAPI(userId)
-      } else if (statusFriendship === 'waitAccept') {
-        await cancelAddFriendAPI({ to: userId })
-      } else if (statusFriendship === 'waitMe') {
-        await acceptAddFriendAPI(requestId)
+      let response
+      if (status === 'accepted') {
+        response = await dispatch(unFriend(userId)).unwrap()
+      } else if (status === 'pending') {
+        response = await dispatch(cancelFriendRequest(userId)).unwrap()
+      } else if (status === 'incoming') {
+        response = await dispatch(acceptFriendRequest(userId)).unwrap()
       } else {
-        await sendFriendAPI({ to: userId })
+        response = await dispatch(sendFriendRequest(userId)).unwrap()
       }
-
-      await fetchFriendshipStatus()
+      toast.success(response.message, { position: 'bottom-right' })
     } catch (error) {
-      console.error('Error updating friendship status:', error)
+      toast.error(error.message)
     }
   }
 
   const renderButton = () => {
     if (userId === user._id) return <></>
-    if (statusFriendship === 'friends')
+    if (status === 'accepted')
       return (
-        <Button variant='contained' sx={{ ...styleFlexCenterButton, width: 152 }} color='info' onClick={handleClickCancel}>
+        <Button variant='contained' sx={{ ...styleFlexCenterButton }} color='info' onClick={handleClickCancel}>
           <PersonRemoveAlt1OutlinedIcon />
           <Typography variant='body1' fontWeight='bold'>
             Hủy kết bạn
@@ -47,18 +49,18 @@ const FriendshipButton = ({ userId, showChat }) => {
         </Button>
       )
 
-    if (statusFriendship === 'waitAccept')
+    if (status === 'pending')
       return (
-        <Button variant='contained' sx={{ ...styleFlexCenterButton, width: 152 }} onClick={handleClickCancel}>
+        <Button variant='contained' sx={{ ...styleFlexCenterButton }} onClick={handleClickCancel}>
           <CancelOutlinedIcon />
           <Typography variant='body1' fontWeight='bold'>
             Hủy lời mời
           </Typography>
         </Button>
       )
-    if (statusFriendship === 'waitMe')
+    if (status === 'incoming')
       return (
-        <Button variant='contained' sx={{ ...styleFlexCenterButton, width: 120 }} onClick={handleClickCancel}>
+        <Button variant='contained' sx={{ ...styleFlexCenterButton }} onClick={handleClickCancel}>
           <CheckOutlinedIcon />
           <Typography variant='body1' fontWeight='bold'>
             Đồng ý
@@ -66,33 +68,21 @@ const FriendshipButton = ({ userId, showChat }) => {
         </Button>
       )
 
-    if (statusFriendship === 'noRelationship')
-      return (
-        <Button variant='contained' sx={{ ...styleFlexCenterButton, width: 138 }} onClick={handleClickCancel}>
-          <PersonAddAlt1OutlinedIcon />
-          <Typography variant='body1' fontWeight='bold'>
-            Thêm bạn
-          </Typography>
-        </Button>
-      )
+    return (
+      <Button variant='contained' sx={{ ...styleFlexCenterButton }} onClick={handleClickCancel}>
+        <PersonAddAlt1OutlinedIcon />
+        <Typography variant='body1' fontWeight='bold'>
+          Thêm bạn
+        </Typography>
+      </Button>
+    )
   }
-
-  const fetchFriendshipStatus = async () => {
-    const response = await checkFriendshipAPI(userId)
-    setStatusFriendship(response.status)
-    if (response?.requestId) setRequestId(response.requestId)
-    else setRequestId(null)
-  }
-
-  useEffect(() => {
-    fetchFriendshipStatus()
-  }, [])
 
   return (
     <FlexRow gap={2}>
       {renderButton()}
       {showChat && (
-        <Button variant='outlined' sx={{ ...styleFlexCenterButton, width: 126 }}>
+        <Button variant='outlined' sx={{ ...styleFlexCenterButton }}>
           <SendOutlinedIcon />
           <Typography variant='body1' fontWeight='bold'>
             Nhắn tin

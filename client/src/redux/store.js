@@ -7,7 +7,7 @@ import postReducer from '@/features/post/postSlice'
 import commentReducer from '@/features/comment/commentSlice'
 import loadingReducer from '@/features/loading/loadingSlice'
 import requestReducer from '@/features/request/requestSlice'
-import friendReducer from '@/features/friend/friendSlice'
+import friendshipReducer from '@/features/request/friendshipSlice'
 import notificationReducer from '@/features/notification/notificationSlice'
 import { setupAxiosInterceptors } from '@/apis/axiosIntercept'
 
@@ -16,7 +16,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: ['post', 'comment', 'loading', 'request']
+  blacklist: ['post', 'comment', 'loading', 'frienship']
 }
 
 const rootReducer = combineReducers({
@@ -26,7 +26,7 @@ const rootReducer = combineReducers({
   loading: loadingReducer,
   notification: notificationReducer,
   request: requestReducer,
-  friend: friendReducer
+  friendship: friendshipReducer
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

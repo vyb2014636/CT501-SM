@@ -8,8 +8,11 @@ const getListNotification = async (myId, page, limit) => {
     .limit(limit)
     .populate('sender', 'firstname lastname fullname avatar')
     .populate('postId', 'describe')
+  const total = await Notification.find({ receiver: myId }).countDocuments()
+  const totalUnread = await Notification.find({ receiver: myId, status: 'unread' }).countDocuments()
 
-  return notifications
+  const hasMoreNotifications = limit * page < total
+  return { hasMoreNotifications, notifications, totalUnread }
 }
 
 const interactNotification = async (notificationId) => {

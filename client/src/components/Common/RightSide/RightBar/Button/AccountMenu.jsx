@@ -12,6 +12,9 @@ import Settings from '@mui/icons-material/Settings'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import { logout } from '@/features/auth/authThunk'
 import { resetPostState } from '@/features/post/postSlice'
+import { resetCommentState } from '@/features/comment/commentSlice'
+import { resetNotificationState } from '@/features/notification/notificationSlice'
+import { resetFriendship } from '@/features/request/friendshipSlice'
 const AccountButton = () => {
   const styleTriangle = {
     elevation: 0,
@@ -52,6 +55,9 @@ const AccountButton = () => {
   }
   const handleLogout = () => {
     dispatch(resetPostState())
+    dispatch(resetCommentState())
+    dispatch(resetNotificationState())
+    dispatch(resetFriendship())
     dispatch(logout())
   }
 

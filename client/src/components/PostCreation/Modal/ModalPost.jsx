@@ -19,7 +19,6 @@ import ModalWrapper from '@/components/Common/Modal/ModalWrapper'
 
 const ModalPost = ({ children, user }) => {
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [describe, setDescribe] = useState('')
   const [files, setFiles] = useState([])
   const [images, setImages] = useState([])

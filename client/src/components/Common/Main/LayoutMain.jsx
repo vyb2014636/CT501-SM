@@ -3,9 +3,10 @@ import { Box, Typography } from '@mui/material'
 import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
 import PostList from '@/components/Common/List/ListPost'
 import { scrollbarStyleMui } from '@/styles/styles'
+import { useSelector } from 'react-redux'
 
-const LayoutMain = ({ loading, posts, pageRef, children }) => {
-  if (loading && posts.length === 0) {
+const LayoutMain = ({ loading, posts, pageRef, children, loadingFriendship }) => {
+  if (loading && posts.length === 0 && loadingFriendship) {
     return (
       <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
         {Array.from({ length: 3 }, (_, i) => (

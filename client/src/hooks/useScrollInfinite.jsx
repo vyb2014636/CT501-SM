@@ -5,6 +5,7 @@ const useScrollInfinite = (ref, loadMore, hasMore) => {
     const handleScroll = () => {
       if (ref.current) {
         const { scrollTop, scrollHeight, clientHeight } = ref.current
+
         if (scrollTop + clientHeight + 2 >= scrollHeight && hasMore) {
           loadMore()
         }

@@ -31,7 +31,7 @@ export const scrollbarStyleMui = {
   overflowX: 'hidden',
   '&::-webkit-scrollbar-thumb': { bgcolor: 'background.paper' },
   '&::-webkit-scrollbar-thumb:hover': { bgcolor: '#bfc2cf' },
-  '&::-webkit-scrollbar': { width: 5 }
+  '&::-webkit-scrollbar': { width: 10 }
 }
 export const scrollbarTextFieldStyleMui = {
   '& textarea': {

@@ -10,8 +10,9 @@ router
   .get('/requests-my-sent', verifyToken, requestFriendControler.getRequestMySent)
   .get('/friendship/:checkUserId', verifyToken, requestFriendControler.checkFriendshipStatus)
   .post('/sendRequest', verifyToken, requestFriendControler.sendFriendRequest)
-  .post('/cancelRequest', verifyToken, requestFriendControler.cancelFriendRequest)
-  .post('/rejectRequest', verifyToken, requestFriendControler.rejectFriendRequest)
-  .post('/acceptRequest', verifyToken, requestFriendControler.acceptFriendRequest)
+  .put('/cancelRequest', verifyToken, requestFriendControler.cancelFriendRequest)
+  .put('/unfriend', verifyToken, requestFriendControler.unFriend)
+  .put('/rejectRequest', verifyToken, requestFriendControler.rejectFriendRequest)
+  .put('/acceptRequest', verifyToken, requestFriendControler.acceptFriendRequest)
 
 export const requestFriend = router

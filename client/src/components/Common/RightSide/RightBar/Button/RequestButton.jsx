@@ -5,6 +5,7 @@ import List from '@mui/material/List'
 import Menu from '@mui/material/Menu'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
+import Badge from '@mui/material/Badge'
 import Tooltip from '@mui/material/Tooltip'
 import ListItem from '@mui/material/ListItem'
 import IconButton from '@mui/material/IconButton'
@@ -14,49 +15,40 @@ import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined'
 import FlexRow from '@components/Common/Flex/FlexRow'
 import { formatFullname } from '@/utils/helpers'
 import { acceptAddFriendAPI, getRequests, rejectAddFriendAPI } from '@/apis/user/userAPI'
+import { acceptFriendRequest, fetchFriendRequests, rejectFriendRequest } from '@/features/request/requestThunk'
+import { useDispatch, useSelector } from 'react-redux'
 
 const RequestButton = () => {
   const [anchorEl, setAnchorEl] = useState(null)
-  const [requests, setRequests] = useState([])
+  const { requests } = useSelector((state) => state.request)
   const [error, setError] = useState(false)
   const open = Boolean(anchorEl)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
   }
   const handleClose = () => {
     setAnchorEl(null)
   }
-  const fetchRequests = async () => {
-    try {
-      const response = await getRequests()
-      setRequests(response.listRequest)
-      setError(false)
-    } catch (error) {
-      setError(true)
-    }
-  }
 
   useEffect(() => {
-    fetchRequests()
+    dispatch(fetchFriendRequests())
   }, [])
 
-  const handleAcceptAddFriend = async (requestId) => {
+  const handleAcceptAddFriend = async (from) => {
     try {
-      const response = await acceptAddFriendAPI(requestId)
-      toast.success(response.message)
-      fetchRequests()
+      dispatch(acceptFriendRequest(from))
+      toast.success('Đồng ý thành công')
     } catch (error) {
       toast.error(error.message)
     }
   }
 
-  const handleRejectAddFriend = async (requestId) => {
+  const handleRejectAddFriend = async (from) => {
     try {
-      console.log(requestId)
-      const response = await rejectAddFriendAPI(requestId)
-      toast.info(response.message)
-      fetchRequests()
+      dispatch(rejectFriendRequest(from))
+      toast.info('Đã hủy kết bạn')
     } catch (error) {
       toast.error(error.message)
     }
@@ -70,7 +62,13 @@ const RequestButton = () => {
           aria-haspopup='true'
           aria-expanded={open ? 'true' : undefined}
           size='small'>
-          <PeopleAltOutlinedIcon color='primary' fontSize='medium' />
+          {requests.length > 0 ? (
+            <Badge color='secondary' variant='dot'>
+              <PeopleAltOutlinedIcon color='primary' fontSize='medium' />
+            </Badge>
+          ) : (
+            <PeopleAltOutlinedIcon color='primary' fontSize='medium' />
+          )}
         </IconButton>
       </Tooltip>
 
@@ -87,10 +85,10 @@ const RequestButton = () => {
                     primary={`${formatFullname(request.from?.firstname, request.from?.lastname) || 'Người dùng'} đã gửi cho bạn lời mời kết bạn`}
                     secondary={
                       <FlexRow gap={2} alignItems='center'>
-                        <Button variant='contained' sx={{ flex: 1 }} onClick={() => handleAcceptAddFriend(request._id)}>
+                        <Button variant='contained' sx={{ flex: 1 }} onClick={() => handleAcceptAddFriend(request.from)}>
                           Đồng ý
                         </Button>
-                        <Button variant='outlined' sx={{ flex: 1 }} onClick={() => handleRejectAddFriend(request._id)}>
+                        <Button variant='outlined' sx={{ flex: 1 }} onClick={() => handleRejectAddFriend(request.from)}>
                           Từ chối
                         </Button>
                       </FlexRow>

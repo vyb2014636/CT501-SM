@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchAllPosts } from '@/features/post/postThunk'
 import { resetPostState } from '@/features/post/postSlice'
 import LayoutMain from '@/components/Common/Main/LayoutMain'
-import PostBox from '@/components/Post/PostBox'
+import PostCreation from '@/components/PostCreation/Card/PostCreation'
 
 const Main = () => {
   const dispatch = useDispatch()
@@ -21,7 +21,7 @@ const Main = () => {
 
   return (
     <LayoutMain loading={loading} posts={posts} pageRef={pageRef}>
-      <PostBox user={user} />
+      <PostCreation user={user} />
     </LayoutMain>
   )
 }

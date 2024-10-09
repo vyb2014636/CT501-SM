@@ -15,24 +15,24 @@ export const getRequests = async () => {
 }
 
 export const sendFriendAPI = async (to) => {
-  const response = await axiosIntercept.post('requestFriend/sendRequest', to)
+  const response = await axiosIntercept.post('requestFriend/sendRequest', { to })
   return response
 }
 
 export const cancelAddFriendAPI = async (to) => {
-  const response = await axiosIntercept.post('requestFriend/cancelRequest', to)
+  const response = await axiosIntercept.put('requestFriend/cancelRequest', { to })
   return response
 }
-export const acceptAddFriendAPI = async (requestId) => {
-  const response = await axiosIntercept.post('requestFriend/acceptRequest', { requestId: requestId })
+export const acceptAddFriendAPI = async (from) => {
+  const response = await axiosIntercept.put('requestFriend/acceptRequest', { from })
   return response
 }
-export const rejectAddFriendAPI = async (requestId) => {
-  const response = await axiosIntercept.post('requestFriend/rejectRequest', { requestId: requestId })
+export const rejectAddFriendAPI = async (from) => {
+  const response = await axiosIntercept.put('requestFriend/rejectRequest', { from })
   return response
 }
-export const unFriendAPI = async (toUser) => {
-  const response = await axiosIntercept.put('user/unFriend', { targetId: toUser })
+export const unFriendAPI = async (to) => {
+  const response = await axiosIntercept.put('requestFriend/unfriend', { to })
   return response
 }
 
@@ -62,6 +62,7 @@ export const uploadBackground = async (formData) => {
   })
   return response
 }
+
 export const uploadInfo = async (formData) => {
   console.log(formData)
   const response = await axiosIntercept.put('user/uploadInfo', formData)

@@ -11,13 +11,14 @@ import MyAvartarBackground from './Avatar/MyAvartarBackground'
 import OtherAvartarBackground from './Avatar/OtherAvartarBackground'
 import FriendshipButton from './Button/FriendshipButton'
 
-const ProfileCard = ({ user, totalPosts, children, myCardProfile = false }) => {
+const ProfileCard = ({ user, totalPosts, myCardProfile = false }) => {
   const [value, setValue] = useState(0)
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
 
   const { firstname, lastname, friends } = user || {}
+
   return (
     <FlexColumn sx={{ backgroundColor: 'background.paper', height: 500, borderRadius: '12px 12px 0 0', mb: 2 }}>
       {myCardProfile ? <MyAvartarBackground user={user} /> : <OtherAvartarBackground user={user} />}

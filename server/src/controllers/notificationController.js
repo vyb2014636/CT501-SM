@@ -3,12 +3,14 @@ import { notificationService } from '~/services/notificationService'
 const getListNotification = async (req, res, next) => {
   try {
     const myId = req.user.id
-    const { page = 1, limit = 10 } = req.query
+    const { page = 1, limit = 5 } = req.query
+    const { notifications, hasMoreNotifications, totalUnread } = await notificationService.getListNotification(myId, page, limit)
 
-    const response = await notificationService.getListNotification(myId, page, limit)
     res.status(200).json({
       message: 'Danh sách thông báo mới nhất',
-      notifications: response
+      notifications,
+      hasMoreNotifications,
+      totalUnread
     })
   } catch (error) {
     next(error)

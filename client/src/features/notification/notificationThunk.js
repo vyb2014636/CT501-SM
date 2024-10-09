@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axiosIntercept from '@/apis/axiosIntercept'
 
-export const fetchListNotificationAPI = createAsyncThunk('notification/getNotice', async (_, { rejectWithValue }) => {
+export const fetchListNotificationAPI = createAsyncThunk('notification/getNotice', async ({ page }, { rejectWithValue }) => {
   try {
-    const response = await axiosIntercept.get('notification/')
+    const response = await axiosIntercept.get('notification/', { params: { page: page || 1 } })
+
     return response
   } catch (error) {
     rejectWithValue(error.message)

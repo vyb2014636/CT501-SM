@@ -49,7 +49,7 @@ export const postSlice = createSlice({
         state.hasMorePosts = action.payload.hasMorePosts
       })
       .addCase(fetchAllPosts.rejected, (state, action) => {
-        state.status = 'failed'
+        state.error = true
         state.message = action.message
         state.userPosts = null
         state.loading = false
@@ -66,7 +66,7 @@ export const postSlice = createSlice({
         state.loading = false
       })
       .addCase(fetchPost.rejected, (state, action) => {
-        state.status = 'failed'
+        state.error = true
         state.message = action.message
         state.loading = false
       })

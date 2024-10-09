@@ -1,4 +1,3 @@
-// src/features/postSlice.js
 import { createSlice } from '@reduxjs/toolkit'
 import { fetchListNotificationAPI, readNotificationAPI } from './notificationThunk'
 
@@ -9,7 +8,8 @@ export const notificationSlice = createSlice({
     status: 'idle',
     error: false,
     loading: true,
-    hasMoreNotifications: true
+    hasMoreNotifications: false,
+    totalUnread: 0
   },
   reducers: {
     resetNotificationState: (state) => {
@@ -17,7 +17,8 @@ export const notificationSlice = createSlice({
       state.status = 'idle'
       state.error = false
       state.loading = true
-      state.hasMoreNotifications = true
+      state.hasMoreNotifications = false
+      state.totalUnread = 0
     }
   },
   extraReducers: (builder) => {
@@ -25,20 +26,19 @@ export const notificationSlice = createSlice({
       state.status = 'loading'
       state.loading = true
       state.error = true
-      state.hasMoreNotifications = true
     })
     builder.addCase(fetchListNotificationAPI.fulfilled, (state, action) => {
-      state.notifications = action.payload.notifications
+      state.notifications = [...state.notifications, ...action.payload.notifications]
       state.status = 'succeed'
       state.loading = false
       state.error = false
-      // state.hasMoreNotifications = true
+      state.hasMoreNotifications = action.payload.hasMoreNotifications
+      state.totalUnread = action.payload.totalUnread
     })
     builder.addCase(fetchListNotificationAPI.rejected, (state) => {
       state.status = 'failed'
-      state.loading = true
+      state.loading = false
       state.error = true
-      // state.hasMoreNotifications = true
     })
     builder.addCase(readNotificationAPI.fulfilled, (state, action) => {
       const updatedNotification = action.payload.notification

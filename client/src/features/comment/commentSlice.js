@@ -18,7 +18,7 @@ export const commentSlice = createSlice({
       state.status = 'idle'
       state.error = false
       state.loading = true
-      state.hasMoreComments = true
+      state.hasMoreComments = false
       state.ofPost = null
     }
   },

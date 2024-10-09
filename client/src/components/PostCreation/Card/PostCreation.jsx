@@ -12,9 +12,9 @@ import FlexStartButton from '@components/Common/Flex/FlexStartButton'
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import { formatFullname } from '@/utils/helpers'
-import ModalPost from './Modal/ModalPost'
+import ModalPost from '../Modal/ModalPost'
 
-const PostBox = ({ user }) => {
+const PostCreation = ({ user }) => {
   const handleTestRefreshToken = async () => {
     const response = await axiosIntercept.get('/auth/refreshToken')
   }
@@ -77,4 +77,4 @@ const PostBox = ({ user }) => {
   )
 }
 
-export default PostBox
+export default PostCreation

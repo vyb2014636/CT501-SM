@@ -9,14 +9,17 @@ import ListItemText from '@mui/material/ListItemText'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import { formatFullname } from '@/utils/helpers'
 import { cancelAddFriendAPI, sendFriendAPI } from '@/apis/user/userAPI'
+import { useDispatch } from 'react-redux'
+import { cancelFriendRequest, sendFriendRequest } from '@/features/request/requestThunk'
 
 const ListSuggestion = ({ userNoFriend, id }) => {
   const [changeButton, setChangeButton] = useState(true)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleSendFriendRequest = async () => {
     try {
-      await sendFriendAPI({ to: userNoFriend._id })
+      dispatch(sendFriendRequest(userNoFriend._id))
       setChangeButton(false)
     } catch (error) {
       toast.error(error.message)
@@ -25,7 +28,7 @@ const ListSuggestion = ({ userNoFriend, id }) => {
 
   const handleCancelFriendRequest = async () => {
     try {
-      await cancelAddFriendAPI({ to: userNoFriend._id })
+      dispatch(cancelFriendRequest(userNoFriend._id))
       setChangeButton(true)
     } catch (error) {
       toast.error(error.message)
