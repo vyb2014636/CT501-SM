@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -9,7 +9,7 @@ import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlin
 import { formatFullname } from '@/utils/helpers'
 import { likeReply } from '@/features/comment/commentThunk'
 
-const ItemReply = ({ postId, commentId, user, reply }) => {
+const ReplyCard = ({ postId, commentId, user, reply }) => {
   const dispatch = useDispatch()
 
   const currentUser = useSelector((state) => state.auth.user)
@@ -45,4 +45,4 @@ const ItemReply = ({ postId, commentId, user, reply }) => {
   )
 }
 
-export default ItemReply
+export default memo(ReplyCard)

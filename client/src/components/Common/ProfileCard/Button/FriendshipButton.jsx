@@ -8,16 +8,19 @@ import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
 import { useDispatch, useSelector } from 'react-redux'
 import FlexRow from '@/components/Common/Flex/FlexRow'
-import { checkFriendshipStatus } from '@/features/request/friendshipSlice'
+import { checkFriendshipStatus, resetFriendship } from '@/features/request/friendshipSlice'
 import { acceptFriendRequest, cancelFriendRequest, sendFriendRequest, unFriend } from '@/features/request/requestThunk'
 import { toast } from 'react-toastify'
 
 const styleFlexCenterButton = { display: 'flex', alignItems: 'center', gap: 2 }
 
-const FriendshipButton = ({ userId, showChat }) => {
+const FriendshipButton = ({ userId, showChat, status }) => {
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
-  const { status } = useSelector((state) => state.friendship)
+
+  // useEffect(() => {
+  //   dispatch(resetFriendship()), dispatch(checkFriendshipStatus(userId))
+  // }, [dispatch, userId])
 
   const handleClickCancel = async () => {
     try {

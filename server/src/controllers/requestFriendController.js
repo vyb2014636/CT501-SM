@@ -4,10 +4,11 @@ import { requestFriendService } from '~/services/requestFriendService'
 const getRequests = async (req, res, next) => {
   try {
     const { id } = req.user
-    const response = await requestFriendService.getRequests(id)
+    const { sends, requests } = await requestFriendService.getRequests(id)
     res.status(200).json({
       message: 'Lấy danh sách request thành công',
-      listRequest: response
+      sends,
+      requests
     })
   } catch (error) {
     next(error)

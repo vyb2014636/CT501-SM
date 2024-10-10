@@ -1,46 +1,58 @@
 import { resetPostState } from '@/features/post/postSlice'
 import { fetchAllPosts } from '@/features/post/postThunk'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import NotFoundPage from '@/pages/Error/NotFoundPage'
-import ProfileCard from '@/components/Common/ProfileCard/ProfileCard'
+import { checkFriendshipStatus, resetFriendship } from '@/features/request/friendshipSlice'
 import PostList from '@/components/Common/List/ListPost'
-import { Box } from '@mui/material'
 import { scrollbarStyleMui } from '@/styles/styles'
+import { Box } from '@mui/material'
 import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
-import PostCreation from '@/components/PostCreation/Card/PostCreation'
+import { toast } from 'react-toastify'
+import ProfileSkeleton from '@/components/Common/Skeleton/ProfileSkeleton'
 
 const Person = () => {
   const { userId } = useParams()
   const dispatch = useDispatch()
   const pageRef = useRef(1)
-
-  const { userPosts, totalPosts, posts, loading, status } = useSelector((state) => state.post)
+  const { error } = useSelector((state) => state.post)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    dispatch(resetPostState())
-    dispatch(fetchAllPosts({ page: pageRef.current, userId }))
-  }, [dispatch])
+    const fetchData = async () => {
+      try {
+        await Promise.all([
+          dispatch(resetPostState()),
+          dispatch(resetFriendship()),
+          dispatch(fetchAllPosts({ page: pageRef.current, userId })),
+          dispatch(checkFriendshipStatus(userId))
+        ])
+      } catch (error) {
+        toast.error(error.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [dispatch, userId])
 
-  if (userId && status === 'failed') return <NotFoundPage />
+  // Kiểm tra lỗi
+  if (error) return <NotFoundPage />
 
-  if (loading && posts.length === 0) {
+  // Kiểm tra loading
+  if (loading) {
     return (
       <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
+        <ProfileSkeleton />
         {Array.from({ length: 3 }, (_, i) => (
           <SkeletonPosts key={i} />
         ))}
       </Box>
     )
-  } else {
-    return (
-      <PostList pageRef={pageRef}>
-        <ProfileCard user={userPosts} totalPosts={totalPosts} myCardProfile />
-        <PostCreation user={userPosts} />
-      </PostList>
-    )
   }
+
+  return <PostList pageRef={pageRef} showProfileCard currentUser />
 }
 
 export default Person

@@ -5,8 +5,8 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
-import CommentButton from '../../Comment/CommentButton'
 import ShareButton from '@/components/Share/Button/ShareButton'
+import CommentButton from '@/components/Comment/CommentButton'
 
 const InteractPostCard = ({ isLiked, handleClickLike, styleThreeButton, post }) => {
   const memoizedHandleClickLike = useCallback(() => {

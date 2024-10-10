@@ -10,9 +10,11 @@ import EditInfoButton from './Button/EditInfoButton'
 import MyAvartarBackground from './Avatar/MyAvartarBackground'
 import OtherAvartarBackground from './Avatar/OtherAvartarBackground'
 import FriendshipButton from './Button/FriendshipButton'
+import { useSelector } from 'react-redux'
 
 const ProfileCard = ({ user, totalPosts, myCardProfile = false }) => {
   const [value, setValue] = useState(0)
+  const { status } = useSelector((state) => state.friendship)
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
@@ -30,7 +32,7 @@ const ProfileCard = ({ user, totalPosts, myCardProfile = false }) => {
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-        {myCardProfile ? <EditInfoButton user={user} /> : <FriendshipButton userId={user._id} showChat />}
+        {myCardProfile ? <EditInfoButton user={user} /> : <FriendshipButton userId={user._id} status={status} showChat />}
       </Box>
 
       <ProfileStat friendsCount={friends?.length} totalPosts={totalPosts} />

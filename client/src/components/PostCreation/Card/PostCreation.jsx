@@ -13,8 +13,10 @@ import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline'
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined'
 import { formatFullname } from '@/utils/helpers'
 import ModalPost from '../Modal/ModalPost'
+import { useSelector } from 'react-redux'
 
-const PostCreation = ({ user }) => {
+const PostCreation = () => {
+  const { user } = useSelector((state) => state.auth)
   const handleTestRefreshToken = async () => {
     const response = await axiosIntercept.get('/auth/refreshToken')
   }

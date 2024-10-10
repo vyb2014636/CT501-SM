@@ -62,7 +62,7 @@ const RequestButton = () => {
           aria-haspopup='true'
           aria-expanded={open ? 'true' : undefined}
           size='small'>
-          {requests.length > 0 ? (
+          {requests?.length > 0 ? (
             <Badge color='secondary' variant='dot'>
               <PeopleAltOutlinedIcon color='primary' fontSize='medium' />
             </Badge>

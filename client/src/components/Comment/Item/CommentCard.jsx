@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Avatar from '@mui/material/Avatar'
@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux'
 import { likeComment } from '@/features/comment/commentThunk'
 import { formatFullname } from '@/utils/helpers'
 
-const ItemComment = ({ user, comment, handleClickReply, postId, isLiked }) => {
+const CommentCard = ({ user, comment, handleClickReply, postId, isLiked }) => {
   const dispatch = useDispatch()
 
   const handleLike = () => {
@@ -48,4 +48,4 @@ const ItemComment = ({ user, comment, handleClickReply, postId, isLiked }) => {
   )
 }
 
-export default ItemComment
+export default memo(CommentCard)

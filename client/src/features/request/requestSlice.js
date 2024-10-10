@@ -1,4 +1,4 @@
-import { acceptFriendRequest, fetchFriendRequests, rejectFriendRequest, sendFriendRequest } from './requestThunk'
+import { acceptFriendRequest, cancelFriendRequest, fetchFriendRequests, rejectFriendRequest, sendFriendRequest } from './requestThunk'
 import { createSlice } from '@reduxjs/toolkit'
 
 // Slice
@@ -6,6 +6,7 @@ const requestSlice = createSlice({
   name: 'request',
   initialState: {
     requests: [],
+    sends: [],
     loading: false,
     error: null
   },
@@ -17,7 +18,8 @@ const requestSlice = createSlice({
         state.error = null
       })
       .addCase(fetchFriendRequests.fulfilled, (state, action) => {
-        state.requests = action.payload
+        state.requests = action.payload.requests
+        state.sends = action.payload.sends
         state.loading = false
       })
       .addCase(fetchFriendRequests.rejected, (state, action) => {
@@ -26,6 +28,12 @@ const requestSlice = createSlice({
       })
       .addCase(acceptFriendRequest.fulfilled, (state, action) => {
         state.requests = state.requests.filter((req) => req._id !== action.payload.request._id)
+      })
+      .addCase(cancelFriendRequest.fulfilled, (state, action) => {
+        state.sends = state.sends.filter((req) => req._id !== action.payload.request._id)
+      })
+      .addCase(sendFriendRequest.fulfilled, (state, action) => {
+        state.sends.push(action.payload.request)
       })
       .addCase(rejectFriendRequest.fulfilled, (state, action) => {
         state.requests = state.requests.filter((req) => req._id !== action.payload.request._id)

@@ -1,22 +1,18 @@
 import React, { memo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Box from '@mui/material/Box'
-import Modal from '@mui/material/Modal'
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 import Skeleton from '@mui/material/Skeleton'
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline'
-import FlexColumn from '../Flex/FlexColumn'
 import CommentForm from './Form/CommentForm'
-import TitleModal from '../Modal/Title/TitleModal'
 import { fetchComments } from '@/features/comment/commentThunk'
 import { resetCommentState } from '@/features/comment/commentSlice'
 import { scrollbarStyles, styleModal } from '@/styles/styles'
 import { styleThreeButton } from '@/styles/stylePost/style'
 import useScrollInfinite from '@/hooks/useScrollInfinite'
-import CommentSession from './CommentSession'
-import ModalWrapper from '../Modal/ModalWrapper'
+import CommentSection from './Section/CommentSection'
+import ModalWrapper from '../Common/Modal/ModalWrapper'
 
 const CommentButton = ({ post }) => {
   const dispatch = useDispatch()
@@ -65,27 +61,13 @@ const CommentButton = ({ post }) => {
             </Typography>
           ) : (
             comments?.map((comment) => (
-              <CommentSession key={comment._id} post={post} comment={comment} user={comment.user} dispatch={dispatch} replies={comment.replies} />
+              <CommentSection key={comment._id} post={post} comment={comment} user={comment.user} dispatch={dispatch} replies={comment.replies} />
             ))
           )}
           {loading && comments.length > 0 && <Skeleton variant='rectangular' width='100%' height={60} animation='wave' />}
         </Box>
         <CommentForm user={user} post={post} />
       </ModalWrapper>
-      {/* 
-      <Modal open={open} onClose={handleClose}>
-        <FlexColumn sx={{ ...styleModal, height: 600, p: 0, overflow: 'hidden' }}>
-          <TitleModal title='Bình luận' />
-
-          <Divider />
-
-        
-
-          <Divider />
-
-          <CommentForm user={user} post={post} />
-        </FlexColumn>
-      </Modal> */}
     </>
   )
 }

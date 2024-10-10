@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { IconButton, Badge, Tooltip, Menu, Typography, MenuItem, Box } from '@mui/material'
+import { IconButton, Badge, Tooltip, Menu, Typography, MenuItem, Box, Skeleton } from '@mui/material'
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
 import NotificationCard from '@/components/Notification/Card/NotificationCard'
 import useScrollInfinite from '@/hooks/useScrollInfinite'
@@ -70,6 +70,7 @@ const NoticeButton = () => {
           ) : (
             notifications.map((notification) => <NotificationCard key={notification._id} notification={notification} />)
           )}
+          {loading && notifications.length > 0 && <Skeleton variant='rectangular' width='100%' height={60} animation='wave' />}
         </Box>
       </Menu>
     </>

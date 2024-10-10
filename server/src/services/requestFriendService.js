@@ -14,11 +14,14 @@ const notifyFriendsAboutRequest = async (userId, toId, type) => {
 }
 
 const getRequests = async (to) => {
-  const requests = await FriendRequest.find({ to, status: 'pending' }).populate('from', 'firstname lastname avatar').lean()
+  const requests = await FriendRequest.find({ to, status: 'pending' }).populate('from to', 'firstname lastname avatar').lean()
+  const sends = await FriendRequest.find({ from: to, status: 'pending' }).populate('from to', 'firstname lastname avatar').lean()
+
   if (!requests) throw new ApiError(404, 'Không tìm thấy lời mời nào')
 
-  return requests
+  return { sends, requests }
 }
+
 const sendFriendRequest = async (from, to) => {
   const existingFriendship = await FriendRequest.findOne({
     $or: [
@@ -34,12 +37,12 @@ const sendFriendRequest = async (from, to) => {
     }
     existingFriendship.status = 'pending'
     await existingFriendship.save()
-    return await existingFriendship.populate('from', 'firstname lastname avatar')
+    return await existingFriendship.populate('from to', 'firstname lastname avatar')
   }
 
   const newFriendship = new FriendRequest({ from, to })
   await newFriendship.save()
-  return await newFriendship.populate('from', 'firstname lastname avatar')
+  return await newFriendship.populate('from to', 'firstname lastname avatar')
 }
 
 const cancelFriendRequest = async (from, to) => {

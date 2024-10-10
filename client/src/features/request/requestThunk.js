@@ -6,7 +6,7 @@ import axiosIntercept from '@/apis/axiosIntercept'
 export const fetchFriendRequests = createAsyncThunk('requests/fetch', async (_, { rejectWithValue }) => {
   try {
     const response = await getRequests()
-    return response.listRequest
+    return response
   } catch (error) {
     return rejectWithValue(error.message)
   }
@@ -50,8 +50,8 @@ export const cancelFriendRequest = createAsyncThunk('requests/cancel', async (us
 
 export const sendFriendRequest = createAsyncThunk('requests/send', async (userId, { rejectWithValue }) => {
   try {
+    console.log(userId)
     const response = await sendFriendAPI(userId)
-    console.log(response)
     return response
   } catch (error) {
     return rejectWithValue(error.message)
