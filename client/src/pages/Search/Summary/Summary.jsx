@@ -5,6 +5,7 @@ import { scrollbarStyleMui } from '@/styles/styles'
 import { Box, Typography } from '@mui/material'
 import PostBox from '@/components/Search/Box/PostBox'
 import { searchAPI } from '@/apis/user/userAPI'
+import { toast } from 'react-toastify'
 
 const Summary = () => {
   const { query } = useParams()
@@ -12,28 +13,36 @@ const Summary = () => {
   const [postsSearch, setPostsSearch] = useState([])
   const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   const fetchSearchUser = async () => {
     try {
+      setLoading(true)
       const response = await searchAPI(query)
       setUsersSearch(response.users)
       setPostsSearch(response.posts)
       setHasMore(response.hasMoreUsers)
     } catch (error) {
-      console.error('Error fetching search users', error)
+      toast.error(error.message)
+      setError(true)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   useEffect(() => {
     fetchSearchUser()
   }, [query])
 
+  if (loading || !usersSearch || !postsSearch) return <Typography>loading....</Typography>
+
+  if (error) return <Typography>Không thể tải</Typography>
+
   return (
     <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
-      {loading && usersSearch?.length === 0 ? (
+      {loading ? (
         <Typography>loading....</Typography>
-      ) : !loading && usersSearch?.length === 0 && postsSearch?.length === 0 ? (
+      ) : usersSearch?.length === 0 && postsSearch?.length === 0 ? (
         <Typography>Không tìm thấy</Typography>
       ) : (
         <>

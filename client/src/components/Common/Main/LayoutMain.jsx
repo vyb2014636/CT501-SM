@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
 import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
-import PostList from '@/components/Common/List/ListPost'
+import PostList from '@/components/Common/Main/PersonalFeed'
 import { scrollbarStyleMui } from '@/styles/styles'
 import { useSelector } from 'react-redux'
 

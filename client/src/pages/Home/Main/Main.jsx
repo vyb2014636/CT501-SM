@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchAllPosts } from '@/features/post/postThunk'
@@ -7,29 +7,43 @@ import PostCreation from '@/components/PostCreation/Card/PostCreation'
 import { fetchListNotificationAPI } from '@/features/notification/notificationThunk'
 import { resetNotificationState } from '@/features/notification/notificationSlice'
 import NotFoundPage from '@/pages/Error/NotFoundPage'
-import PostList from '@/components/Common/List/ListPost'
+import PostList from '@/components/Common/Main/PersonalFeed'
 import { Box } from '@mui/material'
 import PostCreationSkeleton from '@/components/Common/Skeleton/PostCreationSkeleton'
 import { scrollbarStyleMui } from '@/styles/styles'
 import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
+import MainFeed from '@/components/Common/Main/MainFeed'
 
 const Main = () => {
   const dispatch = useDispatch()
-  const pageRef = useRef(1)
-  const { user } = useSelector((state) => state.auth)
-  const { posts, loading, error } = useSelector((state) => state.post)
   const location = useLocation()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const { totalPosts, posts } = useSelector((state) => state.post)
+
+  const fetchData = async () => {
+    try {
+      await Promise.all([
+        dispatch(resetPostState()),
+        dispatch(resetNotificationState()),
+        dispatch(fetchListNotificationAPI({ page: 1 })),
+        dispatch(fetchAllPosts({ page: 1 }))
+      ])
+    } catch (error) {
+      toast.error(error.message)
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    if (location.state?.refresh) pageRef.current = 1
-    dispatch(resetPostState())
-    dispatch(resetNotificationState())
-    dispatch(fetchListNotificationAPI({ page: 1 }))
-    dispatch(fetchAllPosts({ page: pageRef.current }))
+    fetchData()
   }, [dispatch, location.state])
 
-  if (error) return <NotFoundPage /> //Không có đường dẫn
-  if (loading) {
+  if (error) return <NotFoundPage />
+
+  if (loading && totalPosts === 0) {
     return (
       <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
         <PostCreationSkeleton />
@@ -40,7 +54,7 @@ const Main = () => {
     )
   }
 
-  return <PostList pageRef={pageRef} />
+  return <MainFeed posts={posts} totalPosts={totalPosts} />
 }
 
 export default Main

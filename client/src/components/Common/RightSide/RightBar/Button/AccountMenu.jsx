@@ -81,7 +81,7 @@ const AccountButton = () => {
         PaperProps={styleTriangle}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-        <MenuItem onClick={() => navigate(`/${user._id}/person`)}>
+        <MenuItem onClick={() => navigate(`/personal`)}>
           <Avatar /> Tài khoản của tôi
         </MenuItem>
         <Divider />

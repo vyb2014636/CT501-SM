@@ -40,7 +40,7 @@ const ListSuggestion = ({ userNoFriend, id }) => {
       <ListItem>
         <ListItemAvatar
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-          onClick={() => navigate(`/${userNoFriend._id}`)}>
+          onClick={() => navigate(`/personal/${userNoFriend._id}`)}>
           <Avatar alt={userNoFriend.lastname} src={userNoFriend.avatar} sx={{ height: 46, width: 46 }} />
         </ListItemAvatar>
         <ListItemText primary={formatFullname(userNoFriend.firstname, userNoFriend.lastname)} secondary={`@${userNoFriend.firstname}`} />

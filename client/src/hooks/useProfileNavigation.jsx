@@ -8,9 +8,9 @@ export const useProfileNavigation = () => {
 
   const handleProfileClick = (userId) => {
     if (currentUserId === userId) {
-      navigate(`/${userId}/person`)
+      navigate(`/personal`)
     } else {
-      navigate(`/${userId}`)
+      navigate(`/personal/${userId}`)
     }
   }
 

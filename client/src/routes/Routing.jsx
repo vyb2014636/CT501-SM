@@ -3,23 +3,23 @@ import { Routes, Route } from 'react-router-dom'
 import Admin from '@/pages/Admin'
 import Home from '@/pages/Home'
 import Auth from '@/pages/Auth'
-import Profile from '@/pages/Profile'
+import Personal from '@/pages/Personal'
 import Dashboard from '@/pages/Admin/Dashboard/Dashboard'
 import Setting from '@/pages/Admin/Setting/Setting'
 import Login from '@/pages/Auth/Login/Login'
 import Register from '@/pages/Auth/Register/Register'
-import Favorites from '@/pages/Home/Content/Favorites/Favorites'
-import Main from '@/pages/Home/Content/Main/Main'
+import Favorites from '@/pages/Home/Favorites/Favorites'
+import Main from '@/pages/Home/Main/Main'
 import PrivateRoute from './PrivateRoute'
 import Verify from '@/pages/Auth/Verify/Verify'
 import NotFoundPage from '@/pages/Error/NotFoundPage'
 import PublicRoute from './PublicRoute'
-import Other from '@/pages/Profile/Other/Other'
-import Person from '@/pages/Profile/Person/Person'
 import Search from '@/pages/Search'
 import Summary from '@/pages/Search/Summary/Summary'
 import AllUser from '@/pages/Search/AllUsers/AllUser'
-import ViewPost from '@/pages/Home/Content/ViewPost/ViewPost'
+import ViewPost from '@/pages/Home/ViewPost/ViewPost'
+import MyPersonal from '@/pages/Personal/MyProfile/MyPersonal'
+import UserPersonal from '@/pages/Personal/Other/UserPersonal'
 
 function Routing() {
   return (
@@ -34,9 +34,9 @@ function Routing() {
           <Route path='/admin' element={<Dashboard />} />
           <Route path='/admin/setting' element={<Setting />} />
         </Route>
-        <Route path='/:userId' element={<Profile />}>
-          <Route path='/:userId' element={<Other />} />
-          <Route path='/:userId/person' element={<Person />} />
+        <Route path='/personal' element={<Personal />}>
+          <Route path='/personal' element={<MyPersonal />} />
+          <Route path='/personal/:userId' element={<UserPersonal />} />
         </Route>
         <Route path='/search/:query' element={<Search />}>
           <Route path='/search/:query' element={<Summary />} />

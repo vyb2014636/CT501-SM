@@ -22,6 +22,10 @@ const friendRequestSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
+friendRequestSchema.methods.populateFromToFrienship = function () {
+  return this.populate('from to', 'firstname lastname avatar background')
+}
+
 friendRequestSchema.pre('save', function (next) {
   if (this.isModified('status')) {
     this.history.push({

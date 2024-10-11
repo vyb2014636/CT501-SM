@@ -6,7 +6,7 @@ import Container from '@mui/material/Container'
 import LeftSide from '@/components/Common/LeftSide/LeftSide'
 import RightSide from '@/components/Common/RightSide/RightSide'
 
-const Profile = () => {
+const Personal = () => {
   const isNonScreenMobile = useMediaQuery('(min-width: 950px)')
 
   return (
@@ -20,4 +20,4 @@ const Profile = () => {
   )
 }
 
-export default Profile
+export default Personal

@@ -14,8 +14,8 @@ const notifyFriendsAboutRequest = async (userId, toId, type) => {
 }
 
 const getRequests = async (to) => {
-  const requests = await FriendRequest.find({ to, status: 'pending' }).populate('from to', 'firstname lastname avatar').lean()
-  const sends = await FriendRequest.find({ from: to, status: 'pending' }).populate('from to', 'firstname lastname avatar').lean()
+  const requests = await FriendRequest.find({ to, status: 'pending' }).populate('from to', 'firstname lastname avatar background').lean()
+  const sends = await FriendRequest.find({ from: to, status: 'pending' }).populate('from to', 'firstname lastname avatar background').lean()
 
   if (!requests) throw new ApiError(404, 'Không tìm thấy lời mời nào')
 
@@ -37,12 +37,12 @@ const sendFriendRequest = async (from, to) => {
     }
     existingFriendship.status = 'pending'
     await existingFriendship.save()
-    return await existingFriendship.populate('from to', 'firstname lastname avatar')
+    return await existingFriendship.populateFromToFrienship()
   }
 
   const newFriendship = new FriendRequest({ from, to })
   await newFriendship.save()
-  return await newFriendship.populate('from to', 'firstname lastname avatar')
+  return await newFriendship.populateFromToFrienship()
 }
 
 const cancelFriendRequest = async (from, to) => {
@@ -50,7 +50,7 @@ const cancelFriendRequest = async (from, to) => {
   if (friendship && friendship.status === 'pending') {
     friendship.status = 'cancelled'
     await friendship.save()
-    return friendship
+    return await friendship.populateFromToFrienship()
   } else {
     throw new ApiError(400, 'Không có yêu cầu nào như vậy')
   }
@@ -63,8 +63,6 @@ const acceptFriendRequest = async (from, to) => {
   request.status = 'accepted'
   await request.save()
 
-  if (request.to.toString() !== to.toString()) throw new ApiError(403, 'Bạn không có quyền chấp nhận yêu cầu này.')
-
   const [userFrom, userTo] = await Promise.all([User.findById(request.from), User.findById(request.to)])
 
   if (!userFrom || !userTo) throw new ApiError(404, 'Một hoặc cả hai người dùng không tồn tại.')
@@ -76,7 +74,7 @@ const acceptFriendRequest = async (from, to) => {
 
   await notifyFriendsAboutRequest(from, to, 'friendRequestAccepted')
 
-  return request
+  return await request.populateFromToFrienship()
 }
 
 const rejectFriendRequest = async (from, to) => {
@@ -109,7 +107,8 @@ const unFriend = async (from, to) => {
     await User.findByIdAndUpdate(from, { $pull: { friends: to } })
     await User.findByIdAndUpdate(to, { $pull: { friends: from } })
     await existingFriendship.save()
-    return existingFriendship
+
+    return await existingFriendship.populateFromToFrienship()
   } else {
     throw new ApiError(404, 'Không tìm thấy yêu cầu')
   }

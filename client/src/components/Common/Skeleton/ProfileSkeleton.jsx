@@ -1,9 +1,7 @@
 import React from 'react'
 import { Box, Skeleton, Button, Divider } from '@mui/material'
 
-import PostCreationSkeleton from './PostCreationSkeleton'
-
-const ProfileSkeleton = () => {
+const ProfileSkeleton = ({ children }) => {
   return (
     <>
       <Box sx={{ backgroundColor: 'background.paper', height: 500, borderRadius: '12px 12px 0 0', mb: 2 }}>
@@ -11,7 +9,7 @@ const ProfileSkeleton = () => {
           sx={{
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            height: '200px',
+            height: 200,
             borderRadius: '12px 12px 0 0',
             position: 'relative'
           }}>
@@ -60,8 +58,7 @@ const ProfileSkeleton = () => {
           </Box>
         </Box>
       </Box>
-
-      <PostCreationSkeleton />
+      {children}
     </>
   )
 }

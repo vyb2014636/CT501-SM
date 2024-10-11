@@ -11,6 +11,7 @@ import FlexRow from '@/components/Common/Flex/FlexRow'
 import { checkFriendshipStatus, resetFriendship } from '@/features/request/friendshipSlice'
 import { acceptFriendRequest, cancelFriendRequest, sendFriendRequest, unFriend } from '@/features/request/requestThunk'
 import { toast } from 'react-toastify'
+import { updateFriends } from '@/features/auth/authSlice'
 
 const styleFlexCenterButton = { display: 'flex', alignItems: 'center', gap: 2 }
 
@@ -27,10 +28,12 @@ const FriendshipButton = ({ userId, showChat, status }) => {
       let response
       if (status === 'accepted') {
         response = await dispatch(unFriend(userId)).unwrap()
+        // dispatch(updateFriends({ user: response.request.to, actionType: 'remove' }))
       } else if (status === 'pending') {
         response = await dispatch(cancelFriendRequest(userId)).unwrap()
       } else if (status === 'incoming') {
         response = await dispatch(acceptFriendRequest(userId)).unwrap()
+        // dispatch(updateFriends({ user: response.request.from, actionType: 'add' }))
       } else {
         response = await dispatch(sendFriendRequest(userId)).unwrap()
       }

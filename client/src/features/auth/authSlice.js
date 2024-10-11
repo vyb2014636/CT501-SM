@@ -2,6 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { login, logout, refreshToken } from './authThunk' // Đảm bảo đường dẫn chính xác
 import { removeToken } from '@/utils/tokenHelper' // Đảm bảo import removeToken
+import { acceptFriendRequest, unFriend } from '../request/requestThunk'
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -21,6 +22,15 @@ export const authSlice = createSlice({
     },
     updateUser(state, action) {
       state.user = action.payload
+    },
+    updateFriends(state, action) {
+      const { user, actionType } = action.payload // Giả sử payload chứa userId và actionType
+
+      if (actionType === 'add') {
+        state.user.friends.push(user)
+      } else if (actionType === 'remove') {
+        state.user.friends = state.user.friends.filter((friend) => friend._id !== user._id) // Xóa bạn khỏi danh sách
+      }
     }
   },
   extraReducers: (builder) => {
@@ -56,13 +66,15 @@ export const authSlice = createSlice({
         state.loading = false
         state.isAuthenticated = false
       })
-
-      .addCase(refreshToken.fulfilled, (state, action) => {
-        state.accessToken = action.payload.accessToken
+      .addCase(acceptFriendRequest.fulfilled, (state, action) => {
+        state.user.friends.push(action.payload.request.from)
+      })
+      .addCase(unFriend.fulfilled, (state, action) => {
+        state.user.friends = state.user.friends.filter((friend) => friend._id !== action.payload.request.to._id) // Xóa bạn khỏi danh sách
       })
   }
 })
 
-export const { resetError, updateUser } = authSlice.actions
+export const { resetError, updateUser, updateFriends } = authSlice.actions
 
 export default authSlice.reducer

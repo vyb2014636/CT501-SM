@@ -33,7 +33,7 @@ const MyAvartarBackground = ({ user, myCardProfile }) => {
           backgroundImage: `url('${user.background || img}')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          height: '200px',
+          height: 200,
           borderRadius: '12px 12px 0 0',
           position: 'relative'
         }}>

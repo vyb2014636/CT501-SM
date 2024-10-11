@@ -1,50 +1,45 @@
 import { resetPostState } from '@/features/post/postSlice'
 import { fetchAllPosts } from '@/features/post/postThunk'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
 import NotFoundPage from '@/pages/Error/NotFoundPage'
-import { checkFriendshipStatus, resetFriendship } from '@/features/request/friendshipSlice'
-import PostList from '@/components/Common/List/ListPost'
-import { scrollbarStyleMui } from '@/styles/styles'
 import { Box } from '@mui/material'
 import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
 import { toast } from 'react-toastify'
 import ProfileSkeleton from '@/components/Common/Skeleton/ProfileSkeleton'
+import PersonalFeed from '@/components/Common/Main/PersonalFeed'
+import PostCreationSkeleton from '@/components/Common/Skeleton/PostCreationSkeleton'
 
-const Other = () => {
-  const { userId } = useParams()
+const MyPersonal = () => {
   const dispatch = useDispatch()
-  const pageRef = useRef(1)
-  const { error } = useSelector((state) => state.post)
   const [loading, setLoading] = useState(true)
-
+  const [error, setError] = useState(false)
+  const { totalPosts, posts } = useSelector((state) => state.post)
+  const currentUser = useSelector((state) => state.auth.user)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await Promise.all([
-          dispatch(resetPostState()),
-          dispatch(resetFriendship()),
-          dispatch(fetchAllPosts({ page: pageRef.current, userId })),
-          dispatch(checkFriendshipStatus(userId))
-        ])
+        await Promise.all([dispatch(resetPostState()), dispatch(fetchAllPosts({ page: 1, userId: currentUser._id }))])
       } catch (error) {
         toast.error(error.message)
+        setError(true)
       } finally {
         setLoading(false)
       }
     }
     fetchData()
-  }, [dispatch, userId])
+  }, [dispatch])
 
   // Kiểm tra lỗi
   if (error) return <NotFoundPage />
 
   // Kiểm tra loading
-  if (loading) {
+  if ((loading && totalPosts === 0) || !currentUser) {
     return (
-      <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
-        <ProfileSkeleton />
+      <Box sx={{ flex: 3, p: 4, mx: 4 }}>
+        <ProfileSkeleton>
+          <PostCreationSkeleton />
+        </ProfileSkeleton>
         {Array.from({ length: 3 }, (_, i) => (
           <SkeletonPosts key={i} />
         ))}
@@ -52,7 +47,7 @@ const Other = () => {
     )
   }
 
-  return <PostList pageRef={pageRef} showProfileCard />
+  return <PersonalFeed user={currentUser} posts={posts} totalPosts={totalPosts} currentUser />
 }
 
-export default Other
+export default MyPersonal

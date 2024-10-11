@@ -91,7 +91,6 @@ const SearchTextField = () => {
       <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement='bottom-start' style={{ zIndex: 1300 }}>
         <Paper style={{ width: '100%' }}>
           <List>
-            {/* {loading && <CircularProgress />} */}
             {users.map((userSearch) => (
               <ListItem key={userSearch._id} onClick={() => handleProfileClick(userSearch._id, user._id)} button>
                 <ListItemAvatar>

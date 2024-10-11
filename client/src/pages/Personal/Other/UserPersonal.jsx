@@ -5,19 +5,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import NotFoundPage from '@/pages/Error/NotFoundPage'
 import { checkFriendshipStatus, resetFriendship } from '@/features/request/friendshipSlice'
-import PostList from '@/components/Common/List/ListPost'
-import { scrollbarStyleMui } from '@/styles/styles'
+import PersonalFeed from '@/components/Common/Main/PersonalFeed'
 import { Box } from '@mui/material'
 import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
 import { toast } from 'react-toastify'
 import ProfileSkeleton from '@/components/Common/Skeleton/ProfileSkeleton'
 
-const Person = () => {
+const UserPersonal = () => {
   const { userId } = useParams()
   const dispatch = useDispatch()
-  const pageRef = useRef(1)
-  const { error } = useSelector((state) => state.post)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const { totalPosts, posts, userPosts } = useSelector((state) => state.post)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,11 +24,12 @@ const Person = () => {
         await Promise.all([
           dispatch(resetPostState()),
           dispatch(resetFriendship()),
-          dispatch(fetchAllPosts({ page: pageRef.current, userId })),
+          dispatch(fetchAllPosts({ page: 1, userId })),
           dispatch(checkFriendshipStatus(userId))
         ])
       } catch (error) {
         toast.error(error.message)
+        setError(true)
       } finally {
         setLoading(false)
       }
@@ -41,9 +41,9 @@ const Person = () => {
   if (error) return <NotFoundPage />
 
   // Kiểm tra loading
-  if (loading) {
+  if ((loading && totalPosts === 0) || !userPosts) {
     return (
-      <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
+      <Box sx={{ flex: 3, p: 4, mx: 4 }}>
         <ProfileSkeleton />
         {Array.from({ length: 3 }, (_, i) => (
           <SkeletonPosts key={i} />
@@ -52,7 +52,7 @@ const Person = () => {
     )
   }
 
-  return <PostList pageRef={pageRef} showProfileCard currentUser />
+  return <PersonalFeed user={userPosts} posts={posts} totalPosts={totalPosts} />
 }
 
-export default Person
+export default UserPersonal

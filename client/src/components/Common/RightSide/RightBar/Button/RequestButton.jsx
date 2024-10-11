@@ -17,6 +17,7 @@ import { formatFullname } from '@/utils/helpers'
 import { acceptAddFriendAPI, getRequests, rejectAddFriendAPI } from '@/apis/user/userAPI'
 import { acceptFriendRequest, fetchFriendRequests, rejectFriendRequest } from '@/features/request/requestThunk'
 import { useDispatch, useSelector } from 'react-redux'
+import { updateFriends } from '@/features/auth/authSlice'
 
 const RequestButton = () => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -38,7 +39,8 @@ const RequestButton = () => {
 
   const handleAcceptAddFriend = async (from) => {
     try {
-      dispatch(acceptFriendRequest(from))
+      dispatch(acceptFriendRequest(from)).unwrap()
+      // dispatch(updateFriends({ user: response.request.from, actionType: 'add' }))
       toast.success('Đồng ý thành công')
     } catch (error) {
       toast.error(error.message)
@@ -78,7 +80,7 @@ const RequestButton = () => {
             requests?.length > 0 ? (
               requests.map((request) => (
                 <ListItem alignItems='flex-start' key={request._id} sx={{ cursor: 'pointer' }}>
-                  <ListItemAvatar onClick={() => navigate(`/${request.from._id}`)}>
+                  <ListItemAvatar onClick={() => navigate(`/personal/${request.from._id}`)}>
                     <Avatar alt='Remy Sharp' src={request.from?.avatar} />
                   </ListItemAvatar>
                   <ListItemText

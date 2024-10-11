@@ -10,28 +10,30 @@ import PostCard from '../PostCard/PostCard'
 import PostCreation from '@/components/PostCreation/Card/PostCreation'
 import ProfileCard from '../ProfileCard/ProfileCard'
 
-const ListPost = ({ userId = null, pageRef, showProfileCard, currentUser }) => {
-  const { posts, totalPosts, status, loading, hasMorePosts, userPosts } = useSelector((state) => state.post)
+const PersonalFeed = ({ posts, user, currentUser, totalPosts }) => {
+  const { loading, hasMorePosts } = useSelector((state) => state.post)
   const scrollPostsRef = useRef(null)
+  const pageRef = useRef(1)
   const dispatch = useDispatch()
   const loadMorePosts = () => {
     if (hasMorePosts && !loading) {
       pageRef.current += 1
-      dispatch(fetchAllPosts({ page: pageRef.current, userId }))
+      dispatch(fetchAllPosts({ page: pageRef.current, userId: user._id }))
     }
   }
   useScrollInfinite(scrollPostsRef, loadMorePosts, hasMorePosts)
   return (
     <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }} ref={scrollPostsRef}>
-      {showProfileCard && currentUser ? (
-        <ProfileCard user={userPosts} totalPosts={totalPosts} myCardProfile />
-      ) : showProfileCard ? (
-        <ProfileCard user={userPosts} totalPosts={totalPosts} />
+      {currentUser ? (
+        <>
+          <ProfileCard user={user} totalPosts={totalPosts} myCardProfile />
+          <PostCreation />
+        </>
       ) : (
-        <PostCreation />
+        <ProfileCard user={user} totalPosts={totalPosts} />
       )}
 
-      {!loading && posts.length === 0 ? (
+      {posts.length === 0 ? (
         <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
           Không có bài viết nào được đăng
         </Typography>
@@ -53,4 +55,4 @@ const ListPost = ({ userId = null, pageRef, showProfileCard, currentUser }) => {
   )
 }
 
-export default memo(ListPost)
+export default memo(PersonalFeed)
