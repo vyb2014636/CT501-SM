@@ -23,7 +23,7 @@ const friendRequestSchema = new mongoose.Schema(
 )
 
 friendRequestSchema.methods.populateFromToFrienship = function () {
-  return this.populate('from to', 'firstname lastname avatar background')
+  return this.populate('from to', 'firstname lastname fullname avatar background')
 }
 
 friendRequestSchema.pre('save', function (next) {

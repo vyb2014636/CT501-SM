@@ -11,6 +11,11 @@ import MyAvartarBackground from './Avatar/MyAvartarBackground'
 import OtherAvartarBackground from './Avatar/OtherAvartarBackground'
 import FriendshipButton from './Button/FriendshipButton'
 import { useSelector } from 'react-redux'
+import FriendShip from '@/components/Search/Button/FriendShip'
+import { Button } from '@mui/material'
+import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
+
+const styleFlexCenterButton = { display: 'flex', alignItems: 'center', gap: 2 }
 
 const ProfileCard = ({ user, totalPosts, myCardProfile = false }) => {
   const [value, setValue] = useState(0)
@@ -32,7 +37,7 @@ const ProfileCard = ({ user, totalPosts, myCardProfile = false }) => {
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-        {myCardProfile ? <EditInfoButton user={user} /> : <FriendshipButton userId={user._id} status={status} showChat />}
+        {myCardProfile ? <EditInfoButton user={user} /> : <FriendShip user={user} inProfile />}
       </Box>
 
       <ProfileStat friendsCount={friends?.length} totalPosts={totalPosts} />

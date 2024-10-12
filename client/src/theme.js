@@ -59,6 +59,13 @@ const theme = extendTheme({
         }
       }
     },
+    MuiMenu: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          backgroundColor: theme.palette.background.default
+        })
+      }
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         root: ({ theme }) => {

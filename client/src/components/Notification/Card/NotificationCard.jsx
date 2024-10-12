@@ -20,7 +20,7 @@ const NotificationCard = ({ notification }) => {
       sharedPost: ' đã chia sẻ một bài viết.'
     }
     return (
-      <Typography variant='body2' sx={{ marginLeft: 1, fontWeight: status === 'unread' ? 'bold' : 'normal' }}>
+      <Typography variant='body2' sx={{ marginLeft: 1, fontWeight: status === 'unread' ? 'bold' : 'normal', whiteSpace: 'normal' }}>
         <strong>{sender.fullname}</strong>
         {messages[type]}
       </Typography>

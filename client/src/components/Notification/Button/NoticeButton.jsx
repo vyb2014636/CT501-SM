@@ -56,7 +56,7 @@ const NoticeButton = () => {
             width: 'auto'
           }
         }}>
-        <Box sx={{ maxHeight: 350, width: 'auto', ...scrollbarStyleMui }} ref={notificationRef}>
+        <Box sx={{ minWidth: 350, maxHeight: 350, maxWidth: 440, width: 350, ...scrollbarStyleMui }} ref={notificationRef}>
           <Typography variant='h6'>Danh sách thông báo </Typography>
 
           {loading && notifications.length === 0 ? (

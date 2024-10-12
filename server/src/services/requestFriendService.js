@@ -14,8 +14,8 @@ const notifyFriendsAboutRequest = async (userId, toId, type) => {
 }
 
 const getRequests = async (to) => {
-  const requests = await FriendRequest.find({ to, status: 'pending' }).populate('from to', 'firstname lastname avatar background').lean()
-  const sends = await FriendRequest.find({ from: to, status: 'pending' }).populate('from to', 'firstname lastname avatar background').lean()
+  const requests = await FriendRequest.find({ to, status: 'pending' }).populate('from to', 'firstname fullname avatar background').lean()
+  const sends = await FriendRequest.find({ from: to, status: 'pending' }).populate('from to', 'firstname fullname avatar background').lean()
 
   if (!requests) throw new ApiError(404, 'Không tìm thấy lời mời nào')
 

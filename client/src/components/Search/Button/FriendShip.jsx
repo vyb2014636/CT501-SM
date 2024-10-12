@@ -1,80 +1,86 @@
 import { Button, Typography } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
 import { toast } from 'react-toastify'
-import { acceptFriendRequest, cancelFriendRequest, sendFriendRequest } from '@/features/request/requestThunk'
-import { updateFriends } from '@/features/auth/authSlice'
+import { acceptFriendRequest, cancelFriendRequest, sendFriendRequest, unFriend } from '@/features/request/requestThunk'
+import FlexRow from '@/components/Common/Flex/FlexRow'
+import PersonRemoveAlt1OutlinedIcon from '@mui/icons-material/PersonRemoveAlt1Outlined'
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
+import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined'
 
 const styleFlexCenterButton = { display: 'flex', alignItems: 'center', gap: 2 }
 
-const FriendShip = ({ user }) => {
+const FriendButton = ({ onClick, variant, icon, label }) => (
+  <Button variant={variant} sx={{ ...styleFlexCenterButton }} onClick={onClick}>
+    {!icon ? <SendOutlinedIcon /> : icon}
+    <Typography variant='body1' fontWeight='bold'>
+      {label}
+    </Typography>
+  </Button>
+)
+
+const FriendShip = ({ user, inProfile }) => {
   const dispatch = useDispatch()
   const currentUser = useSelector((state) => state.auth.user)
   const { sends, requests } = useSelector((state) => state.request)
-  console.log(currentUser)
-  const isFriend = currentUser.friends.some((userCheck) => userCheck._id === user._id)
-  const hasSentRequest = sends.some((send) => send.to._id === user._id)
-  const hasReceiveRequest = requests.some((receive) => receive.from._id === user._id && receive.to._id === currentUser._id)
 
-  const handleAddFriend = async () => {
-    try {
-      await dispatch(sendFriendRequest(user._id)).unwrap()
-    } catch (error) {
-      toast.error(error.message)
-    }
-  }
+  const isFriend = useMemo(() => currentUser.friends.some((friend) => friend._id === user._id), [currentUser.friends, user._id])
 
-  const handleCancelSendRequest = async () => {
-    try {
-      await dispatch(cancelFriendRequest(user._id)).unwrap()
-    } catch (error) {
-      toast.error(error.message)
-    }
-  }
+  const hasSentRequest = useMemo(() => sends.some((send) => send.to._id === user._id), [sends, user._id])
 
-  const handleCAcceptRequest = async () => {
+  const hasReceiveRequest = useMemo(
+    () => requests.some((receive) => receive.from._id === user._id && receive.to._id === currentUser._id),
+    [requests, user._id, currentUser._id]
+  )
+
+  const handleRequest = async (action, successMessage) => {
     try {
-      const response = await dispatch(acceptFriendRequest(user._id)).unwrap()
-      dispatch(updateFriends({ user: response.request.from, actionType: 'add' }))
+      await dispatch(action(user._id)).unwrap()
+      toast.success(successMessage)
     } catch (error) {
       toast.error(error.message)
     }
   }
 
   return (
-    <>
-      {isFriend && (
-        <Button variant='outlined' sx={{ ...styleFlexCenterButton }}>
-          <SendOutlinedIcon />
-          <Typography variant='body1' fontWeight='bold'>
-            Nhắn tin
-          </Typography>
-        </Button>
-      )}
-
-      {hasSentRequest && (
-        <Button variant='contained' sx={{ ...styleFlexCenterButton }} onClick={handleCancelSendRequest}>
-          <Typography variant='body1' fontWeight='bold'>
-            Hủy lời mời
-          </Typography>
-        </Button>
-      )}
-      {hasReceiveRequest && (
-        <Button variant='contained' sx={{ ...styleFlexCenterButton }} onClick={handleCAcceptRequest}>
-          <Typography variant='body1' fontWeight='bold'>
-            Đồng ý
-          </Typography>
-        </Button>
-      )}
-      {currentUser._id !== user._id && !hasSentRequest && !hasReceiveRequest && !isFriend && (
-        <Button variant='contained' sx={{ ...styleFlexCenterButton }} onClick={handleAddFriend}>
-          <Typography variant='body1' fontWeight='bold'>
-            Thêm bạn
-          </Typography>
-        </Button>
-      )}
-    </>
+    <FlexRow gap={2}>
+      {isFriend ? (
+        inProfile ? (
+          <FriendButton
+            onClick={() => handleRequest(unFriend, 'Đã hủy kết bạn')}
+            variant='contained'
+            icon={<PersonRemoveAlt1OutlinedIcon />}
+            label='Hủy kết bạn'
+          />
+        ) : (
+          <FriendButton variant='outlined' icon={<SendOutlinedIcon />} label='Nhắn tin' />
+        )
+      ) : hasSentRequest ? (
+        <FriendButton
+          onClick={() => handleRequest(cancelFriendRequest, 'Đã hủy lời mời kết bạn')}
+          variant='contained'
+          icon={<CancelOutlinedIcon />}
+          label='Hủy lời mời'
+        />
+      ) : hasReceiveRequest ? (
+        <FriendButton
+          onClick={() => handleRequest(acceptFriendRequest, 'Đã chấp nhận lời mời kết bạn')}
+          variant='contained'
+          icon={<CheckOutlinedIcon />}
+          label='Đồng ý'
+        />
+      ) : currentUser._id !== user._id ? (
+        <FriendButton
+          onClick={() => handleRequest(sendFriendRequest, 'Đã gửi lời mời kết bạn')}
+          variant='contained'
+          icon={<PersonAddAlt1OutlinedIcon />}
+          label='Thêm bạn'
+        />
+      ) : null}
+      {inProfile && <FriendButton variant='outlined' icon={<SendOutlinedIcon />} label='Nhắn tin' />}
+    </FlexRow>
   )
 }
 
