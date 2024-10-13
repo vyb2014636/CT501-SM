@@ -1,5 +1,5 @@
 import PostCard from '@/components/Common/PostCard/PostCard'
-import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
+import SkeletonPosts from '@/components/Common/Skeleton/PostsSkeleton'
 import { resetPostState } from '@/features/post/postSlice'
 import { fetchPost } from '@/features/post/postThunk'
 import { scrollbarStyleMui } from '@/styles/styles'

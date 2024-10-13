@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
 import Typography from '@mui/material/Typography'
-import ListSuggestion from './ListSuggestion/ListSuggestion'
 import { getListSuggestion } from '@/apis/user/userAPI'
+import FlexColumn from '../Common/Flex/FlexColumn'
+import SuggestionCard from './ListSuggestion/SuggestionCard'
 
 const Suggestion = () => {
   const [suggestions, setSuggestions] = useState(null)
@@ -21,20 +24,22 @@ const Suggestion = () => {
   }, [])
 
   return (
-    <Box
+    <FlexColumn
       sx={{
-        bgcolor: 'background.paper',
-        borderRadius: '18px',
-        p: 3,
-        mt: '15px'
+        mt: '15px',
+        flex: 10
       }}>
-      <Typography variant='h7' gutterBottom color='primary' fontWeight='bold'>
-        Những người bạn có thể biết
-      </Typography>
-      {suggestions?.map((user, id) => (
-        <ListSuggestion userNoFriend={user} id={id} key={id} />
-      ))}
-    </Box>
+      <List sx={{ bgcolor: 'background.paper', borderRadius: '18px', display: 'flex', flexDirection: 'column' }}>
+        <ListItem>
+          <Typography variant='h6' gutterBottom color='primary' fontWeight='bold'>
+            Những người bạn có thể biết
+          </Typography>
+        </ListItem>
+        {suggestions?.map((user, id) => (
+          <SuggestionCard userNoFriend={user} key={id} />
+        ))}
+      </List>
+    </FlexColumn>
   )
 }
 

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import NotFoundPage from '@/pages/Error/NotFoundPage'
 import { Box } from '@mui/material'
-import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
+import SkeletonPosts from '@/components/Common/Skeleton/PostsSkeleton'
 import { toast } from 'react-toastify'
 import ProfileSkeleton from '@/components/Common/Skeleton/ProfileSkeleton'
 import PersonalFeed from '@/components/Common/Main/PersonalFeed'
@@ -34,18 +34,12 @@ const MyPersonal = () => {
   if (error) return <NotFoundPage />
 
   // Kiểm tra loading
-  if ((loading && totalPosts === 0) || !currentUser) {
+  if ((loading && totalPosts === 0) || !currentUser)
     return (
-      <Box sx={{ flex: 3, p: 4, mx: 4 }}>
-        <ProfileSkeleton>
-          <PostCreationSkeleton />
-        </ProfileSkeleton>
-        {Array.from({ length: 3 }, (_, i) => (
-          <SkeletonPosts key={i} />
-        ))}
-      </Box>
+      <ProfileSkeleton>
+        <PostCreationSkeleton />
+      </ProfileSkeleton>
     )
-  }
 
   return <PersonalFeed user={currentUser} posts={posts} totalPosts={totalPosts} currentUser />
 }

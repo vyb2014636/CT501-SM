@@ -67,7 +67,7 @@ const SearchTextField = () => {
   }
 
   return (
-    <div>
+    <div style={{ flex: 3 }}>
       <TextField
         variant='outlined'
         size='small'

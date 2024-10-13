@@ -1,9 +1,11 @@
 import React from 'react'
 import { Box, Skeleton, Button, Divider } from '@mui/material'
+import { scrollbarStyleMui, styleMain } from '@/styles/styles'
+import PostSkeleton from './Children/PostSkeleton'
 
 const ProfileSkeleton = ({ children }) => {
   return (
-    <>
+    <Box sx={{ ...styleMain, ...scrollbarStyleMui }}>
       <Box sx={{ backgroundColor: 'background.paper', height: 500, borderRadius: '12px 12px 0 0', mb: 2 }}>
         <Box
           sx={{
@@ -59,7 +61,10 @@ const ProfileSkeleton = ({ children }) => {
         </Box>
       </Box>
       {children}
-    </>
+      <PostSkeleton />
+      <PostSkeleton />
+      <PostSkeleton />
+    </Box>
   )
 }
 

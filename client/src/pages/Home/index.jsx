@@ -9,7 +9,7 @@ import ListContact from '@/components/Contact/ListContact'
 import Suggestion from '@/components/Suggestion/Suggestion'
 
 const Home = () => {
-  const isNonScreenMobile = useMediaQuery('(min-width: 950px)')
+  const isNonScreenMobile = useMediaQuery('(min-width: 1050px)')
 
   return (
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', overflow: 'hidden' }}>

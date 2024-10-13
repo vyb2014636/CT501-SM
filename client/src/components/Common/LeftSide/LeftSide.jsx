@@ -1,13 +1,13 @@
 import React from 'react'
-import Box from '@mui/material/Box'
 import LeftBar from './LeftBar/LeftBar'
+import FlexColumn from '../Flex/FlexColumn'
 
 const LeftSide = ({ children }) => {
   return (
-    <Box sx={{ display: { xs: 'none', lg: 'block' }, flex: '2', p: 2 }}>
+    <FlexColumn sx={{ display: { xs: 'none', lg: 'flex' }, p: 2, flex: 2 }}>
       <LeftBar />
       {children}
-    </Box>
+    </FlexColumn>
   )
 }
 

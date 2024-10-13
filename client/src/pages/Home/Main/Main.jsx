@@ -11,8 +11,9 @@ import PostList from '@/components/Common/Main/PersonalFeed'
 import { Box } from '@mui/material'
 import PostCreationSkeleton from '@/components/Common/Skeleton/PostCreationSkeleton'
 import { scrollbarStyleMui } from '@/styles/styles'
-import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
+import SkeletonPosts from '@/components/Common/Skeleton/PostsSkeleton'
 import MainFeed from '@/components/Common/Main/MainFeed'
+import PostsSkeleton from '@/components/Common/Skeleton/PostsSkeleton'
 
 const Main = () => {
   const dispatch = useDispatch()
@@ -26,7 +27,7 @@ const Main = () => {
       await Promise.all([
         dispatch(resetPostState()),
         dispatch(resetNotificationState()),
-        dispatch(fetchListNotificationAPI({ page: 1 })),
+        dispatch(fetchListNotificationAPI({ page: 1 })), //Chừng nào có thông báo mới ,mới gọi
         dispatch(fetchAllPosts({ page: 1 }))
       ])
     } catch (error) {
@@ -43,16 +44,7 @@ const Main = () => {
 
   if (error) return <NotFoundPage />
 
-  if (loading && totalPosts === 0) {
-    return (
-      <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
-        <PostCreationSkeleton />
-        {Array.from({ length: 3 }, (_, i) => (
-          <SkeletonPosts key={i} />
-        ))}
-      </Box>
-    )
-  }
+  if (loading && totalPosts === 0) return <PostsSkeleton />
 
   return <MainFeed posts={posts} totalPosts={totalPosts} />
 }

@@ -1,18 +1,13 @@
 import React from 'react'
-import Box from '@mui/material/Box'
 import RightBar from './RightBar/RightBar'
+import FlexColumn from '../Flex/FlexColumn'
 
 const RightSide = ({ children }) => {
   return (
-    <Box
-      sx={{
-        width: 400,
-        p: 2,
-        display: { xs: 'none', lg: 'block' }
-      }}>
+    <FlexColumn sx={{ display: { xs: 'none', lg: 'flex' }, p: 2, flex: 2 }}>
       <RightBar />
       {children}
-    </Box>
+    </FlexColumn>
   )
 }
 

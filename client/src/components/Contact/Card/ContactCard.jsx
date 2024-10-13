@@ -1,15 +1,23 @@
-import { Avatar, ListItem, ListItemAvatar, ListItemText, MenuItem } from '@mui/material'
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { Avatar, ListItemAvatar, ListItemText, MenuItem } from '@mui/material'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const ContactCard = ({ user }) => {
+const ContactCard = ({ user, selectedUserId, setSelectedUserId }) => {
   const navigate = useNavigate()
 
+  const handleClick = () => {
+    setSelectedUserId(user._id)
+    navigate(`/chat/${user._id}`)
+  }
+
   return (
-    <MenuItem sx={{ borderRadius: 2 }} onClick={() => navigate(`/personal/${user._id}`)}>
+    <MenuItem
+      sx={{ borderRadius: 2 }}
+      onClick={handleClick}
+      selected={selectedUserId === user._id} // So sánh với selectedUserId
+    >
       <ListItemAvatar>
-        <Avatar alt={user.lastname} src={user.avatar} sx={{ height: 46, width: 46 }} />
+        <Avatar alt={user.lastname} src={user.avatar} />
       </ListItemAvatar>
       <ListItemText primary={user?.fullname} secondary={`@${user.firstname}`} />
     </MenuItem>

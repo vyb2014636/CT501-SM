@@ -3,9 +3,9 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchAllPosts } from '@/features/post/postThunk'
-import { scrollbarStyleMui } from '@/styles/styles'
+import { scrollbarStyleMui, styleMain } from '@/styles/styles'
 import useScrollInfinite from '@/hooks/useScrollInfinite'
-import SkeletonPosts from '../Skeleton/SkeletonPosts'
+import SkeletonPosts from '../Skeleton/PostsSkeleton'
 import PostCard from '../PostCard/PostCard'
 import PostCreation from '@/components/PostCreation/Card/PostCreation'
 
@@ -24,7 +24,7 @@ const MainFeed = ({ posts, totalPosts }) => {
 
   useScrollInfinite(scrollPostsRef, loadMorePosts, hasMorePosts)
   return (
-    <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }} ref={scrollPostsRef}>
+    <Box sx={{ ...styleMain, ...scrollbarStyleMui }} ref={scrollPostsRef}>
       <PostCreation />
 
       {posts.length === 0 ? (

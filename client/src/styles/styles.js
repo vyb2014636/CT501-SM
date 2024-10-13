@@ -14,6 +14,13 @@ export const styleModal = {
   px: 4
 }
 
+export const styleMain = {
+  flex: 3,
+  mx: { xs: 10, sm: 20, md: 40, lg: 8 },
+  pr: 3,
+  py: 2
+}
+
 export const scrollbarStyles = {
   '&::-webkit-scrollbar': {
     width: '8px' // Độ rộng của scrollbar

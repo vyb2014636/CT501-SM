@@ -1,19 +1,15 @@
 import React from 'react'
 import MenuMobile from '@components/Mobile/MenuMobile'
-import useMediaQuery from '@mui/material/useMediaQuery'
+// import useMediaQuery from '@mui/material/useMediaQuery'
 import FlexBetween from '@/components/Common/Flex/FlexBetween'
 import Logo from './Logo'
 import SearchTextField from '../../../Search/SearchTextField'
 
 const LeftBar = () => {
-  const isNonScreenMobile = useMediaQuery('(min-width: 950px)')
-
   return (
-    <FlexBetween sx={{ gap: 2, p: 2, borderRadius: '12px' }}>
+    <FlexBetween sx={{ gap: 2, p: 2 }}>
       <Logo />
-
       <SearchTextField />
-      {!isNonScreenMobile && <MenuMobile />}
     </FlexBetween>
   )
 }

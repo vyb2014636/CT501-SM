@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import CardContent from '@mui/material/CardContent'
@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import Skeleton from '@mui/material/Skeleton'
 
-const SkeletonPosts = () => {
+const PostSkeleton = () => {
   return (
     <Card sx={{ width: '100%', mb: 2 }}>
       <CardHeader
@@ -28,4 +28,4 @@ const SkeletonPosts = () => {
   )
 }
 
-export default SkeletonPosts
+export default PostSkeleton

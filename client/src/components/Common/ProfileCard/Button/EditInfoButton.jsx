@@ -51,8 +51,8 @@ const EditInfoButton = ({ user }) => {
     try {
       await uploadInfo(data)
       toast.success('Cập nhật thông tin thành công!')
-      setInitialFormData(formData) // Cập nhật lại initialFormData sau khi lưu thành công
-      setOpen(false) // Đóng form sau khi lưu thành công
+      setInitialFormData(formData)
+      setOpen(false)
     } catch (error) {
       toast.error('Cập nhật thông tin thất bại.')
     }

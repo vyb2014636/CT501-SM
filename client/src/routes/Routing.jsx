@@ -20,6 +20,7 @@ import AllUser from '@/pages/Search/AllUsers/AllUser'
 import ViewPost from '@/pages/Home/ViewPost/ViewPost'
 import MyPersonal from '@/pages/Personal/MyProfile/MyPersonal'
 import UserPersonal from '@/pages/Personal/Other/UserPersonal'
+import ChatBox from '@/pages/Home/Chat/ChatBox'
 
 function Routing() {
   return (
@@ -27,8 +28,9 @@ function Routing() {
       <Route element={<PrivateRoute />}>
         <Route path='/' element={<Home />}>
           <Route path='/' element={<Main />} />
-          <Route path='/post/:postId' element={<ViewPost />} />
+          <Route path='chat/:userId' element={<ChatBox />} />
           <Route path='favorite' element={<Favorites />} />
+          <Route path='post/:postId' element={<ViewPost />} />
         </Route>
         <Route path='/admin' element={<Admin />}>
           <Route path='/admin' element={<Dashboard />} />

@@ -7,7 +7,7 @@ import NotFoundPage from '@/pages/Error/NotFoundPage'
 import { checkFriendshipStatus, resetFriendship } from '@/features/request/friendshipSlice'
 import PersonalFeed from '@/components/Common/Main/PersonalFeed'
 import { Box } from '@mui/material'
-import SkeletonPosts from '@/components/Common/Skeleton/SkeletonPosts'
+import SkeletonPosts from '@/components/Common/Skeleton/PostsSkeleton'
 import { toast } from 'react-toastify'
 import ProfileSkeleton from '@/components/Common/Skeleton/ProfileSkeleton'
 
@@ -41,16 +41,7 @@ const UserPersonal = () => {
   if (error) return <NotFoundPage />
 
   // Kiểm tra loading
-  if ((loading && totalPosts === 0) || !userPosts) {
-    return (
-      <Box sx={{ flex: 3, p: 4, mx: 4 }}>
-        <ProfileSkeleton />
-        {Array.from({ length: 3 }, (_, i) => (
-          <SkeletonPosts key={i} />
-        ))}
-      </Box>
-    )
-  }
+  if ((loading && totalPosts === 0) || !userPosts) return <ProfileSkeleton />
 
   return <PersonalFeed user={userPosts} posts={posts} totalPosts={totalPosts} />
 }

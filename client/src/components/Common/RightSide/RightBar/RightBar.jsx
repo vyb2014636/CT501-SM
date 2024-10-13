@@ -8,7 +8,7 @@ import AccountButton from './Button/AccountMenu'
 
 const RightBar = () => {
   return (
-    <FlexBetween sx={{ gap: 2, my: 3 }}>
+    <FlexBetween sx={{ gap: 2, p: 2, height: (theme) => theme.myApp.heighHeader }}>
       <HomeButton />
       <ModeButton />
       <RequestButton />

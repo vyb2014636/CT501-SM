@@ -8,7 +8,7 @@ export const notificationSlice = createSlice({
     status: 'idle',
     error: false,
     loading: true,
-    hasMoreNotifications: false,
+    hasMoreNotifications: true,
     totalUnread: 0
   },
   reducers: {
@@ -17,7 +17,7 @@ export const notificationSlice = createSlice({
       state.status = 'idle'
       state.error = false
       state.loading = true
-      state.hasMoreNotifications = false
+      state.hasMoreNotifications = true
       state.totalUnread = 0
     }
   },
