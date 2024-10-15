@@ -2,18 +2,49 @@ import ApiError from '~/middlewares/ApiError'
 import Notification from '~/models/notification'
 import Post from '~/models/post'
 import User from '~/models/user'
+import { sendNotification } from '~/sockets'
 
-const notifyFriendsAboutPost = async (userId, postId, type) => {
-  const user = await User.findById(userId).populate('friends')
+const notifyFriendsAboutPost = async (userId, post, type) => {
+  try {
+    // Tạo thông báo cho tất cả bạn bè
+    const notifications = post.byPost.friends.map((friend) => ({
+      type: type,
+      sender: userId,
+      receiver: friend,
+      postId: post._id
+    }))
 
-  const notifications = user.friends.map((friend) => ({
+    // Lưu thông báo vào cơ sở dữ liệu
+    const savedNotifications = await Notification.insertMany(notifications)
+
+    // Gửi thông báo cho từng người bạn
+    savedNotifications.forEach(async (notification) => {
+      await notification.populate('sender postId', 'firstname lastname fullname avatar')
+      sendNotification(notification.receiver, 'newPost', {
+        userName: post.byPost.fullname,
+        post: post,
+        notification: notification
+      })
+    })
+  } catch (error) {
+    console.error('Error sending notifications:', error)
+  }
+}
+
+const notifyShareToByPost = async (my, receiver, postId, type) => {
+  const notification = new Notification({
+    sender: my.id,
+    receiver,
     type: type,
-    sender: userId,
-    receiver: friend._id,
     postId
-  }))
+  })
+  await notification.save()
+  await notification.populate('sender postId', 'firstname lastname fullname avatar')
 
-  await Notification.insertMany(notifications)
+  sendNotification(receiver, 'sharedPost', {
+    userName: my.fullname,
+    notification: notification
+  })
 }
 
 const createPost = async (describe, myId, images, videos) => {
@@ -25,12 +56,13 @@ const createPost = async (describe, myId, images, videos) => {
 
   const newPost = await Post.create({
     describe,
-    byPost: myId,
+    byPost: myId.id,
     images,
     videos
   })
+  await newPost.populate('byPost', 'firstname lastname fullname avatar friends')
 
-  await notifyFriendsAboutPost(myId, newPost._id, 'newPost')
+  await notifyFriendsAboutPost(myId.id, newPost, 'newPost')
 
   return newPost
 }
@@ -91,31 +123,29 @@ const likePost = async (userId, postId) => {
 }
 
 const sharePost = async (postId, myId, describe) => {
-  const post = await Post.findByIdPopulateSharePost(postId)
+  const post = await Post.findById(postId).populate('sharedPost')
 
   if (!post) throw new Error('Bài đăng bạn muốn chia sẻ không tồn tại')
 
   const originalPost = post.sharedPost ? post.sharedPost : post
 
-  // Kiểm tra nếu người dùng đã chia sẻ bài viết này rồi
-  if (originalPost.byPost === myId) {
-    throw new Error('Bạn không thể tự chia sẻ bài viết của chính mình')
-  }
+  // if (originalPost.byPost.toString() === myId.id) throw new Error('Bạn không thể tự chia sẻ bài viết của chính mình')
 
   // Tạo một bài chia sẻ mới
   const sharedPost = new Post({
-    byPost: myId,
+    byPost: myId.id,
     describe,
     sharedPost: originalPost._id
   })
 
   await sharedPost.save()
 
-  originalPost.sharesBy.push(myId)
-
+  originalPost.sharesBy.push(myId.id)
   await originalPost.save()
 
-  await notifyFriendsAboutPost(myId, sharedPost._id, 'sharedPost')
+  // Kiểm tra xem bài viết gốc có phải là của chính người dùng không
+
+  if (originalPost.byPost.toString() !== myId.id) await notifyShareToByPost(myId, originalPost.byPost, sharedPost._id, 'sharedPost')
 
   return sharedPost
 }

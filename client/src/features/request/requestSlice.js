@@ -10,7 +10,14 @@ const requestSlice = createSlice({
     loading: false,
     error: null
   },
-  reducers: {},
+  reducers: {
+    pushListRequests: (state, action) => {
+      state.requests.push(action.payload)
+    },
+    removeListRequests: (state, action) => {
+      state.requests = state.requests.filter((req) => req._id !== action.payload)
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchFriendRequests.pending, (state) => {
@@ -40,5 +47,6 @@ const requestSlice = createSlice({
       })
   }
 })
+export const { pushListRequests } = requestSlice.actions
 
 export default requestSlice.reducer

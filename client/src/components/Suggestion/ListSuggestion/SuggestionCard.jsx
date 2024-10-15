@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import List from '@mui/material/List'
@@ -13,26 +13,19 @@ import { useDispatch } from 'react-redux'
 import { cancelFriendRequest, sendFriendRequest } from '@/features/request/requestThunk'
 
 const SuggestionCard = ({ userNoFriend }) => {
-  const [changeButton, setChangeButton] = useState(true)
+  const [isRequestSent, setIsRequestSent] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  const handleSendFriendRequest = async () => {
+  const handleFriendRequest = async () => {
     try {
-      dispatch(sendFriendRequest(userNoFriend._id))
-      setChangeButton(false)
+      if (isRequestSent) {
+        dispatch(cancelFriendRequest(userNoFriend._id))
+      } else {
+        dispatch(sendFriendRequest(userNoFriend._id))
+      }
+      setIsRequestSent((prev) => !prev)
     } catch (error) {
-      setChangeButton(true)
-      toast.error(error.message)
-    }
-  }
-
-  const handleCancelFriendRequest = async () => {
-    try {
-      dispatch(cancelFriendRequest(userNoFriend._id))
-      setChangeButton(true)
-    } catch (error) {
-      setChangeButton(false)
       toast.error(error.message)
     }
   }
@@ -45,17 +38,11 @@ const SuggestionCard = ({ userNoFriend }) => {
         <Avatar alt={userNoFriend.lastname} src={userNoFriend.avatar} />
       </ListItemAvatar>
       <ListItemText primary={formatFullname(userNoFriend.firstname, userNoFriend.lastname)} secondary={`@${userNoFriend.firstname}`} />
-      {changeButton ? (
-        <Button variant='contained' sx={{ borderRadius: 12 }} onClick={handleSendFriendRequest}>
-          Kết bạn
-        </Button>
-      ) : (
-        <Button variant='outlined' sx={{ borderRadius: 12 }} onClick={handleCancelFriendRequest}>
-          Hủy kết bạn
-        </Button>
-      )}
+      <Button variant={isRequestSent ? 'outlined' : 'contained'} sx={{ borderRadius: 12 }} onClick={handleFriendRequest}>
+        {isRequestSent ? 'Hủy kết bạn' : 'Kết bạn'}
+      </Button>
     </ListItem>
   )
 }
 
-export default SuggestionCard
+export default memo(SuggestionCard)

@@ -19,6 +19,7 @@ const LoginForm = () => {
     dispatch(login(credentials))
       .unwrap()
       .then(async () => {
+        dispatch(fetchListNotificationAPI({ page: 1 }))
         toast.success('Đăng nhập thành công')
         navigate('/')
       })

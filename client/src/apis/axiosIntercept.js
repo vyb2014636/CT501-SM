@@ -1,9 +1,10 @@
 // src/utils/axiosClient.js
 import { refreshToken } from '@/features/auth/authThunk'
+import env from '@/utils/enviroment'
 import axios from 'axios'
 
 const axiosIntercept = axios.create({
-  baseURL: 'http://localhost:8017/v1' // Đảm bảo biến môi trường đã được thiết lập
+  baseURL: env.SOCKET_API_URL // Đảm bảo biến môi trường đã được thiết lập
 })
 
 // Hàm này sẽ setup interceptors với store

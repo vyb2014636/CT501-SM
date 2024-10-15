@@ -2,6 +2,7 @@ import ApiError from '~/middlewares/ApiError'
 import FriendRequest from '~/models/friendRequest'
 import Notification from '~/models/notification'
 import User from '~/models/user'
+import { sendNotification } from '~/sockets'
 
 const notifyFriendsAboutRequest = async (userId, toId, type) => {
   const notification = new Notification({
@@ -9,8 +10,9 @@ const notifyFriendsAboutRequest = async (userId, toId, type) => {
     receiver: userId,
     type: type
   })
-
   await notification.save()
+  await notification.populate('sender', 'firstname lastname fullname avatar')
+  return notification
 }
 
 const getRequests = async (to) => {
@@ -37,12 +39,22 @@ const sendFriendRequest = async (from, to) => {
     }
     existingFriendship.status = 'pending'
     await existingFriendship.save()
-    return await existingFriendship.populateFromToFrienship()
+
+    await existingFriendship.populateFromToFrienship()
+
+    sendNotification(to, 'sendAddFriend', { request: existingFriendship })
+
+    return existingFriendship
   }
 
   const newFriendship = new FriendRequest({ from, to })
+
   await newFriendship.save()
-  return await newFriendship.populateFromToFrienship()
+  await newFriendship.populateFromToFrienship()
+
+  sendNotification(to, 'sendAddFriend', { request: newFriendship })
+
+  return newFriendship
 }
 
 const cancelFriendRequest = async (from, to) => {
@@ -72,18 +84,28 @@ const acceptFriendRequest = async (from, to) => {
 
   await Promise.all([userFrom.save(), userTo.save()])
 
-  await notifyFriendsAboutRequest(from, to, 'friendRequestAccepted')
+  await request.populateFromToFrienship()
 
-  return await request.populateFromToFrienship()
+  const notification = await notifyFriendsAboutRequest(from, to, 'friendRequestAccepted')
+
+  sendNotification(from, 'friendRequestAccepted', { userName: request.to.fullname, friend: request.to, notification: notification })
+
+  return request
 }
 
 const rejectFriendRequest = async (from, to) => {
   let request = await FriendRequest.findOne({ from, to })
 
+  await request.populateFromToFrienship()
+
   if (request && request.status === 'pending') {
     request.status = 'declined'
     await request.save()
-    await notifyFriendsAboutRequest(to, from, 'friendRequestReject')
+
+    const notification = await notifyFriendsAboutRequest(from, to, 'friendRequestReject')
+
+    sendNotification(from, 'friendRequestReject', { userName: request.to.fullname, notification: notification, requestID: request._id })
+
     return request
   } else {
     throw new ApiError(400, 'Không có yêu cầu nào như vậy')
@@ -107,8 +129,11 @@ const unFriend = async (from, to) => {
     await User.findByIdAndUpdate(from, { $pull: { friends: to } })
     await User.findByIdAndUpdate(to, { $pull: { friends: from } })
     await existingFriendship.save()
+    await existingFriendship.populateFromToFrienship()
 
-    return await existingFriendship.populateFromToFrienship()
+    sendNotification(to, 'unFriend', { unFriend: existingFriendship.from })
+
+    return existingFriendship
   } else {
     throw new ApiError(404, 'Không tìm thấy yêu cầu')
   }

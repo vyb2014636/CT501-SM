@@ -15,6 +15,7 @@ import { resetPostState } from '@/features/post/postSlice'
 import { resetCommentState } from '@/features/comment/commentSlice'
 import { resetNotificationState } from '@/features/notification/notificationSlice'
 import { resetFriendship } from '@/features/request/friendshipSlice'
+import { disconnectUser } from '@/services/socket'
 const AccountButton = () => {
   const styleTriangle = {
     elevation: 0,
@@ -54,6 +55,7 @@ const AccountButton = () => {
     setAnchorEl(null)
   }
   const handleLogout = () => {
+    disconnectUser()
     dispatch(resetPostState())
     dispatch(resetCommentState())
     dispatch(resetNotificationState())

@@ -24,7 +24,6 @@ const ShareButton = ({ post }) => {
       const response = await sharePostAPI(post._id, descibeShare)
       toast.success(response.message)
       handleCloseShare()
-      navigate('/', { state: { refresh: true } })
     } catch (error) {
       toast.error(error.message)
     }

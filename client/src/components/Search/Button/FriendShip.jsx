@@ -36,12 +36,14 @@ const FriendShip = ({ user, inProfile }) => {
   )
 
   const handleRequest = async (action, successMessage) => {
-    try {
-      await dispatch(action(user._id)).unwrap()
-      toast.success(successMessage)
-    } catch (error) {
-      toast.error(error.message)
-    }
+    await dispatch(action(user._id))
+      .unwrap()
+      .then(async () => {
+        toast.success(successMessage)
+      })
+      .catch((error) => {
+        toast.error(error.message)
+      })
   }
 
   return (

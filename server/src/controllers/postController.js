@@ -2,12 +2,12 @@ import { postService } from '~/services/postService'
 
 const createPost = async (req, res, next) => {
   const { describe } = req.body
-  const myId = req.user.id
+  const my = req.user
   const images = req?.files?.images ? req?.files?.images?.map((file) => file.path) : []
   const videos = req?.files?.videos ? req?.files?.videos?.map((file) => file.path) : []
 
   try {
-    const newPost = await postService.createPost(describe, myId, images, videos)
+    const newPost = await postService.createPost(describe, my, images, videos)
 
     return res.status(201).json({
       message: newPost ? 'Đăng thành công' : 'Post thất bại',
@@ -71,9 +71,9 @@ const likePost = async (req, res, next) => {
 
 const sharePost = async (req, res, next) => {
   try {
-    const userId = req.user.id
+    const my = req.user
     const { postId, describe } = req.body
-    const post = await postService.sharePost(postId, userId, describe)
+    const post = await postService.sharePost(postId, my, describe)
     return res.status(200).json({
       message: post ? 'Bài đăng đã được chia sẻ' : 'Chia sẻ thất bại',
       post: post

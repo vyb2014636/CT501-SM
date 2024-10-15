@@ -19,6 +19,10 @@ export const notificationSlice = createSlice({
       state.loading = true
       state.hasMoreNotifications = true
       state.totalUnread = 0
+    },
+    receiveNotify: (state, action) => {
+      state.notifications.unshift(action.payload)
+      state.totalUnread = state.totalUnread + 1
     }
   },
   extraReducers: (builder) => {
@@ -43,10 +47,13 @@ export const notificationSlice = createSlice({
     builder.addCase(readNotificationAPI.fulfilled, (state, action) => {
       const updatedNotification = action.payload.notification
       const index = state.notifications.findIndex((notification) => notification._id === updatedNotification._id)
+
+      if (updatedNotification.status === 'read') state.totalUnread = Math.max(state.totalUnread - 1, 0) // Đảm bảo totalUnread không âm
+
       if (index !== -1) state.notifications[index] = updatedNotification
     })
   }
 })
 
-export const { resetNotificationState } = notificationSlice.actions
+export const { resetNotificationState, receiveNotify } = notificationSlice.actions
 export default notificationSlice.reducer

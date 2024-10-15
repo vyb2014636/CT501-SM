@@ -7,21 +7,34 @@ import Typography from '@mui/material/Typography'
 import { getListSuggestion } from '@/apis/user/userAPI'
 import FlexColumn from '../Common/Flex/FlexColumn'
 import SuggestionCard from './ListSuggestion/SuggestionCard'
+import { useSelector } from 'react-redux'
 
 const Suggestion = () => {
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [suggestions, setSuggestions] = useState(null)
+  const { requests, sends } = useSelector((state) => state.request)
+
   const fetchListNoFriends = async () => {
     try {
+      setLoading(true)
       const response = await getListSuggestion()
       setSuggestions(response.listUser)
     } catch (error) {
+      setError(true)
       toast.error(error.message)
+    } finally {
+      setLoading(false)
     }
   }
 
   useEffect(() => {
     fetchListNoFriends()
-  }, [])
+  }, [requests, sends])
+
+  if (loading) return <Typography>...loading</Typography>
+
+  if (error) return <Typography>Không có dữ liệu</Typography>
 
   return (
     <FlexColumn

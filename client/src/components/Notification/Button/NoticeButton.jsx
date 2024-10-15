@@ -7,8 +7,8 @@ import NotificationList from '../List/NotificationList'
 const NoticeButton = () => {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
-  const { notifications, loading, hasMoreNotifications } = useSelector((state) => state.notification)
-  const unreadCount = notifications.filter((notification) => notification.status === 'unread').length
+  const { notifications, loading, hasMoreNotifications, totalUnread } = useSelector((state) => state.notification)
+  // const unreadCount = notifications.filter((notification) => notification.status === 'unread').length
 
   const handleClick = (event) => setAnchorEl(event.currentTarget)
 
@@ -17,7 +17,7 @@ const NoticeButton = () => {
     <>
       <Tooltip title='Thông báo'>
         <IconButton onClick={handleClick}>
-          <Badge badgeContent={unreadCount} color='primary'>
+          <Badge badgeContent={totalUnread} color='primary'>
             <NotificationsNoneOutlinedIcon color='primary' />
           </Badge>
         </IconButton>

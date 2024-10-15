@@ -24,14 +24,9 @@ const Main = () => {
 
   const fetchData = async () => {
     try {
-      await Promise.all([
-        dispatch(resetPostState()),
-        dispatch(resetNotificationState()),
-        dispatch(fetchListNotificationAPI({ page: 1 })), //Chừng nào có thông báo mới ,mới gọi
-        dispatch(fetchAllPosts({ page: 1 }))
-      ])
+      await Promise.all([dispatch(resetPostState()), dispatch(fetchAllPosts({ page: 1 }))])
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message) ///đây chưa showw được lỗi vì trong slice chưa reject
       setError(true)
     } finally {
       setLoading(false)

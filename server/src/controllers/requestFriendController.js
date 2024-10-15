@@ -18,7 +18,6 @@ const getRequests = async (req, res, next) => {
 const sendFriendRequest = async (req, res, next) => {
   const { to } = req.body // ID của người nhận yêu cầu kết bạn
   const from = req.user.id // ID của người gửi yêu cầu kết bạn
-
   try {
     const request = await requestFriendService.sendFriendRequest(from, to)
     if (!request) throw new ApiError(400, 'Xử lý thất bại!')

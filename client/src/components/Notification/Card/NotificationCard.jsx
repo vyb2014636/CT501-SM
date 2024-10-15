@@ -1,10 +1,14 @@
-import { Avatar, Box, MenuItem, Typography } from '@mui/material'
-import React from 'react'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import MenuItem from '@mui/material/MenuItem'
+import Typography from '@mui/material/Typography'
 import CircleIcon from '@mui/icons-material/Circle'
 import { useNavigate } from 'react-router-dom'
 import { useProfileNavigation } from '@/hooks/useProfileNavigation'
 import { useDispatch } from 'react-redux'
 import { readNotificationAPI } from '@/features/notification/notificationThunk'
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import vi from 'date-fns/locale/vi'
 
 const NotificationCard = ({ notification }) => {
   const navigate = useNavigate()
@@ -27,8 +31,11 @@ const NotificationCard = ({ notification }) => {
     )
   }
 
-  const handleNavigate = (type, from, notificationId, postId) => {
-    dispatch(readNotificationAPI(notificationId))
+  const handleNavigate = (notification) => {
+    const { type, sender, postId, status } = notification
+    const from = sender && sender._id ? sender._id : null
+    if (status === 'unread') dispatch(readNotificationAPI(notification._id))
+
     switch (type) {
       case 'friendRequestAccepted':
       case 'friendRequestReject':
@@ -44,18 +51,16 @@ const NotificationCard = ({ notification }) => {
   }
 
   return (
-    <MenuItem
-      sx={{ display: 'flex', padding: 2, alignItems: 'center', borderRadius: 0 }}
-      onClick={() => handleNavigate(notification.type, notification.sender._id, notification._id, notification.postId)}>
+    <MenuItem sx={{ display: 'flex', padding: 2, alignItems: 'center', borderRadius: 0 }} onClick={() => handleNavigate(notification)}>
       <Avatar src={notification.sender.avatar} alt='User avatar' sx={{ width: 50, height: 50, marginRight: 2 }} />
 
       <Box sx={{ flexGrow: 1 }}>
         {renderNotificationMessage(notification)}
 
-        {/* Time, reactions, comments */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginTop: 0.5 }}>
           <Typography variant='caption' sx={{ color: '#4caf50' }}>
-            {notification.createdAt}
+            {/* Hiển thị thời gian theo kiểu 'x giờ trước' */}
+            {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true, locale: vi })}
           </Typography>
           {/* <Typography variant='caption'>• 38 cảm xúc</Typography>
           <Typography variant='caption'>• 11 bình luận</Typography> */}
