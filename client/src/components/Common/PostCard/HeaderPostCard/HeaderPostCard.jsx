@@ -6,6 +6,9 @@ import Typography from '@mui/material/Typography'
 import { formatFullname } from '@/utils/helpers'
 import { avatarStyleMui, titleAvatarStyleMui } from '@/styles/styles'
 import MoreVertButton from './Button/MoreVertButton'
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import vi from 'date-fns/locale/vi'
+
 const HeaderPostCard = ({ userPost, post, visibleMenu }) => {
   const handleProfileClick = useProfileNavigation()
   return (
@@ -25,7 +28,7 @@ const HeaderPostCard = ({ userPost, post, visibleMenu }) => {
         </Typography>
       }
       action={visibleMenu && <MoreVertButton userPost={userPost} />}
-      subheader={new Date(post.createdAt).toLocaleString()}
+      subheader={formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: vi })}
     />
   )
 }

@@ -9,6 +9,8 @@ import PersonRemoveAlt1OutlinedIcon from '@mui/icons-material/PersonRemoveAlt1Ou
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined'
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined'
+import { accessChat } from '@/features/chat/chatThunk'
+import { useNavigate } from 'react-router-dom'
 
 const styleFlexCenterButton = { display: 'flex', alignItems: 'center', gap: 2 }
 
@@ -22,8 +24,9 @@ const FriendButton = ({ onClick, variant, icon, label }) => (
 )
 
 const FriendShip = ({ user, inProfile }) => {
-  const dispatch = useDispatch()
   const currentUser = useSelector((state) => state.auth.user)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { sends, requests } = useSelector((state) => state.request)
 
   const isFriend = useMemo(() => currentUser.friends.some((friend) => friend._id === user._id), [currentUser.friends, user._id])
@@ -39,11 +42,16 @@ const FriendShip = ({ user, inProfile }) => {
     await dispatch(action(user._id))
       .unwrap()
       .then(async () => {
-        toast.success(successMessage)
+        if (successMessage) toast.success(successMessage)
       })
       .catch((error) => {
         toast.error(error.message)
       })
+  }
+
+  const handleAccessChat = async () => {
+    dispatch(accessChat({ userID: user._id, users: [currentUser._id, user._id] }))
+    navigate('/chat')
   }
 
   return (
@@ -57,7 +65,7 @@ const FriendShip = ({ user, inProfile }) => {
             label='Hủy kết bạn'
           />
         ) : (
-          <FriendButton variant='outlined' icon={<SendOutlinedIcon />} label='Nhắn tin' />
+          <FriendButton variant='outlined' icon={<SendOutlinedIcon />} label='Nhắn tin' onClick={handleAccessChat} />
         )
       ) : hasSentRequest ? (
         <FriendButton
@@ -81,7 +89,7 @@ const FriendShip = ({ user, inProfile }) => {
           label='Thêm bạn'
         />
       ) : null}
-      {inProfile && <FriendButton variant='outlined' icon={<SendOutlinedIcon />} label='Nhắn tin' />}
+      {inProfile && <FriendButton variant='outlined' icon={<SendOutlinedIcon />} label='Nhắn tin' onClick={handleAccessChat} />}
     </FlexRow>
   )
 }

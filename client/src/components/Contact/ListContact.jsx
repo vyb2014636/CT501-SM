@@ -12,14 +12,14 @@ import { useLocation } from 'react-router-dom'
 
 const ListContact = () => {
   const { user } = useSelector((state) => state.auth)
-  const [selectedUserId, setSelectedUserId] = useState(null) // State để lưu user đã chọn
-  const location = useLocation() // Lấy thông tin về đường dẫn hiện tại
-  useEffect(() => {
-    const pathMatch = /^\/chat\/[a-zA-Z0-9]+$/
-    if (!pathMatch.test(location.pathname)) {
-      setSelectedUserId(null)
-    }
-  }, [location.pathname])
+  // const [selectedUserId, setSelectedUserId] = useState(null) // State để lưu user đã chọn
+  // const location = useLocation() // Lấy thông tin về đường dẫn hiện tại
+  // useEffect(() => {
+  //   const pathMatch = /^\/chat\/[a-zA-Z0-9]+$/
+  //   if (!pathMatch.test(location.pathname)) {
+  //     setSelectedUserId(null)
+  //   }
+  // }, [location.pathname])
   return (
     <Box
       sx={{
@@ -36,12 +36,12 @@ const ListContact = () => {
       </FlexBetween>
       <MenuList>
         {user.friends && user.friends.length > 0 ? (
-          user.friends.map((contact, index) => (
+          user.friends.map((contact) => (
             <ContactCard
               key={contact._id}
               user={contact}
-              selectedUserId={selectedUserId} // Truyền selectedUserId vào từng card
-              setSelectedUserId={setSelectedUserId} // Truyền hàm để thay đổi selectedUserId
+              // selectedUserId={selectedUserId} // Truyền selectedUserId vào từng card
+              // setSelectedUserId={setSelectedUserId} // Truyền hàm để thay đổi selectedUserId
             />
           ))
         ) : (

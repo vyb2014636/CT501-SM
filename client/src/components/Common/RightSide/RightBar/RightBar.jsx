@@ -5,6 +5,7 @@ import ModeButton from './Button/ModeButton'
 import RequestButton from './Button/RequestButton'
 import NoticeButton from '../../../Notification/Button/NoticeButton'
 import AccountButton from './Button/AccountMenu'
+import ChatButton from './Button/ChatButton'
 
 const RightBar = () => {
   return (
@@ -12,6 +13,7 @@ const RightBar = () => {
       <HomeButton />
       <ModeButton />
       <RequestButton />
+      <ChatButton />
       <NoticeButton />
       <AccountButton />
     </FlexBetween>

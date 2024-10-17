@@ -2,7 +2,7 @@ import { BrowserRouter } from 'react-router-dom'
 import Routing from '@/routes/Routing'
 import BackdropLoad from './components/Common/Backdrop/BackdropLoad'
 import { useSelector } from 'react-redux'
-import { connectUser } from './services/socket'
+import { connectUser, disconnectUser } from './services/socket'
 import { useEffect } from 'react'
 
 function App() {
@@ -11,6 +11,8 @@ function App() {
   useEffect(() => {
     if (user) {
       connectUser(user._id) // Kết nối socket khi đăng nhập
+    } else {
+      disconnectUser()
     }
   }, [user])
 

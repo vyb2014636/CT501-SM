@@ -12,7 +12,7 @@ var otpSchema = new mongoose.Schema(
     otpExpired: {
       type: Date,
       default: Date.now,
-      expires: 60 // 120 giây = 2 phút
+      expires: 60
     }
   },
   {

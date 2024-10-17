@@ -13,14 +13,12 @@ export const initSocket = (server) => {
   io.on('connection', (socket) => {
     console.log(`Kết nối thành công`) // Cập nhật số lượng người dùng khi có kết nối mới
 
-    // Lắng nghe sự kiện khi người dùng kết nối
     socket.on('user_connected', (userId) => {
       usersActive.set(userId, socket.id) // Lưu userId và socketId vào Map
       console.log(`User ${userId} đã kết nối với socket ID ${socket.id}`)
-      console.log(`Số lượng User đã kết nối: ${usersActive.size}`) // Cập nhật số lượng người dùng sau khi một người dùng kết nối
+      console.log(`Số lượng User đã kết nối: ${usersActive.size}`)
     })
 
-    // Lắng nghe sự kiện khi người dùng ngắt kết nối
     socket.on('disconnect', () => {
       const user = [...usersActive.entries()].find(([, socketId]) => socketId === socket.id)
       if (user) {

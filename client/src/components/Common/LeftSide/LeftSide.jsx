@@ -4,7 +4,7 @@ import FlexColumn from '../Flex/FlexColumn'
 
 const LeftSide = ({ children }) => {
   return (
-    <FlexColumn sx={{ display: { xs: 'none', lg: 'flex' }, p: 2, flex: 2 }}>
+    <FlexColumn sx={{ display: { xs: 'none', lg: 'flex' }, p: 2, flex: 2, height: 1 }}>
       <LeftBar />
       {children}
     </FlexColumn>
