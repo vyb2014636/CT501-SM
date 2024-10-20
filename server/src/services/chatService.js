@@ -1,56 +1,82 @@
 import ApiError from '~/middlewares/ApiError'
-import Chat from '~/models/chat'
+import chatModel from '~/models/chatModel'
+import messageModel from '~/models/messageModel'
 
-const accessChat = async (myID, chatDetails, userID) => {
-  const { users, chatName, isGroupChat } = chatDetails
-  if (isGroupChat) {
-    if (!Array.isArray(users) || users.length < 2) throw new ApiError(400, 'Nhóm chat phải có ít nhất 2 người dùng')
-    const isNotInGroup = users.some((user) => user === myID)
-    if (isNotInGroup) throw new ApiError(403, 'Bạn không có quyền truy cập nhóm này')
+const accessChat = async (chatID, myID, userID = null) => {
+  try {
+    if (chatID) {
+      let chat = await chatModel
+        .findOne({
+          _id: chatID,
+          users: { $in: [myID] } // Chỉ cho phép truy cập nếu người dùng là thành viên của chat
+        })
+        .populate('users', '-password')
+        .populate('groupAdmin', '-password')
+        .populate({
+          path: 'latestMessage',
+          populate: {
+            path: 'sender', // Populate sender trong latestMessage
+            select: 'fullname avatar' // Chỉ lấy fullname và avatar
+          }
+        })
+      if (!chat) throw new ApiError(404, 'Cuộc trò chuyện không tồn tại hoặc bạn không có quyền truy cập')
 
-    const groupChat = await Chat.findOneAndUpdate(
-      {
-        isGroupChat: true,
-        chatName,
-        users: { $all: users }
-      },
-      { $setOnInsert: { groupAdmin: myID } },
-      { new: true, upsert: true }
-    )
-      .populate('users', '-password')
-      .populate('groupAdmin', '-password')
-      .populate('latestMessage')
-
-    return groupChat // Trả về nhóm chat
-  } else {
-    // const chat = await Chat.findOneAndUpdate(
-    //   {
-    //     isGroupChat: false,
-    //     users: { $all: [myID, userID] } // Sử dụng $all để kiểm tra cả hai user trong mảng
-    //   },
-    //   { $setOnInsert: { chatName: null } }, // Chỉ cần cập nhật nếu tạo mới
-    //   { new: true, upsert: true } // Trả về document mới nếu được tạo
-    // )
-    //   .populate('users', '-password') // Lấy danh sách người dùng mà không có password
-    //   .populate('latestMessage') // Lấy tin nhắn mới nhất
-
-    // Tìm cuộc trò chuyện 1-1
-    let chat = await Chat.findOne({
-      isGroupChat: false,
-      users: { $all: [myID, userID] }
-    })
-      .populate('users', 'fullname avatar')
-      .populate('latestMessage')
-
-    // Nếu không tìm thấy, tạo cuộc trò chuyện mới
-    if (!chat) {
-      chat = await Chat.create({
-        chatName: null,
-        isGroupChat: false,
-        users: [myID, userID]
-      }).populate('users', 'fullname avatar')
+      // Cập nhật trạng thái tin nhắn là đã đọc
+      await messageModel.updateMany(
+        { chat: chatID, readBy: { $ne: myID } }, // Tìm các tin nhắn chưa được đánh dấu là đã đọc
+        { $addToSet: { readBy: myID } } // Thêm myID vào mảng readBy
+      )
+      // Cập nhật danh sách người đọc cho tin nhắn mới nhất
+      if (chat.latestMessage) {
+        chat.latestMessage.readBy.push(myID)
+        await chat.latestMessage.save() // Lưu thay đổi vào latestMessage
+      }
+      return chat // Trả về nhóm chat hoặc đoạn chat 1-1
     }
-    return chat
+
+    // Nếu không có `chatID` nhưng có `userID`, tìm hoặc tạo mới cuộc trò chuyện 1-1
+    if (userID) {
+      let chat = await chatModel
+        .findOne({
+          isGroupChat: false,
+          users: { $all: [myID, userID] } // Tìm kiếm cuộc trò chuyện 1-1 giữa hai người
+        })
+        .populate('users', 'fullname avatar')
+        .populate({
+          path: 'latestMessage',
+          populate: {
+            path: 'sender', // Populate sender trong latestMessage
+            select: 'fullname avatar' // Chỉ lấy fullname và avatar
+          }
+        })
+
+      // Nếu không có, tạo cuộc trò chuyện mới
+      if (!chat) {
+        chat = await chatModel.create({
+          chatName: null,
+          isGroupChat: false,
+          users: [myID, userID]
+        })
+
+        // Sau khi tạo, populate để lấy thông tin đầy đủ
+        chat = await chat.populate('users', 'fullname avatar').populate({
+          path: 'latestMessage',
+          populate: {
+            path: 'sender', // Populate sender trong latestMessage
+            select: 'fullname avatar' // Chỉ lấy fullname và avatar
+          }
+        })
+      }
+
+      // Cập nhật danh sách người đọc cho tin nhắn mới nhất
+      if (chat.latestMessage) {
+        chat.latestMessage.readBy.push(myID)
+        await chat.latestMessage.save() // Lưu thay đổi vào latestMessage
+      }
+      return chat // Trả về cuộc trò chuyện 1-1
+    }
+  } catch (error) {
+    throw error
   }
 }
 
@@ -71,11 +97,18 @@ const createGroupChat = async (myID, users, chatName) => {
 }
 
 const getChats = async (myID) => {
-  const chats = await Chat.find({
-    users: { $elemMatch: { $eq: myID } }
-  })
+  const chats = await chatModel
+    .find({
+      users: { $elemMatch: { $eq: myID } }
+    })
     .populate('users', '-password')
-    .populate('latestMessage')
+    .populate({
+      path: 'latestMessage',
+      populate: {
+        path: 'sender', // Populate sender trong latestMessage
+        select: 'fullname avatar' // Chỉ lấy fullname và avatar
+      }
+    })
     .sort({ updatedAt: -1 })
 
   return chats

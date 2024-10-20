@@ -1,5 +1,5 @@
 import ApiError from '~/middlewares/ApiError'
-import Notification from '~/models/notification'
+import Notification from '~/models/notificationModel'
 
 const getListNotification = async (myId, page, limit) => {
   const notifications = await Notification.find({ receiver: myId })

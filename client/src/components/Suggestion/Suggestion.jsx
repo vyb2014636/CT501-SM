@@ -30,7 +30,7 @@ const Suggestion = () => {
 
   useEffect(() => {
     fetchListNoFriends()
-  }, [requests, sends])
+  }, [])
 
   if (loading) return <Typography>...loading</Typography>
 

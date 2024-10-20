@@ -10,9 +10,9 @@ export const fetchChats = createAsyncThunk('chat/listChat', async (_, { rejectWi
   }
 })
 
-export const accessChat = createAsyncThunk('chat/access', async ({ userID, chatName, isGroupChat, users }, { rejectWithValue }) => {
+export const accessChat = createAsyncThunk('chat/access', async ({ chatID, userID }, { rejectWithValue }) => {
   try {
-    const response = await axiosIntercept.post('/chat/', { users: users, chatName, isGroupChat, userID })
+    const response = await axiosIntercept.post('/chat/', { chatID, userID })
 
     return response // Trả về dữ liệu từ response
   } catch (error) {

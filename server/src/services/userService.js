@@ -1,34 +1,36 @@
 import ApiError from '~/middlewares/ApiError'
-import FriendRequest from '~/models/friendRequest'
-import Post from '~/models/post'
-import User from '~/models/user'
+import requestModel from '~/models/requestModel'
+import postModel from '~/models/postModel'
+import userModel from '~/models/userModel'
 
 const getListUserNoFriend = async (myId) => {
-  const user = await User.findById(myId).populate('friends').select('-password')
+  const user = await userModel.findById(myId).populate('friends').select('-password')
   if (!user) throw new ApiError(404, 'Không tìm thấy người dùng')
-  const sentRequests = await FriendRequest.find({ from: myId, status: 'pending' }).select('to')
-  const userSending = await FriendRequest.find({ to: myId, status: 'pending' }).select('from')
+  const sentRequests = await requestModel.find({ from: myId, status: 'pending' }).select('to')
+  const userSending = await requestModel.find({ to: myId, status: 'pending' }).select('from')
   const excludedUserIds = [
     ...user.friends.map((friend) => friend._id), // Bạn bè hiện tại
     ...sentRequests.map((request) => request.to), // Người đã gửi yêu cầu
     ...userSending.map((request) => request.from) //Người đó đang gửi yêu cầu cho minh
   ]
   // Tìm những người dùng chưa kết bạn và chưa có yêu cầu kết bạn
-  const suggestions = await User.find({
-    _id: { $ne: myId, $nin: excludedUserIds } // Loại bỏ bản thân và những người không phù hợp
-  }).select('avatar lastname firstname background')
+  const suggestions = await userModel
+    .find({
+      _id: { $ne: myId, $nin: excludedUserIds } // Loại bỏ bản thân và những người không phù hợp
+    })
+    .select('avatar lastname firstname background')
   return suggestions
 }
 
 const uploadAvatar = async (myId, avatar) => {
   if (!avatar) throw new ApiError(401, 'Bạn chưa chọn ảnh')
-  const updatedUser = await User.findByIdAndUpdate(myId, { avatar: avatar }, { new: true })
-  return updatedUser
+  const updatedUser = await userModel.findByIdAndUpdate(myId, { avatar: avatar }, { new: true })
+  return await updatedUser.populate('friends', 'firstname lastname fullname avatar background')
 }
 const uploadBackground = async (myId, background) => {
   if (!background) throw new ApiError(401, 'Bạn chưa chọn ảnh')
-  const updatedUser = await User.findByIdAndUpdate(myId, { background }, { new: true })
-  return updatedUser
+  const updatedUser = await userModel.findByIdAndUpdate(myId, { background }, { new: true })
+  return await updatedUser.populate('friends', 'firstname lastname fullname avatar background')
 }
 const uploadInfo = async (myId, reqBody) => {
   if (!reqBody || Object.keys(reqBody).length === 0) throw new ApiError(400, 'Dữ liệu gửi lên không được rỗng')
@@ -40,15 +42,13 @@ const uploadInfo = async (myId, reqBody) => {
     address
   }
 
-  const updatedUser = await User.findByIdAndUpdate(myId, updateData, { new: true })
+  const updatedUser = await userModel.findByIdAndUpdate(myId, updateData, { new: true })
+
+  if (!updatedUser) throw new ApiError(404, 'Không tìm thấy người dùng')
 
   updatedUser.save()
 
-  if (!updatedUser) {
-    throw new ApiError(404, 'Không tìm thấy người dùng')
-  }
-
-  return updatedUser
+  return await updatedUser.populate('friends', 'firstname lastname fullname avatar background')
 }
 
 const searchUser = async (query) => {
@@ -56,26 +56,30 @@ const searchUser = async (query) => {
 
   const regex = searchTerms.map((term) => `(${term})`).join('.*')
 
-  const totalUsers = await User.countDocuments({
+  const totalUsers = await userModel.countDocuments({
     $or: [{ fullname: { $regex: regex, $options: 'i' } }, { normalizedFullName: { $regex: regex, $options: 'i' } }]
   })
 
-  const users = await User.find({
-    $or: [
-      {
-        fullname: { $regex: regex, $options: 'i' }
-      },
-      {
-        normalizedFullName: { $regex: regex, $options: 'i' }
-      }
-    ]
-  }).limit(3)
+  const users = await userModel
+    .find({
+      $or: [
+        {
+          fullname: { $regex: regex, $options: 'i' }
+        },
+        {
+          normalizedFullName: { $regex: regex, $options: 'i' }
+        }
+      ]
+    })
+    .limit(3)
 
-  let postsQuery = Post.find({
-    describe: { $regex: query, $options: 'i' }
-  }).limit(3)
+  let postsQuery = postModel
+    .find({
+      describe: { $regex: query, $options: 'i' }
+    })
+    .limit(3)
 
-  postsQuery = Post.populateFields(postsQuery)
+  postsQuery = postModel.populateFields(postsQuery)
 
   const posts = await postsQuery.lean()
 
@@ -90,7 +94,7 @@ const getAllSearch = async (query) => {
 
   const regex = searchTerms.map((term) => `(${term})`).join('.*')
 
-  const users = await User.find({
+  const users = await userModel.find({
     $or: [
       {
         fullname: { $regex: regex, $options: 'i' }

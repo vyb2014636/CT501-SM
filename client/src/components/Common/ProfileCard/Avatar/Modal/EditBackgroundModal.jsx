@@ -17,6 +17,7 @@ import { styleModal } from '@/styles/styles'
 import getCroppedImg from '@/utils/getCroppedImg'
 import { updateUser } from '@/features/auth/authSlice'
 import { uploadBackground } from '@/apis/user/userAPI'
+import { closeBackdrop, openBackdrop } from '@/features/loading/loadingSlice'
 
 const EditBackgroundModal = ({ openModal, setOpenModal }) => {
   const [selectedImage, setSelectedImage] = useState(null)
@@ -71,6 +72,8 @@ const EditBackgroundModal = ({ openModal, setOpenModal }) => {
     formData.append('background', blob)
 
     try {
+      dispatch(openBackdrop())
+
       const response = await uploadBackground(formData)
       dispatch(updateUser(response.user))
       toast.success(response.message)
@@ -79,6 +82,7 @@ const EditBackgroundModal = ({ openModal, setOpenModal }) => {
     } finally {
       resetModal()
       setLoading(false)
+      dispatch(closeBackdrop())
     }
   }
 
@@ -86,7 +90,7 @@ const EditBackgroundModal = ({ openModal, setOpenModal }) => {
     <Modal open={openModal} onClose={handleCloseModal}>
       <Box sx={{ ...styleModal, height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <Button component='label' role={undefined} variant='contained' tabIndex={-1} startIcon={<CloudUploadIcon />}>
-          Chọn ảnh đại diện
+          Chọn ảnh nền
           <HiddenTextField type='file' accept='image/*' onChange={handleImageChange} />
         </Button>
         <Divider />

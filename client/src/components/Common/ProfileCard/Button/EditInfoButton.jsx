@@ -9,8 +9,11 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined'
 import EditProfileForm from './Form/EditProfileForm'
+import { updateUser } from '@/features/auth/authSlice'
+import { useDispatch } from 'react-redux'
 
 const EditInfoButton = ({ user }) => {
+  const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState({
     firstname: user.firstname || '',
@@ -49,7 +52,8 @@ const EditInfoButton = ({ user }) => {
       }
     }
     try {
-      await uploadInfo(data)
+      const response = await uploadInfo(data)
+      dispatch(updateUser(response.user))
       toast.success('Cập nhật thông tin thành công!')
       setInitialFormData(formData)
       setOpen(false)

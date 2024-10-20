@@ -20,6 +20,7 @@ const Chat = () => {
     dispatch(fetchChats())
   }, [dispatch])
   console.log(chats)
+
   return (
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', height: '100vh', overflow: 'hidden' }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', px: !isNonScreenMobile && 32 }}>
@@ -29,11 +30,16 @@ const Chat = () => {
           <RightSide />
         </FlexRow>
         <FlexRow sx={{ height: (theme) => `calc(100vh - ${theme.myApp.heighHeader})`, p: 4, gap: 3 }}>
-          <Box sx={{ flex: 2 }}>
-            <Conversation loadingChats={loading} chats={chats} />
+          <Box sx={{ flex: 1, mb: 'auto', borderRadius: 4, height: 1, p: 2, backgroundColor: 'background.paper' }}>
+            <Conversation loadingChats={loading} chats={chats} selectedChat={selectedChat} />
           </Box>
-          {selectedChat ? <ChatBox chat={selectedChat} /> : <Typography>Vui lòng chọn cuộc hội thoại</Typography>}
-          {/* <ChatBox /> */}
+          {selectedChat ? (
+            <ChatBox chat={selectedChat} />
+          ) : (
+            <Box sx={{ flex: 3, backgroundColor: 'background.paper', height: 1 }}>
+              <Typography>Vui lòng chọn cuộc hội thoại</Typography>
+            </Box>
+          )}
         </FlexRow>
       </Box>
     </Container>

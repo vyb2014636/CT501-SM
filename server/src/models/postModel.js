@@ -89,6 +89,27 @@ postSchema.statics.populateFields = function (query) {
     })
 }
 
+postSchema.statics.findByIdWithComments = function (postID) {
+  return this.findById(postID)
+    .populate([
+      { path: 'comments.user', select: 'firstname lastname avatar' },
+      { path: 'comments.replies.user', select: 'firstname lastname avatar' },
+      { path: 'comments.likes', select: 'firstname lastname avatar' }
+    ])
+    .lean() // Sử dụng lean() để tối ưu hiệu suất
+}
+
+postSchema.methods.addComment = async function (userId, content) {
+  // Thêm comment vào bài post
+  this.comments.push({ user: userId, content })
+
+  // Lưu bài post
+  const savedPost = await this.save()
+
+  // Populate các trường cần thiết
+  return savedPost.populate('comments.user comments.replies.user comments.likes')
+}
+
 const Post = mongoose.model('Post', postSchema)
 
 export default Post

@@ -133,7 +133,7 @@ const unFriend = async (req, res, next) => {
   }
 }
 
-export const requestFriendControler = {
+export const requestController = {
   getRequests,
   sendFriendRequest,
   cancelFriendRequest,

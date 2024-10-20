@@ -3,11 +3,11 @@ import { chatService } from '~/services/chatService'
 
 const accessChat = async (req, res, next) => {
   const myID = req.user.id
-  const { users, chatName, isGroupChat, userID } = req.body
+  const { userID, chatID } = req.body
   // if (!users || !Array.isArray(users) || users.length === 0) throw new ApiError(400, 'Đoạn chat này rỗng')
 
   try {
-    const chat = await chatService.accessChat(myID, { users, chatName, isGroupChat }, userID)
+    const chat = await chatService.accessChat(chatID, myID, userID)
     res.status(200).json({
       message: 'Đoạn chat bạn truy cập',
       chat

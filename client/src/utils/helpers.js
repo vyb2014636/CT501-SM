@@ -33,3 +33,7 @@ export const getFriendshipStatus = (userId, userCurrent, sentRequests, receivedR
   if (isFriend) statusFriendship = 'friends'
   return { statusFriendship, requestId }
 }
+
+export const isMe = (userId, userCurrentId) => {
+  return userId.toString() === userCurrentId.toString()
+}

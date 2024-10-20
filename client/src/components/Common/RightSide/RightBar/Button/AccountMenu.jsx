@@ -16,6 +16,7 @@ import { resetCommentState } from '@/features/comment/commentSlice'
 import { resetNotificationState } from '@/features/notification/notificationSlice'
 import { resetFriendship } from '@/features/request/friendshipSlice'
 import { disconnectUser } from '@/services/socket'
+import { resetStateChat } from '@/features/chat/chatSlice'
 const AccountButton = () => {
   const styleTriangle = {
     elevation: 0,
@@ -60,6 +61,7 @@ const AccountButton = () => {
     dispatch(resetCommentState())
     dispatch(resetNotificationState())
     dispatch(resetFriendship())
+    dispatch(resetStateChat())
     dispatch(logout())
   }
 

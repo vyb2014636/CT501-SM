@@ -1,4 +1,4 @@
-import User from '~/models/user'
+import User from '~/models/userModel'
 import bcrypt from 'bcrypt'
 import ApiError from '~/middlewares/ApiError'
 import { generateAccessToken, generateRefreshToken } from '~/utils/jwt'
@@ -77,6 +77,7 @@ const verifyEmail = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { user, accessToken, refreshToken } = await authService.login(req.body)
+
     res.cookie('refreshToken', login.refreshToken, {
       httpOnly: true,
       secure: false,

@@ -55,6 +55,8 @@ import { toast } from 'react-toastify'
 import { pushListRequests } from '@/features/request/requestSlice'
 import { updateFriends } from '@/features/auth/authSlice'
 import env from '@/utils/enviroment'
+import { receiveMessage } from '@/features/chat/messageSlice'
+import { updateLastMessage } from '@/features/chat/chatSlice'
 
 // Khởi tạo socket với các tùy chọn
 const socket = io(env.SOCKET_URL, {
@@ -131,6 +133,10 @@ socket.on('sendAddFriend', (data) => {
 
 socket.on('unFriend', (data) => {
   store.dispatch(updateFriends({ user: data.unFriend, actionType: 'remove' }))
+})
+socket.on('receive_message', (data) => {
+  store.dispatch(receiveMessage(data.newMessage))
+  store.dispatch(updateLastMessage(data))
 })
 
 // Xuất socket để sử dụng ở nơi khác nếu cần

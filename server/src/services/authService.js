@@ -1,28 +1,32 @@
 import ApiError from '~/middlewares/ApiError'
-import Post from '~/models/post'
-import User from '~/models/user'
+import postModel from '~/models/postModel'
+import userModel from '~/models/userModel'
 import bcrypt from 'bcrypt'
 import { generateAccessToken, generateRefreshToken } from '~/utils/jwt'
 
 const login = async (reqBody) => {
-  const validUser = await User.findOne({ email: reqBody.email }).populate('friends', 'firstname lastname fullname avatar background')
-  if (!validUser) throw new ApiError(404, 'Tài khoản không tồn tại')
-  const validPassword = await bcrypt.compare(reqBody.password, validUser.password)
-  if (!validPassword) throw new ApiError(400, 'Mật khẩu không chính xác')
+  try {
+    const validUser = await userModel.findOne({ email: reqBody.email }).populate('friends', 'firstname lastname fullname avatar background')
+    if (!validUser) throw new ApiError(404, 'Tài khoản không tồn tại')
+    const validPassword = await bcrypt.compare(reqBody.password, validUser.password)
 
-  if (validUser && validPassword) {
-    validUser.lastLogin = new Date()
-    await validUser.save()
-    const accessToken = generateAccessToken(validUser)
-    const refreshToken = generateRefreshToken(validUser)
+    if (!validPassword) throw new ApiError(400, 'Mật khẩu không chính xác')
 
-    await User.findOneAndUpdate({ email: reqBody.email }, { refreshToken }, { new: true })
+    if (validUser && validPassword) {
+      validUser.lastLogin = new Date()
+      await validUser.save()
+      const accessToken = generateAccessToken(validUser)
+      const refreshToken = generateRefreshToken(validUser)
+      await userModel.findOneAndUpdate({ email: reqBody.email }, { refreshToken }, { new: true })
 
-    return {
-      user: validUser,
-      accessToken,
-      refreshToken
+      return {
+        user: validUser,
+        accessToken,
+        refreshToken
+      }
     }
+  } catch (error) {
+    throw error
   }
 }
 

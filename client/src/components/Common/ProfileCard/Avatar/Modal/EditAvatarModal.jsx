@@ -13,6 +13,7 @@ import { styleModal } from '@/styles/styles'
 import getCroppedImg from '@/utils/getCroppedImg'
 import { uploadAvatar } from '@/apis/user/userAPI'
 import { updateUser } from '@/features/auth/authSlice'
+import { closeBackdrop, openBackdrop } from '@/features/loading/loadingSlice'
 
 const EditAvatarModal = ({ openModal, setOpenModal }) => {
   const [selectedImage, setSelectedImage] = useState(null)
@@ -64,6 +65,7 @@ const EditAvatarModal = ({ openModal, setOpenModal }) => {
     const blob = await fetch(cropPreview).then((r) => r.blob())
     const formData = new FormData()
     formData.append('avatar', blob)
+    dispatch(openBackdrop())
 
     try {
       const response = await uploadAvatar(formData)
@@ -74,6 +76,7 @@ const EditAvatarModal = ({ openModal, setOpenModal }) => {
     } finally {
       resetModal()
       setLoading(false) // Stop loading
+      dispatch(closeBackdrop())
     }
   }
 

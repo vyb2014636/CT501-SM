@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const friendRequestSchema = new mongoose.Schema(
+const requestSchema = new mongoose.Schema(
   {
     from: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     to: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -22,11 +22,11 @@ const friendRequestSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-friendRequestSchema.methods.populateFromToFrienship = function () {
+requestSchema.methods.populateFromToFrienship = function () {
   return this.populate('from to', 'firstname lastname fullname avatar background')
 }
 
-friendRequestSchema.pre('save', function (next) {
+requestSchema.pre('save', function (next) {
   if (this.isModified('status')) {
     this.history.push({
       status: this.status,
@@ -37,4 +37,4 @@ friendRequestSchema.pre('save', function (next) {
   next()
 })
 
-export default mongoose.model('FriendRequest', friendRequestSchema)
+export default mongoose.model('Request', requestSchema)

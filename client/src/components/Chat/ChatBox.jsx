@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
@@ -18,9 +18,17 @@ const ChatBox = ({ chat }) => {
   const currentUser = useSelector((state) => state.auth.user)
   const [newMessage, setNewMessage] = useState('')
 
+  // Tạo ref để tham chiếu đến FlexColumn
+  const messagesEndRef = useRef(null)
+
   useEffect(() => {
     dispatch(fetchMessages(chat._id))
   }, [dispatch, chat])
+
+  useEffect(() => {
+    // Cuộn đến cuối khi tin nhắn thay đổi
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -32,6 +40,7 @@ const ChatBox = ({ chat }) => {
   if (loading) return <Typography>Loading</Typography>
 
   const otherUser = chat.users.find((user) => user._id.toString() !== currentUser._id.toString())
+
   return (
     <Box
       sx={{
@@ -81,6 +90,8 @@ const ChatBox = ({ chat }) => {
             </Box>
           ))
         )}
+        {/* Thêm một div ẩn để cuộn đến cuối */}
+        <div ref={messagesEndRef} />
       </FlexColumn>
 
       <Box display='flex' mt={2} px={4}>

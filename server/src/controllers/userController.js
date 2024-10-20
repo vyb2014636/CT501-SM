@@ -1,4 +1,4 @@
-import User from '~/models/user'
+import User from '~/models/userModel'
 import { userService } from '~/services/userService'
 
 const unFriend = async (req, res, next) => {
@@ -33,7 +33,7 @@ const uploadInfo = async (req, res, next) => {
   try {
     const myId = req.user.id
     const response = await userService.uploadInfo(myId, req.body)
-    res.status(200).json({ message: response ? 'Thay đổi thành công' : 'Thay đổi ảnh thất bại', user: response })
+    res.status(200).json({ message: response ? 'Thay đổi thành công' : 'Thay đổi thông tin thất bại', user: response })
   } catch (error) {
     next(error)
   }

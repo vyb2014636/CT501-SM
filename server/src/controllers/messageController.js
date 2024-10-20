@@ -3,8 +3,8 @@ import { messagesService } from '~/services/messageService'
 const sendMessage = async (req, res) => {
   const { chatID, content } = req.body
   try {
-    const newMessage = await messagesService.sendMessage(chatID, req.user.id, content)
-    res.status(200).json({ message: 'Tin nhắn đã được gửi', newMessage })
+    const { newMessage, chatId } = await messagesService.sendMessage(chatID, req.user.id, content)
+    res.status(200).json({ message: 'Tin nhắn đã được gửi', newMessage, chatId })
   } catch (error) {
     res.status(500).json(error)
   }

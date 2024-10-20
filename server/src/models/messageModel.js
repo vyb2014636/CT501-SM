@@ -6,8 +6,7 @@ const messageSchema = new mongoose.Schema(
     content: { type: String },
     chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
     readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    replyTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' }, // Tin nhắn trả lời
-    emoji: { type: String } // Emoji trong tin nhắn
+    replyTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' } // Tin nhắn trả lời
   },
   { timestamps: true }
 )

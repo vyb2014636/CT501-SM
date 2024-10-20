@@ -19,6 +19,12 @@ export const initSocket = (server) => {
       console.log(`Số lượng User đã kết nối: ${usersActive.size}`)
     })
 
+    // Lắng nghe sự kiện 'typing'
+    socket.on('typing', (chatId, userId) => {
+      // Gửi thông báo cho những người khác trong cuộc trò chuyện
+      socket.to(chatId).emit('typing', userId)
+    })
+
     socket.on('disconnect', () => {
       const user = [...usersActive.entries()].find(([, socketId]) => socketId === socket.id)
       if (user) {
@@ -31,6 +37,13 @@ export const initSocket = (server) => {
 }
 
 export const sendNotification = (receiverId, eventName, data) => {
+  const socketId = usersActive.get(receiverId.toString())
+  if (socketId) {
+    io.to(socketId).emit(eventName, data)
+  }
+}
+
+export const sendMessage = (receiverId, eventName, data) => {
   const socketId = usersActive.get(receiverId.toString())
   if (socketId) {
     io.to(socketId).emit(eventName, data)

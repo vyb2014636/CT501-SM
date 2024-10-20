@@ -8,7 +8,11 @@ const messageSlice = createSlice({
     status: 'idle',
     loading: true
   },
-  reducers: {},
+  reducers: {
+    receiveMessage: (state, action) => {
+      state.messages.push(action.payload)
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMessages.pending, (state) => {
@@ -22,9 +26,11 @@ const messageSlice = createSlice({
         state.loading = false
       })
       .addCase(sendNewMessage.fulfilled, (state, action) => {
+        console.log(action.payload.newMessage)
         state.messages.push(action.payload.newMessage)
       })
   }
 })
+export const { receiveMessage } = messageSlice.actions
 
 export default messageSlice.reducer

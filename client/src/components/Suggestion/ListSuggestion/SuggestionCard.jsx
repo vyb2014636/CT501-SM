@@ -14,18 +14,17 @@ import { cancelFriendRequest, sendFriendRequest } from '@/features/request/reque
 
 const SuggestionCard = ({ userNoFriend }) => {
   const [isRequestSent, setIsRequestSent] = useState(false)
+  const [changeButton, setChangeButton] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const handleFriendRequest = async () => {
     try {
-      if (isRequestSent) {
-        dispatch(cancelFriendRequest(userNoFriend._id))
-      } else {
-        dispatch(sendFriendRequest(userNoFriend._id))
-      }
+      dispatch(sendFriendRequest(userNoFriend._id)).unwrap()
+      setChangeButton(true)
       setIsRequestSent((prev) => !prev)
     } catch (error) {
+      setChangeButton(false)
       toast.error(error.message)
     }
   }
@@ -38,8 +37,8 @@ const SuggestionCard = ({ userNoFriend }) => {
         <Avatar alt={userNoFriend.lastname} src={userNoFriend.avatar} />
       </ListItemAvatar>
       <ListItemText primary={formatFullname(userNoFriend.firstname, userNoFriend.lastname)} secondary={`@${userNoFriend.firstname}`} />
-      <Button variant={isRequestSent ? 'outlined' : 'contained'} sx={{ borderRadius: 12 }} onClick={handleFriendRequest}>
-        {isRequestSent ? 'Hủy kết bạn' : 'Kết bạn'}
+      <Button variant={changeButton ? 'outlined' : 'contained'} sx={{ borderRadius: 12 }} onClick={handleFriendRequest} disabled={changeButton}>
+        {changeButton ? 'Đã gửi yêu cầu' : 'Kết bạn'}
       </Button>
     </ListItem>
   )

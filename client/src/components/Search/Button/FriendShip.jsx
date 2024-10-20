@@ -50,7 +50,7 @@ const FriendShip = ({ user, inProfile }) => {
   }
 
   const handleAccessChat = async () => {
-    dispatch(accessChat({ userID: user._id, users: [currentUser._id, user._id] }))
+    dispatch(accessChat({ userID: user._id }))
     navigate('/chat')
   }
 

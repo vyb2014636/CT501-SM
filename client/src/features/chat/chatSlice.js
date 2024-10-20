@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { accessChat, createGroupChat, fetchChats } from './chatThunk'
+import { accessChat, createGroupChat, fetchChats, sendNewMessage } from './chatThunk'
 
 const chatSlice = createSlice({
   name: 'chat',
@@ -12,6 +12,27 @@ const chatSlice = createSlice({
   reducers: {
     selectChat: (state, action) => {
       state.selectedChat = action.payload
+    },
+    resetSelect: (state) => {
+      state.selectedChat = null
+    },
+    resetStateChat: (state) => {
+      state.chats = []
+      state.selectedChat = null
+      state.status = 'idle'
+      state.loading = true
+    },
+    updateLastMessage: (state, action) => {
+      const chatIndex = state.chats.findIndex((chat) => chat._id === action.payload.chatID)
+
+      if (chatIndex !== -1) {
+        // Cập nhật lastMessage
+        state.chats[chatIndex].latestMessage = action.payload.newMessage
+
+        // Lưu chat vào biến tạm để di chuyển
+        const [updatedChat] = state.chats.splice(chatIndex, 1) // Xóa chat khỏi vị trí cũ
+        state.chats.unshift(updatedChat) // Thêm chat vào đầu mảng
+      }
     }
   },
   extraReducers: (builder) => {
@@ -23,17 +44,30 @@ const chatSlice = createSlice({
         state.chats = action.payload.chats
         state.loading = false
       })
-      .addCase(fetchChats.rejected, (state, action) => {
+      .addCase(fetchChats.rejected, (state) => {
         state.loading = false
       })
       .addCase(accessChat.fulfilled, (state, action) => {
         const newChat = action.payload.chat
-        // Kiểm tra xem cuộc trò chuyện đã có trong state.chats chưa
-        const chatExists = state.chats.some((chat) => chat._id === newChat._id)
 
-        if (!chatExists) state.chats.unshift(newChat)
+        const chatIndex = state.chats.findIndex((chat) => chat._id === newChat._id)
+
+        if (chatIndex !== -1) state.chats[chatIndex] = newChat
 
         state.selectedChat = newChat
+        state.loading = false
+      })
+      .addCase(sendNewMessage.fulfilled, (state, action) => {
+        const chatIndex = state.chats.findIndex((chat) => chat._id === action.payload.chatId)
+
+        if (chatIndex !== -1) {
+          // Cập nhật lastMessage
+          state.chats[chatIndex].latestMessage = action.payload.newMessage
+
+          // Lưu chat vào biến tạm để di chuyển
+          const [updatedChat] = state.chats.splice(chatIndex, 1) // Xóa chat khỏi vị trí cũ
+          state.chats.unshift(updatedChat) // Thêm chat vào đầu mảng
+        }
       })
       .addCase(createGroupChat.fulfilled, (state, action) => {
         state.chats.unshift(action.payload.groupChat)
@@ -41,6 +75,6 @@ const chatSlice = createSlice({
   }
 })
 
-export const {} = chatSlice.actions
+export const { resetSelect, selectChat, resetStateChat, updateLastMessage } = chatSlice.actions
 
 export default chatSlice.reducer
