@@ -1,6 +1,7 @@
 import ApiError from '~/middlewares/ApiError'
 import chatModel from '~/models/chatModel'
 import messageModel from '~/models/messageModel'
+import { sendMessage, sendNotification } from '~/sockets'
 
 const accessChat = async (chatID, myID, userID = null) => {
   try {
@@ -28,8 +29,11 @@ const accessChat = async (chatID, myID, userID = null) => {
       )
       // Cập nhật danh sách người đọc cho tin nhắn mới nhất
       if (chat.latestMessage) {
-        chat.latestMessage.readBy.push(myID)
-        await chat.latestMessage.save() // Lưu thay đổi vào latestMessage
+        // Kiểm tra xem myID đã có trong mảng readBy chưa
+        if (!chat.latestMessage.readBy.includes(myID)) {
+          chat.latestMessage.readBy.push(myID)
+          await chat.latestMessage.save() // Lưu thay đổi vào latestMessage
+        }
       }
       return chat // Trả về nhóm chat hoặc đoạn chat 1-1
     }
@@ -80,19 +84,25 @@ const accessChat = async (chatID, myID, userID = null) => {
   }
 }
 
-const createGroupChat = async (myID, users, chatName) => {
-  if (!users || users.length < 2) throw new ApiError(400, 'Nhóm phải có ít nhất 2 người')
+const createGroupChat = async (myID, users, chatName, avatarGroup) => {
+  if (!users || users.length < 1) throw new ApiError(400, 'Nhóm phải có ít nhất 2 người')
 
-  users.push(myID) // Thêm người tạo nhóm vào danh sách
+  users.push(myID)
 
-  const groupChat = await Chat.create({
+  const groupChat = await chatModel.create({
     chatName,
     isGroupChat: true, // Đây là cuộc trò chuyện nhóm
     users: users,
-    groupAdmin: myID
+    groupAdmin: myID,
+    avatar: avatarGroup
   })
 
-  const fullGroupChat = await Chat.findById(groupChat._id).populate('users', '-password').populate('groupAdmin', '-password')
+  const fullGroupChat = await chatModel.findById(groupChat._id).populate('users', '-password').populate('groupAdmin', '-password')
+  fullGroupChat.users.forEach((user) => {
+    if (user._id.toString() !== myID) {
+      sendNotification(user._id, 'created_group', { groupChat: fullGroupChat })
+    }
+  })
   return fullGroupChat
 }
 
@@ -109,6 +119,7 @@ const getChats = async (myID) => {
         select: 'fullname avatar' // Chỉ lấy fullname và avatar
       }
     })
+    .populate('groupAdmin', '-password')
     .sort({ updatedAt: -1 })
 
   return chats

@@ -20,10 +20,23 @@ export const accessChat = createAsyncThunk('chat/access', async ({ chatID, userI
   }
 })
 
-export const createGroupChat = createAsyncThunk('chat/group', async ({ users, chatName }, { rejectWithValue }) => {
+export const createGroupChat = createAsyncThunk('chat/group', async ({ users, chatName, avatar }, { rejectWithValue }) => {
   try {
-    const response = await axiosIntercept.post('/post/group', { users, chatName })
+    const formData = new FormData()
+    formData.append('users', JSON.stringify(users))
+    formData.append('chatName', chatName)
 
+    if (avatar) {
+      const response = await fetch(avatar)
+      const blob = await response.blob()
+      formData.append('avatarGroup', blob, avatar.name)
+    }
+
+    const response = await axiosIntercept.post('/chat/group', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     return response
   } catch (error) {
     rejectWithValue(error)

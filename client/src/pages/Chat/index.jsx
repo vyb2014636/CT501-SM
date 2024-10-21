@@ -19,8 +19,6 @@ const Chat = () => {
   useEffect(() => {
     dispatch(fetchChats())
   }, [dispatch])
-  console.log(chats)
-
   return (
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', height: '100vh', overflow: 'hidden' }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', px: !isNonScreenMobile && 32 }}>
@@ -36,8 +34,8 @@ const Chat = () => {
           {selectedChat ? (
             <ChatBox chat={selectedChat} />
           ) : (
-            <Box sx={{ flex: 3, backgroundColor: 'background.paper', height: 1 }}>
-              <Typography>Vui lòng chọn cuộc hội thoại</Typography>
+            <Box sx={{ flex: 3, backgroundColor: 'background.paper', borderRadius: 4, height: 1 }}>
+              <Typography m={4}>Vui lòng chọn cuộc hội thoại</Typography>
             </Box>
           )}
         </FlexRow>

@@ -33,6 +33,9 @@ const chatSlice = createSlice({
         const [updatedChat] = state.chats.splice(chatIndex, 1) // Xóa chat khỏi vị trí cũ
         state.chats.unshift(updatedChat) // Thêm chat vào đầu mảng
       }
+    },
+    updateNewGroup: (state, action) => {
+      state.chats.unshift(action.payload.groupChat)
     }
   },
   extraReducers: (builder) => {
@@ -75,6 +78,6 @@ const chatSlice = createSlice({
   }
 })
 
-export const { resetSelect, selectChat, resetStateChat, updateLastMessage } = chatSlice.actions
+export const { resetSelect, selectChat, resetStateChat, updateLastMessage, updateNewGroup } = chatSlice.actions
 
 export default chatSlice.reducer

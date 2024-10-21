@@ -102,7 +102,7 @@ const logout = async (req, res, next) => {
     if (!cookie && !cookie.refreshToken) throw new ApiError(500, 'Hiện chưa đăng nhập')
 
     await User.findOneAndUpdate({ refreshToken: cookie.refreshToken }, { refreshToken: null }, { new: true })
-    await User.findByIdAndUpdate(id, { refreshToken: '' }, { new: true })
+    await User.findByIdAndUpdate(id, { refreshToken: '', isActive: false }, { new: true })
 
     res.clearCookie('refreshToken', {
       httpOnly: true,

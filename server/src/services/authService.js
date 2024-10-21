@@ -17,7 +17,7 @@ const login = async (reqBody) => {
       await validUser.save()
       const accessToken = generateAccessToken(validUser)
       const refreshToken = generateRefreshToken(validUser)
-      await userModel.findOneAndUpdate({ email: reqBody.email }, { refreshToken }, { new: true })
+      await userModel.findOneAndUpdate({ email: reqBody.email }, { refreshToken, isActive: true }, { new: true })
 
       return {
         user: validUser,

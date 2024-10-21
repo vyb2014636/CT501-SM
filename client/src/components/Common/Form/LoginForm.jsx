@@ -8,6 +8,7 @@ import { login } from '@/features/auth/authThunk'
 import { toast } from 'react-toastify'
 import { fetchListNotificationAPI } from '@/features/notification/notificationThunk'
 import { fetchChats } from '@/features/chat/chatThunk'
+import socket from '@/services/socket'
 
 const LoginForm = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' })
@@ -23,6 +24,7 @@ const LoginForm = () => {
         dispatch(fetchListNotificationAPI({ page: 1 }))
         dispatch(fetchChats())
         toast.success('Đăng nhập thành công')
+
         navigate('/')
       })
       .catch((error) => {

@@ -10,6 +10,7 @@ import requestReducer from '@/features/request/requestSlice'
 import chatReducer from '@/features/chat/chatSlice'
 import messageReducer from '@/features/chat/messageSlice'
 import friendshipReducer from '@/features/request/friendshipSlice'
+import onlineReducer from '@/features/online/onlineSlice'
 import notificationReducer from '@/features/notification/notificationSlice'
 import { setupAxiosInterceptors } from '@/apis/axiosIntercept'
 
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
   request: requestReducer,
   friendship: friendshipReducer,
   chat: chatReducer,
-  message: messageReducer
+  message: messageReducer,
+  online: onlineReducer
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

@@ -56,7 +56,8 @@ import { pushListRequests } from '@/features/request/requestSlice'
 import { updateFriends } from '@/features/auth/authSlice'
 import env from '@/utils/enviroment'
 import { receiveMessage } from '@/features/chat/messageSlice'
-import { updateLastMessage } from '@/features/chat/chatSlice'
+import { updateLastMessage, updateNewGroup } from '@/features/chat/chatSlice'
+import { setUserOffline, setUserOnline } from '@/features/online/onlineSlice'
 
 // Khởi tạo socket với các tùy chọn
 const socket = io(env.SOCKET_URL, {
@@ -137,6 +138,17 @@ socket.on('unFriend', (data) => {
 socket.on('receive_message', (data) => {
   store.dispatch(receiveMessage(data.newMessage))
   store.dispatch(updateLastMessage(data))
+})
+
+socket.on('created_group', (data) => {
+  store.dispatch(updateNewGroup(data))
+})
+
+socket.on('user_connected', (userId) => {
+  store.dispatch(setUserOnline(userId))
+})
+socket.on('user_disconnected', (userId) => {
+  store.dispatch(setUserOffline(userId))
 })
 
 // Xuất socket để sử dụng ở nơi khác nếu cần

@@ -18,9 +18,11 @@ const accessChat = async (req, res, next) => {
 }
 
 const createGroupChat = async (req, res, next) => {
-  const { users, chatName } = req.body
+  const { chatName } = req.body
+  const users = JSON.parse(req.body.users)
+  const avatarGroup = req.file ? req.file.path : null
   try {
-    const groupChat = await chatService.createGroupChat(req.user.id, users, chatName)
+    const groupChat = await chatService.createGroupChat(req.user.id, users, chatName, avatarGroup)
     res.status(200).json({
       message: 'Đã tạo nhóm chat',
       groupChat
