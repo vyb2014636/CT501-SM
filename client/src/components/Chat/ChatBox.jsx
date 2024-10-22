@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, memo } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
@@ -18,6 +18,9 @@ import ChatInfoEdit from './ChatInfoEdit' // Import component mới tạo
 import FlexArrow from '../Common/Flex/FlexArround'
 import FlexRow from '../Common/Flex/FlexRow'
 import { isMe } from '@/utils/helpers'
+import FlexCenter from '../Common/Flex/FlexCenter'
+import MessageCard from './Card/MessageCard'
+import StyledAvatar from '../Common/AvatarStatus/StyledAvatar'
 
 const ChatBox = ({ chat }) => {
   const dispatch = useDispatch()
@@ -27,7 +30,6 @@ const ChatBox = ({ chat }) => {
   const [editingInfo, setEditingInfo] = useState(false) // State để xác định có đang chỉnh sửa thông tin không
 
   const messagesEndRef = useRef(null)
-
   useEffect(() => {
     dispatch(fetchMessages(chat._id))
   }, [dispatch, chat])
@@ -36,45 +38,34 @@ const ChatBox = ({ chat }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (e) => {
+    e.preventDefault()
     if (newMessage.trim()) {
       dispatch(sendNewMessage({ chatID: chat._id, content: newMessage }))
       setNewMessage('')
     }
   }
 
-  const handleSaveChatInfo = (chatId, updatedInfo) => {
-    console.log('Lưu thông tin chat:', chatId, updatedInfo)
-    setEditingInfo(false) // Đóng form chỉnh sửa thông tin
-  }
+  const handleSaveChatInfo = (chatId, updatedInfo) => setEditingInfo(false)
 
   if (loading) return <Skeleton sx={{ flex: 3 }} height={1} width={1} />
 
   const otherUser = chat.users.find((user) => user._id.toString() !== currentUser._id.toString())
 
   return (
-    <Box
-      sx={{
-        flex: 3,
-        borderRadius: 4,
-        height: 1,
-        py: 2,
-        backgroundColor: 'background.paper'
-      }}
-      display='flex'
-      flexDirection='column'
-      justifyContent='space-between'>
+    <FlexColumn sx={{ flex: 3, borderRadius: 4, py: 2, backgroundColor: 'background.paper' }} height={1} justifyContent='space-between'>
       {editingInfo ? (
         <ChatInfoEdit chat={chat} onSave={handleSaveChatInfo} onCancel={() => setEditingInfo(false)} />
       ) : (
         <>
           <FlexBetween p={3}>
-            <Box display='flex' alignItems='center'>
-              <Avatar src={chat.isGroupChat ? chat?.avatar : otherUser?.avatar} />
+            <FlexCenter display='flex' alignItems='center'>
+              <StyledAvatar user={otherUser} chat={chat} />
+
               <Typography variant='h6' ml={2}>
                 {chat.chatName ? chat.chatName : otherUser.fullname}
               </Typography>
-            </Box>
+            </FlexCenter>
             {chat.isGroupChat && (
               <Tooltip title='Thông tin'>
                 <IconButton onClick={() => setEditingInfo(true)}>
@@ -84,46 +75,16 @@ const ChatBox = ({ chat }) => {
             )}
           </FlexBetween>
 
-          <FlexColumn
-            flex={1}
-            sx={{
-              px: 2,
-              overflowY: 'auto',
-              ...scrollbarStyleMui
-            }}>
+          <FlexColumn flex={1} sx={{ px: 2, ...scrollbarStyleMui }}>
             {!loading && messages.length === 0 ? (
               <Typography>Không có tin nhắn nào</Typography>
             ) : (
-              messages?.map((message, index) => (
-                <Box key={index} display='flex' justifyContent={message.sender._id === currentUser._id ? 'flex-end' : 'flex-start'}>
-                  <FlexRow
-                    sx={{
-                      maxWidth: '60%',
-                      alignItems: 'end',
-                      m: 1,
-                      gap: 1
-                    }}>
-                    {!isMe(message.sender._id, currentUser._id) && <Avatar src={message.sender.avatar} />}
-                    <Box
-                      sx={{
-                        bgcolor: message.sender._id === currentUser._id ? '#42a5f5' : 'background.message',
-                        color: message.sender._id === currentUser._id ? 'white' : 'text.message',
-                        p: 3,
-                        borderRadius: '12px'
-                      }}>
-                      <Typography>{message.content}</Typography>
-                      <Typography variant='caption' display='block' textAlign='right'>
-                        {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true, locale: vi })}
-                      </Typography>
-                    </Box>
-                  </FlexRow>
-                </Box>
-              ))
+              messages?.map((message) => <MessageCard key={message._id} message={message} currentUser={currentUser} />)
             )}
             <div ref={messagesEndRef} />
           </FlexColumn>
 
-          <Box display='flex' mt={2} px={4}>
+          <Box display='flex' mt={2} px={4} component='form' onSubmit={handleSendMessage}>
             <TextField
               className='inputChat'
               variant='outlined'
@@ -132,14 +93,14 @@ const ChatBox = ({ chat }) => {
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder='Nhập tin nhắn của bạn'
             />
-            <IconButton color='primary' onClick={handleSendMessage}>
+            <IconButton color='primary' type='submit'>
               <SendIcon />
             </IconButton>
           </Box>
         </>
       )}
-    </Box>
+    </FlexColumn>
   )
 }
 
-export default ChatBox
+export default memo(ChatBox)

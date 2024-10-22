@@ -17,6 +17,8 @@ export const initSocket = (server) => {
       usersActive.set(userId, socket.id) // Lưu userId và socketId vào Map
       console.log(`User ${userId} đã kết nối với socket ID ${socket.id}`)
       console.log(`Số lượng User đã kết nối: ${usersActive.size}`)
+      // Phát sự kiện thông báo user online cho các client khác
+      io.emit('user_online_status', { userId, online: true })
     })
 
     // Lắng nghe sự kiện 'typing'
@@ -28,9 +30,14 @@ export const initSocket = (server) => {
     socket.on('disconnect', () => {
       const user = [...usersActive.entries()].find(([, socketId]) => socketId === socket.id)
       if (user) {
+        const userId = user[0]
+
         usersActive.delete(user[0]) // Xóa user khỏi Map khi ngắt kết nối
         console.log(`User ${user[0]} đã ngắt kết nối`)
         console.log(`Số lượng User đã kết nối: ${usersActive.size}`) // Cập nhật số lượng người dùng sau khi một người dùng ngắt kết nối
+
+        // Phát sự kiện thông báo user offline cho các client khác
+        io.emit('user_offline_status', { userId, online: false })
       }
     })
   })

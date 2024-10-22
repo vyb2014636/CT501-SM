@@ -1,11 +1,10 @@
 import ApiError from '~/middlewares/ApiError'
 import chatModel from '~/models/chatModel'
 import messageModel from '~/models/messageModel'
-import { sendNotification } from '~/sockets'
+import { sendNotification } from '~/sockets/'
 
 const sendMessage = async (chatId, senderId, content) => {
   if (!chatId || !senderId || !content) throw new ApiError(400, 'Nội dung và chatId không được để trống')
-
   const newMessage = await messageModel.create({
     sender: senderId,
     content,
@@ -14,11 +13,10 @@ const sendMessage = async (chatId, senderId, content) => {
 
   const chat = await chatModel.findByIdAndUpdate(chatId, { latestMessage: newMessage })
 
-  const fullMessage = await messageModel.findById(newMessage._id).populate('sender', 'fullname avatar').populate('chat')
-
+  const fullMessage = await messageModel.findById(newMessage._id).populate('sender', 'fullname avatar')
   chat.users.forEach((user) => {
     if (user.toString() !== senderId) {
-      sendNotification(user._id, 'receive_message', { newMessage: fullMessage, chatID: chat._id })
+      sendNotification(user.toString(), 'receive_message', { newMessage: fullMessage, chatID: chatId })
     }
   })
 

@@ -7,15 +7,9 @@ import { useEffect } from 'react'
 
 function App() {
   const { user } = useSelector((state) => state.auth)
-  const dispatch = useDispatch()
   useEffect(() => {
     if (user) {
       connectUser(user._id)
-
-      // socket.on('user_connected', (userId) => {
-      //   console.log(userId)
-      //   dispatch(setUserOnline(userId))
-      // })
     } else {
       disconnectUser()
     }

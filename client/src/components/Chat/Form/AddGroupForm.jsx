@@ -20,9 +20,8 @@ import { createGroupChat } from '@/features/chat/chatThunk'
 import { toast } from 'react-toastify'
 import { closeBackdrop, openBackdrop } from '@/features/loading/loadingSlice'
 
-const AddGroupForm = ({ currentUser, handleCloseAddGroup }) => {
+const AddGroupForm = ({ currentUser, handleCloseAddGroup, handleCreateGroup }) => {
   const [groupName, setGroupName] = useState('')
-  const dispatch = useDispatch()
   const [disabled, setDisabled] = useState(false)
   const [checked, setChecked] = useState([])
   const [selectedImage, setSelectedImage] = useState(null) // State để lưu hình ảnh đã chọn
@@ -50,23 +49,6 @@ const AddGroupForm = ({ currentUser, handleCloseAddGroup }) => {
         setSelectedImage(reader.result)
       }
       reader.readAsDataURL(file)
-    }
-  }
-
-  const handleCreateGroup = async () => {
-    if (!groupName.trim() || checked.length === 0) return // Kiểm tra trước khi gửi
-    try {
-      dispatch(openBackdrop())
-
-      dispatch(createGroupChat({ users: checked, chatName: groupName, avatar: selectedImage }))
-      // await dispatch(createGroupChat(formData)).unwrap()
-      toast.success('Tạo thành công')
-      handleCloseAddGroup()
-    } catch (error) {
-      console.log(error)
-      toast.error('Đã xảy ra lỗi, vui lòng thử lại')
-    } finally {
-      dispatch(closeBackdrop())
     }
   }
 
@@ -138,7 +120,11 @@ const AddGroupForm = ({ currentUser, handleCloseAddGroup }) => {
           })}
         </List>
       </FlexColumn>
-      <Button variant='contained' fullWidth onClick={handleCreateGroup} disabled={checked.length <= 0 || groupName.trim() === '' || !disabled}>
+      <Button
+        variant='contained'
+        fullWidth
+        onClick={() => handleCreateGroup(checked, groupName, selectedImage)}
+        disabled={checked.length <= 0 || groupName.trim() === '' || !disabled}>
         Tạo
       </Button>
     </Box>

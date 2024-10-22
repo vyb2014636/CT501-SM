@@ -7,7 +7,8 @@ const chatSlice = createSlice({
     chats: [],
     selectedChat: null,
     status: 'idle',
-    loading: true
+    loading: true,
+    error: null
   },
   reducers: {
     selectChat: (state, action) => {
@@ -74,6 +75,9 @@ const chatSlice = createSlice({
       })
       .addCase(createGroupChat.fulfilled, (state, action) => {
         state.chats.unshift(action.payload.groupChat)
+      })
+      .addCase(createGroupChat.rejected, (state, action) => {
+        console.error(action.payload) // Log lỗi
       })
   }
 })

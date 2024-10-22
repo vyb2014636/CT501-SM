@@ -2,7 +2,7 @@ import ApiError from '~/middlewares/ApiError'
 import requestModel from '~/models/requestModel'
 import notificationModel from '~/models/notificationModel'
 import userModel from '~/models/userModel'
-import { sendNotification } from '~/sockets'
+import { sendNotification } from '~/sockets/'
 
 const notifyFriendsAboutRequest = async (userId, toId, type) => {
   try {

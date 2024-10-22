@@ -11,6 +11,20 @@ const chatSchema = new mongoose.Schema(
   },
   { timestamps: true }
 )
+
+chatSchema.statics.findAndPopulateChat = async function (query) {
+  return await this.findOne(query)
+    .populate('users', 'fullname avatar')
+    .populate('groupAdmin', '-password')
+    .populate({
+      path: 'latestMessage',
+      populate: {
+        path: 'sender',
+        select: 'fullname avatar'
+      }
+    })
+}
+
 const Chat = mongoose.model('Chat', chatSchema)
 
 export default Chat

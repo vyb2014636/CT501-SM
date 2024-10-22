@@ -8,6 +8,7 @@ import { avatarStyleMui, titleAvatarStyleMui } from '@/styles/styles'
 import MoreVertButton from './Button/MoreVertButton'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import vi from 'date-fns/locale/vi'
+import StyledAvatar from '../../AvatarStatus/StyledAvatar'
 
 const HeaderPostCard = ({ userPost, post, visibleMenu }) => {
   const handleProfileClick = useProfileNavigation()
@@ -15,11 +16,10 @@ const HeaderPostCard = ({ userPost, post, visibleMenu }) => {
     <CardHeader
       sx={{ py: 2 }}
       avatar={
-        <Avatar
-          src={userPost.avatar}
-          alt='Profile Picture'
-          sx={{ width: 44, height: 44, ...avatarStyleMui }}
-          onClick={() => handleProfileClick(userPost._id)}
+        <StyledAvatar
+          user={userPost}
+          style={{ width: 44, height: 44, ...avatarStyleMui }} // Đảm bảo style là một object
+          handleOnclick={() => handleProfileClick(userPost._id)}
         />
       }
       title={

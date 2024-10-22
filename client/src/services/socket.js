@@ -61,18 +61,16 @@ import { setUserOffline, setUserOnline } from '@/features/online/onlineSlice'
 
 // Khởi tạo socket với các tùy chọn
 const socket = io(env.SOCKET_URL, {
-  autoConnect: false, // Tắt tự động kết nối
-  reconnection: true, // Kích hoạt kết nối lại
-  reconnectionAttempts: Infinity, // Không giới hạn số lần kết nối lại
-  reconnectionDelay: 1000, // Thời gian trễ giữa các lần kết nối lại
-  timeout: 20000 // Thời gian tối đa chờ kết nối
+  autoConnect: false // Tắt tự động kết nối
+  // reconnection: true, // Kích hoạt kết nối lại
+  // reconnectionAttempts: Infinity, // Không giới hạn số lần kết nối lại
+  // reconnectionDelay: 1000, // Thời gian trễ giữa các lần kết nối lại
+  // timeout: 20000 // Thời gian tối đa chờ kết nối
 })
 
 // Hàm kết nối người dùng
 export const connectUser = (userId) => {
-  socket.connect() // Kết nối socket
-
-  // Thực hiện kết nối người dùng
+  socket.connect()
   socket.emit('user_connected', userId)
 }
 
@@ -81,7 +79,6 @@ export const disconnectUser = () => {
   socket.disconnect()
 }
 
-// Lắng nghe sự kiện kết nối và ngắt kết nối
 socket.on('connect', () => {
   console.log('Connected to server')
 })
@@ -89,7 +86,6 @@ socket.on('connect', () => {
 socket.on('disconnect', (reason) => {
   console.log('Disconnected from server:', reason)
   if (reason === 'io server disconnect') {
-    // Server đã ngắt kết nối, bạn cần kết nối lại
     socket.connect()
   }
 })
@@ -144,12 +140,11 @@ socket.on('created_group', (data) => {
   store.dispatch(updateNewGroup(data))
 })
 
-socket.on('user_connected', (userId) => {
-  store.dispatch(setUserOnline(userId))
+socket.on('user_online_status', (data) => {
+  store.dispatch(setUserOnline(data.userId))
 })
-socket.on('user_disconnected', (userId) => {
-  store.dispatch(setUserOffline(userId))
+socket.on('user_offline_status', (data) => {
+  store.dispatch(setUserOffline(data.userId))
 })
 
-// Xuất socket để sử dụng ở nơi khác nếu cần
 export default socket
