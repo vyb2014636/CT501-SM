@@ -51,6 +51,9 @@ const theme = extendTheme({
         },
         neutral: {
           primary: '#3a3b3c'
+        },
+        logo: {
+          text: '#0072E4'
         }
       },
       spacing: (factor) => `${0.25 * factor}rem` // = 0.25 * 2rem = 0.5rem = 8px

@@ -20,8 +20,7 @@ const createPost = async (req, res, next) => {
 
 const getPosts = async (req, res, next) => {
   const { id } = req.user
-  const { page, userId } = req.query
-  const limit = 3
+  const { page, userId, limit = 3 } = req.query
   const skip = (page - 1) * limit
   try {
     const { posts, totalPosts, user } = await postService.getPosts(id, userId, limit, skip)

@@ -38,9 +38,10 @@ var userSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    isActive: {
-      type: Boolean,
-      default: false
+    status: {
+      type: String,
+      enum: ['Active', 'Banned'],
+      default: 'Active'
     },
     lastLogin: {
       type: Date

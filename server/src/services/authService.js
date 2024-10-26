@@ -8,6 +8,7 @@ const login = async (reqBody) => {
   try {
     const validUser = await userModel.findOne({ email: reqBody.email }).populate('friends', 'firstname lastname fullname avatar background')
     if (!validUser) throw new ApiError(404, 'Tài khoản không tồn tại')
+    if (validUser.status === 'Banned') throw new ApiError(403, 'Tài khoản của bạn đã bị khóa')
     const validPassword = await bcrypt.compare(reqBody.password, validUser.password)
 
     if (!validPassword) throw new ApiError(400, 'Mật khẩu không chính xác')

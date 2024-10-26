@@ -25,7 +25,7 @@ const LoginForm = () => {
         dispatch(fetchChats())
         toast.success('Đăng nhập thành công')
 
-        navigate('/')
+        // navigate('/')
       })
       .catch((error) => {
         toast.error(error.message || 'Đăng nhập thất bại')

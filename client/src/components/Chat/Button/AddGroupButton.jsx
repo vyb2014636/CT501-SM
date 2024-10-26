@@ -17,9 +17,8 @@ const AddGroupButton = ({ currentUser, chats }) => {
 
   const handleOpenAddGroup = () => setOpenAddGroup(true)
   const handleCloseAddGroup = () => setOpenAddGroup(false)
-  console.log(chats)
   const handleCreateGroup = async (checked, groupName, selectedImage) => {
-    const groupsCreatedByUser = chats.filter((chat) => chat.groupAdmin._id.toString() === currentUser._id.toString())
+    const groupsCreatedByUser = chats.filter((chat) => chat?.groupAdmin?._id.toString() === currentUser._id.toString())
     if (groupsCreatedByUser.length >= 10) {
       toast.error('Tối đa 10 nhóm')
     } else {

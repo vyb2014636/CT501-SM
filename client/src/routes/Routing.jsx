@@ -20,8 +20,10 @@ import AllUser from '@/pages/Search/AllUsers/AllUser'
 import ViewPost from '@/pages/Home/ViewPost/ViewPost'
 import MyPersonal from '@/pages/Personal/MyProfile/MyPersonal'
 import UserPersonal from '@/pages/Personal/Other/UserPersonal'
-import ChatBox from '@/components/Chat/ChatBox'
 import Chat from '@/pages/Chat'
+import { useSelector } from 'react-redux'
+import User from '@/pages/Admin/User/User'
+import AdminRoute from './AdminRoute'
 
 function Routing() {
   return (
@@ -32,13 +34,7 @@ function Routing() {
           <Route path='favorite' element={<Favorites />} />
           <Route path='post/:postId' element={<ViewPost />} />
         </Route>
-
         <Route path='/chat' element={<Chat />} />
-
-        <Route path='/admin' element={<Admin />}>
-          <Route path='/admin' element={<Dashboard />} />
-          <Route path='/admin/setting' element={<Setting />} />
-        </Route>
         <Route path='/personal' element={<Personal />}>
           <Route path='/personal' element={<MyPersonal />} />
           <Route path='/personal/:userId' element={<UserPersonal />} />
@@ -46,6 +42,14 @@ function Routing() {
         <Route path='/search/:query' element={<Search />}>
           <Route path='/search/:query' element={<Summary />} />
           <Route path='/search/:query/people' element={<AllUser />} />
+        </Route>
+      </Route>
+
+      <Route element={<AdminRoute />}>
+        <Route path='/admin' element={<Admin />}>
+          <Route path='/admin/' element={<Dashboard />} />
+          <Route path='/admin/user' element={<User />} />
+          <Route path='/admin/setting' element={<Setting />} />
         </Route>
       </Route>
       <Route element={<PublicRoute />}>

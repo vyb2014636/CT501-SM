@@ -108,11 +108,42 @@ const getAllSearch = async (query) => {
   return users
 }
 
+const getUsers = async () => {
+  try {
+    const users = await userModel.find({ isAdmin: false }).select('fullname address avatar isAdmin isVerify status background').lean()
+    return users
+  } catch (error) {
+    throw error
+  }
+}
+
+const toggleUserStatus = async (userId, status) => {
+  try {
+    if (status === 'Active' || status === 'Banned') {
+      const updatedUser = await userModel
+        .findByIdAndUpdate(
+          userId,
+          { status: status }, // true nếu active, false nếu banned
+          { new: true } // Trả về document sau khi đã cập nhật
+        )
+        .select('fullname address avatar isAdmin isVerify status background')
+
+      if (!updatedUser) throw new ApiError(404, 'Không tìm thấy người dùng')
+
+      return updatedUser
+    } else throw new ApiError(400, 'Bạn chọn trạng thái không hợp lệ')
+  } catch (error) {
+    throw error
+  }
+}
+
 export const userService = {
   getListUserNoFriend,
   uploadAvatar,
   uploadBackground,
   uploadInfo,
   searchUser,
-  getAllSearch
+  getAllSearch,
+  getUsers,
+  toggleUserStatus
 }

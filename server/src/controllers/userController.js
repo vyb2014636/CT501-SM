@@ -77,6 +77,30 @@ const getAllSearch = async (req, res, next) => {
     next(error)
   }
 }
+
+const getUsers = async (req, res, next) => {
+  try {
+    const users = await userService.getUsers()
+    res.status(200).json({ message: 'danh sách tất cả người dùng bạn tìm', users })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const toggleUserStatus = async (req, res, next) => {
+  try {
+    const { userID, status } = req.body
+
+    const updatedUser = await userService.toggleUserStatus(userID, status)
+
+    res.status(200).json({
+      updatedUser,
+      message: 'Cập nhật thành công'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 export const userController = {
   getSuggestions,
   unFriend,
@@ -84,5 +108,7 @@ export const userController = {
   uploadBackground,
   uploadInfo,
   searchUser,
-  getAllSearch
+  getAllSearch,
+  getUsers,
+  toggleUserStatus
 }

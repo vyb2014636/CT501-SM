@@ -77,3 +77,11 @@ export const fetchAllSearchAPI = async (query) => {
   const response = await axiosIntercept.get('user/searchAll', { params: { query: query } })
   return response
 }
+export const fetchListUserForAdmin = async () => {
+  const response = await axiosIntercept.get('user/users')
+  return response
+}
+export const updateStatusAPI = async (userID, status) => {
+  const response = await axiosIntercept.put('user/updateStatusForUser', { userID, status })
+  return response
+}

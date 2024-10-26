@@ -17,33 +17,35 @@ import { resetNotificationState } from '@/features/notification/notificationSlic
 import { resetFriendship } from '@/features/request/friendshipSlice'
 import { disconnectUser } from '@/services/socket'
 import { resetStateChat } from '@/features/chat/chatSlice'
-const AccountButton = () => {
-  const styleTriangle = {
-    elevation: 0,
-    sx: {
-      overflow: 'visible',
-      filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-      mt: 1.5,
-      '& .MuiAvatar-root': {
-        width: 32,
-        height: 32,
-        ml: -0.5,
-        mr: 1
-      },
-      '&::before': {
-        content: '""',
-        display: 'block',
-        position: 'absolute',
-        top: 0,
-        right: 14,
-        width: 10,
-        height: 10,
-        bgcolor: 'background.paper',
-        transform: 'translateY(-50%) rotate(45deg)',
-        zIndex: 0
-      }
+
+const styleTriangle = {
+  elevation: 0,
+  sx: {
+    overflow: 'visible',
+    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+    mt: 1.5,
+    '& .MuiAvatar-root': {
+      width: 32,
+      height: 32,
+      ml: -0.5,
+      mr: 1
+    },
+    '&::before': {
+      content: '""',
+      display: 'block',
+      position: 'absolute',
+      top: 0,
+      right: 14,
+      width: 10,
+      height: 10,
+      bgcolor: 'background.paper',
+      transform: 'translateY(-50%) rotate(45deg)',
+      zIndex: 0
     }
   }
+}
+
+const AccountButton = () => {
   const { user } = useSelector((state) => state.auth)
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -56,12 +58,12 @@ const AccountButton = () => {
     setAnchorEl(null)
   }
   const handleLogout = () => {
-    disconnectUser()
     dispatch(resetPostState())
     dispatch(resetCommentState())
     dispatch(resetNotificationState())
     dispatch(resetFriendship())
     dispatch(resetStateChat())
+    disconnectUser()
     dispatch(logout())
   }
 
