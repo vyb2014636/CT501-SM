@@ -6,9 +6,9 @@ import MenuItem from '@mui/material/MenuItem'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import { useSelector } from 'react-redux'
-import { Box, Typography } from '@mui/material'
-
-const MoreVertButton = ({ userPost }) => {
+import { Typography } from '@mui/material'
+import ReportButton from '@/components/Report/ReportButton'
+const MoreVertButton = ({ userPost, post }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const { user } = useSelector((state) => state.auth)
   const open = Boolean(anchorEl)
@@ -31,11 +31,13 @@ const MoreVertButton = ({ userPost }) => {
           horizontal: 'right'
         }}
         onClose={() => setAnchorEl(null)}>
-        {userPost._id === user._id && (
+        {userPost._id === user._id ? (
           <MenuItem onClick={() => setAnchorEl(null)}>
             <DeleteOutlinedIcon />
             <Typography ml={1}>Xóa</Typography>
           </MenuItem>
+        ) : (
+          <ReportButton setAnchorEl={setAnchorEl} post={post} userPost={userPost} />
         )}
         <MenuItem onClick={() => setAnchorEl(null)}>
           <FavoriteBorderOutlinedIcon />

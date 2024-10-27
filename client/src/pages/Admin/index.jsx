@@ -1,8 +1,8 @@
 import React from 'react'
-import Sidebar from './Layout/SideBar'
+import Sidebar from '../../components/Admin/SideBar'
 import Box from '@mui/material/Box'
 import { Outlet } from 'react-router-dom'
-import Header from './Layout/Header'
+import Header from '../../components/Admin/Header'
 
 const Admin = () => {
   return (

@@ -6,6 +6,7 @@ import { request } from './request'
 import { address } from './address'
 import { notification } from './notification'
 import { chat } from './chat'
+import { report } from './report'
 
 const router = express.Router()
 
@@ -16,5 +17,6 @@ router.use('/requestFriend', request)
 router.use('/address', address)
 router.use('/notification', notification)
 router.use('/chat', chat)
+router.use('/report', report)
 
 export const APIs_V1 = router

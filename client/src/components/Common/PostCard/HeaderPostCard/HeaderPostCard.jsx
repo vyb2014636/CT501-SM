@@ -27,7 +27,7 @@ const HeaderPostCard = ({ userPost, post, visibleMenu }) => {
           {formatFullname(userPost.firstname, userPost.lastname)}
         </Typography>
       }
-      action={visibleMenu && <MoreVertButton userPost={userPost} />}
+      action={visibleMenu && <MoreVertButton userPost={userPost} post={post} />}
       subheader={formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: vi })}
     />
   )

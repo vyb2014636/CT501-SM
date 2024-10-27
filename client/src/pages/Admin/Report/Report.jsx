@@ -1,13 +1,13 @@
 import Box from '@mui/material/Box'
-import { Outlet } from 'react-router-dom'
 import React from 'react'
+import ReportTable from '../User/Content/ReportTable'
 
-const User = () => {
+const Report = () => {
   return (
     <Box sx={{ backgroundColor: 'background.paper', width: '100%', overflow: 'hidden', mt: 4 }}>
-      <Outlet />
+      <ReportTable />
     </Box>
   )
 }
 
-export default User
+export default Report

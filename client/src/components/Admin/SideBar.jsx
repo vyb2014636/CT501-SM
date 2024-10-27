@@ -2,9 +2,7 @@ import React from 'react'
 import { Drawer, List, ListItemButton, Box, Avatar, Typography } from '@mui/material'
 import Dashboard from '@mui/icons-material/Dashboard'
 import Person from '@mui/icons-material/Person'
-import ShoppingCart from '@mui/icons-material/ShoppingCart'
 import Description from '@mui/icons-material/Description'
-import Lock from '@mui/icons-material/Lock'
 import Block from '@mui/icons-material/Block'
 import FlexColumn from '@/components/Common/Flex/FlexColumn'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -19,9 +17,9 @@ const Logo = () => (
 const menuItems = [
   { id: '1', text: 'Dashboard', icon: <Dashboard />, path: '/admin' },
   { id: '2', text: 'Người dùng', icon: <Person />, path: '/admin/user' },
-  { id: '3', text: 'Bài đăng', icon: <Description />, path: '/admin/blog' },
-  { id: '4', text: 'Danh sách khóa', icon: <Block />, path: '/admin/block' },
-  { id: '5', text: 'Danh sách phản hồi', icon: <Block />, path: '/admin/complain' }
+  { id: '3', text: 'Danh sách khiếu nại', icon: <Description />, path: '/admin/report' },
+  { id: '4', text: 'Danh sách tố cáo', icon: <Block />, path: '/admin/complain' },
+  { id: '5', text: 'Danh sách khóa', icon: <Block />, path: '/admin/block' }
 ]
 
 const Sidebar = () => {
@@ -30,6 +28,11 @@ const Sidebar = () => {
 
   const handleClickItem = (item) => {
     navigate(item.path)
+  }
+
+  // Kiểm tra xem đường dẫn hiện tại có khớp với đường dẫn trong menu không
+  const isSelected = (itemPath) => {
+    return location.pathname === itemPath || location.pathname.startsWith(`${itemPath}/`)
   }
 
   return (
@@ -59,7 +62,8 @@ const Sidebar = () => {
               gap: 2,
               fontWeight: 'fontWeightMedium'
             }}
-            selected={location.pathname === item.path}>
+            selected={isSelected(item.path) && !(item.id === '1' && location.pathname !== '/admin')} // Chỉ chọn Dashboard khi đang ở đúng đường dẫn của nó
+          >
             <Box component='span' sx={{ width: 24, height: 24 }}>
               {item.icon}
             </Box>
@@ -72,12 +76,6 @@ const Sidebar = () => {
               }}>
               {item.text}
             </Box>
-
-            {item.badge && (
-              <Box sx={{ backgroundColor: 'secondary.main', px: 1, color: 'neutral.primary', borderRadius: 1, fontWeight: 'bold' }}>
-                +{item.badge}
-              </Box>
-            )}
           </ListItemButton>
         ))}
       </List>

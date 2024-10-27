@@ -24,6 +24,10 @@ import Chat from '@/pages/Chat'
 import { useSelector } from 'react-redux'
 import User from '@/pages/Admin/User/User'
 import AdminRoute from './AdminRoute'
+import UsersTable from '@/pages/Admin/User/Content/UsersTable'
+import EditUserForm from '@/pages/Admin/User/Content/EditUserForm'
+import ReportTable from '@/pages/Admin/User/Content/ReportTable'
+import Report from '@/pages/Admin/Report/Report'
 
 function Routing() {
   return (
@@ -48,7 +52,11 @@ function Routing() {
       <Route element={<AdminRoute />}>
         <Route path='/admin' element={<Admin />}>
           <Route path='/admin/' element={<Dashboard />} />
-          <Route path='/admin/user' element={<User />} />
+          <Route path='/admin/user' element={<User />}>
+            <Route path='/admin/user' element={<UsersTable />} />
+            <Route path='/admin/user/:userID' element={<EditUserForm />} />
+          </Route>
+          <Route path='/admin/report' element={<Report />} />
           <Route path='/admin/setting' element={<Setting />} />
         </Route>
       </Route>
