@@ -4,9 +4,12 @@ import BackdropLoad from './components/Common/Backdrop/BackdropLoad'
 import { useDispatch, useSelector } from 'react-redux'
 import socket, { connectUser, disconnectUser } from './services/socket'
 import { useEffect } from 'react'
+import { setOnlineUsers } from './features/online/onlineSlice'
+import { fetchUsersOnline } from './apis/auth/authAPI'
 
 function App() {
   const { user } = useSelector((state) => state.auth)
+
   useEffect(() => {
     if (user) {
       connectUser(user._id)

@@ -23,7 +23,7 @@ const reportSchema = new mongoose.Schema(
       required: true
       // enum: ['spam', 'hate speech', 'inappropriate content']
     },
-    status: { type: String, enum: ['pending', 'resolved', 'dismissed'], default: 'pending' },
+    status: { type: String, enum: ['pending', 'resolved', 'warning'], default: 'pending' },
     createdAt: {
       type: Date,
       default: Date.now
@@ -31,6 +31,32 @@ const reportSchema = new mongoose.Schema(
   },
   { timestamps: true }
 )
+reportSchema.pre(/^find/, function (next) {
+  this.populate('reporter')
+    .populate('reportedUser')
+    .populate({
+      path: 'post',
+      populate: [
+        {
+          path: 'byPost',
+          select: 'firstname lastname email background avatar'
+        },
+        {
+          path: 'sharesBy',
+          select: 'firstname lastname email background avatar'
+        },
+        {
+          path: 'sharedPost',
+          populate: {
+            path: 'byPost',
+            select: 'firstname lastname email background avatar'
+          }
+        }
+      ]
+    })
+
+  next()
+})
 
 const Report = mongoose.model('Report', reportSchema)
 

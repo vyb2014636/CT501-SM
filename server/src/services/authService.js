@@ -18,7 +18,7 @@ const login = async (reqBody) => {
       await validUser.save()
       const accessToken = generateAccessToken(validUser)
       const refreshToken = generateRefreshToken(validUser)
-      await userModel.findOneAndUpdate({ email: reqBody.email }, { refreshToken, isActive: true }, { new: true })
+      await userModel.findOneAndUpdate({ email: reqBody.email }, { refreshToken, isOnline: true }, { new: true })
 
       return {
         user: validUser,
@@ -30,7 +30,15 @@ const login = async (reqBody) => {
     throw error
   }
 }
-
+const getUsersOnline = async () => {
+  try {
+    const users = await userModel.find({ isOnline: true }).select('fullname')
+    return users
+  } catch (error) {
+    throw error
+  }
+}
 export const authService = {
-  login
+  login,
+  getUsersOnline
 }

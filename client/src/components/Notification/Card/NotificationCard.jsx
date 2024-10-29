@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux'
 import { readNotificationAPI } from '@/features/notification/notificationThunk'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import vi from 'date-fns/locale/vi'
+import { toast } from 'react-toastify'
 
 const NotificationCard = ({ notification }) => {
   const navigate = useNavigate()
@@ -21,11 +22,13 @@ const NotificationCard = ({ notification }) => {
       friendRequestAccepted: ' đã chấp nhận lời mời kết bạn của bạn.',
       friendRequestReject: ' đã từ chối lời mời kết bạn của bạn.',
       newPost: ' đã đăng một bài viết mới.',
-      sharedPost: ' đã chia sẻ một bài viết.'
+      sharedPost: ' đã chia sẻ một bài viết.',
+      deletePost: ': bài đăng của bạn đã bị xóa do bị báo cáo'
     }
+    console.log(sender)
     return (
       <Typography variant='body2' sx={{ marginLeft: 1, fontWeight: status === 'unread' ? 'bold' : 'normal', whiteSpace: 'normal' }}>
-        <strong>{sender.fullname}</strong>
+        <strong>{sender.isAdmin ? 'Hệ thống' : sender.fullname}</strong>
         {messages[type]}
       </Typography>
     )
@@ -43,6 +46,7 @@ const NotificationCard = ({ notification }) => {
         break
       case 'newPost':
       case 'sharedPost':
+        if (!postId) toast.info('Bài đăng đã bị xóa')
         navigate(`/post/${postId._id}`)
         break
       default:
@@ -52,7 +56,7 @@ const NotificationCard = ({ notification }) => {
 
   return (
     <MenuItem sx={{ display: 'flex', padding: 2, alignItems: 'center', borderRadius: 0 }} onClick={() => handleNavigate(notification)}>
-      <Avatar src={notification.sender.avatar} alt='User avatar' sx={{ width: 50, height: 50, marginRight: 2 }} />
+      <Avatar src={!notification.sender.isAdmin && notification.sender.avatar} alt='User avatar' sx={{ width: 50, height: 50, marginRight: 2 }} />
 
       <Box sx={{ flexGrow: 1 }}>
         {renderNotificationMessage(notification)}

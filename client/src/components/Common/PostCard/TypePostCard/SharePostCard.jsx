@@ -23,7 +23,9 @@ const SharePostCard = ({ noMedia, post, isLiked, handleClickLike }) => {
         </Card>
 
         <CardContent>
-          <Typography variant='body2'>{post.likes?.length} người thích</Typography>
+          <Typography variant='body2'>
+            {post.likes?.length} người thích, {post.comments.length} Bình luận
+          </Typography>
         </CardContent>
         <Divider />
         <InteractPostCard isLiked={isLiked} handleClickLike={handleClickLike} styleThreeButton={styleThreeButton} post={post} />

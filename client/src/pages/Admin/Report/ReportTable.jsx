@@ -14,10 +14,11 @@ import { fetchListUserForAdmin } from '@/apis/user/userAPI'
 import { Typography } from '@mui/material'
 import { getReports } from '@/apis/report/reportAPI'
 import ReportTableRow from '@/components/Admin/Table/ReportTableRow'
+import TableTitle from '@/components/Admin/Title/TableTitle'
 
 const ReportTable = () => {
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [rowsPerPage, setRowsPerPage] = useState(6)
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [reports, setReports] = useState([])
@@ -43,6 +44,8 @@ const ReportTable = () => {
   const filteredreports = reports.filter((report) => report.reporter.email.toLowerCase().includes(searchQuery.toLowerCase()))
   return (
     <>
+      <TableTitle title='Danh sách khiếu nại' />
+
       <Box sx={{ display: 'flex', alignItems: 'center', m: 2 }}>
         <InputBase
           placeholder='Tìm kiếm người dùng báo cáo'
@@ -55,6 +58,9 @@ const ReportTable = () => {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: 'background.default' }}>
+              <TableCell style={{ width: '100px' }} align='center'>
+                Thứ tự
+              </TableCell>
               <TableCell style={{ width: '100px' }}>Mã báo cáo</TableCell>
               <TableCell style={{ width: '200px' }}>Tài khoản báo cáo</TableCell>
               <TableCell style={{ width: '200px' }}>Tài khoản bị báo cáo</TableCell>
@@ -68,7 +74,9 @@ const ReportTable = () => {
             {filteredreports?.length > 0 ? (
               filteredreports
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((report) => <ReportTableRow key={report._id} report={report} />)
+                .map((report, index) => (
+                  <ReportTableRow key={report._id} report={report} setReports={setReports} serialNumber={page * rowsPerPage + index + 1} />
+                ))
             ) : (
               <TableRow>
                 <TableCell colSpan={7} align='center'>
@@ -80,7 +88,7 @@ const ReportTable = () => {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[4, 5, 6]}
         component='div'
         count={filteredreports.length}
         rowsPerPage={rowsPerPage}
@@ -90,6 +98,8 @@ const ReportTable = () => {
           setRowsPerPage(parseInt(event.target.value, 10))
           setPage(0)
         }}
+        labelRowsPerPage='Số dòng trên trang' // Đổi tên ở đây
+        labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count}`} // Đổi văn bản ở đây
       />
     </>
   )

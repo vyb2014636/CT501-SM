@@ -16,7 +16,9 @@ const CommonPostCard = ({ noMedia, post, isLiked, handleClickLike }) => {
       <ContentPostCard describe={post?.describe || 'Lỗi hiển thị nội dung'} />
       {!noMedia && MediaPostCard(post)}
       <CardContent>
-        <Typography variant='body2'>{post.likes?.length} người thích</Typography>
+        <Typography variant='body2'>
+          {post.likes?.length} người thích, {post.comments.length} Bình luận
+        </Typography>
       </CardContent>
       <Divider />
       <InteractPostCard isLiked={isLiked} handleClickLike={handleClickLike} styleThreeButton={styleThreeButton} post={post} />

@@ -10,6 +10,7 @@ router
   .post('/signup', authValidation.validRegister, authController.register)
   .post('/verifyEmail', authController.verifyEmail)
   .get('/logout', verifyToken, authController.logout)
+  .get('/online', verifyToken, authController.getUsersOnline)
   .get('/refreshToken', verifyToken, authController.refreshAccessToken)
 // .get('/:id',verifyToken,authController.profile)
 

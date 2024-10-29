@@ -26,8 +26,10 @@ import User from '@/pages/Admin/User/User'
 import AdminRoute from './AdminRoute'
 import UsersTable from '@/pages/Admin/User/Content/UsersTable'
 import EditUserForm from '@/pages/Admin/User/Content/EditUserForm'
-import ReportTable from '@/pages/Admin/User/Content/ReportTable'
 import Report from '@/pages/Admin/Report/Report'
+import Warning from '@/pages/Admin/Warning/Warning'
+import WarningsTable from '@/pages/Admin/Warning/WarningsTable'
+import WarningsUserTable from '@/pages/Admin/Warning/WarningsUserTable'
 
 function Routing() {
   return (
@@ -57,6 +59,10 @@ function Routing() {
             <Route path='/admin/user/:userID' element={<EditUserForm />} />
           </Route>
           <Route path='/admin/report' element={<Report />} />
+          <Route path='/admin/warning' element={<Warning />}>
+            <Route path='/admin/warning' element={<WarningsTable />} />
+            <Route path='/admin/warning/:userId' element={<WarningsUserTable />} />
+          </Route>
           <Route path='/admin/setting' element={<Setting />} />
         </Route>
       </Route>

@@ -12,52 +12,44 @@ import Box from '@mui/material/Box'
 import ConfirmationDialog from '@/components/Common/ConfirmationDialog/ConfirmationDialog'
 import { fetchListUserForAdmin } from '@/apis/user/userAPI'
 import { Typography } from '@mui/material'
+import { getWarnings } from '@/apis/warning/warningAPI'
+import WarningTableRow from '../../../components/Admin/Table/WarningTableRow'
 import TableTitle from '@/components/Admin/Title/TableTitle'
 
-const UsersTable = () => {
+const WarningsTable = () => {
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [rowsPerPage, setRowsPerPage] = useState(6)
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
-  const [users, setUsers] = useState([])
+  const [warnings, setWarnings] = useState([])
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchWarnings = async () => {
       setLoading(true)
       try {
-        const response = await fetchListUserForAdmin()
-        setUsers(response.users)
+        const response = await getWarnings()
+        console.log(response)
+        setWarnings(response.warnings)
       } catch (error) {
         console.log(error.message)
       }
       setLoading(false)
     }
-    fetchUsers()
-
-    // Khôi phục trạng thái từ localStorage
-    // const savedEditMode = localStorage.getItem('editMode')
-
-    // const savedUser = JSON.parse(localStorage.getItem('selectedUser'))
-
-    // if (savedEditMode && savedUser) {
-    //   setEditMode(JSON.parse(savedEditMode))
-    //   setSelectedUser(savedUser)
-    // }
+    fetchWarnings()
   }, [])
 
   if (loading) return <Typography>Loading....</Typography>
 
-  if (!loading && !users.length) return <Typography>Không có dữ liệu</Typography>
+  if (!loading && !warnings.length) return <Typography>Không có dữ liệu</Typography>
 
-  const filteredUsers = users.filter((user) => user.fullname.toLowerCase().includes(searchQuery.toLowerCase()))
-
+  const filteredwarnings = warnings.filter((warning) => warning.email.toLowerCase().includes(searchQuery.toLowerCase()))
   return (
     <>
-      <TableTitle title='Danh sách người dùng' />
+      <TableTitle title='Danh sách người dùng vi phạm' />
 
       <Box sx={{ display: 'flex', alignItems: 'center', m: 2 }}>
         <InputBase
-          placeholder='Tìm kiếm'
+          placeholder='Tìm kiếm người dùng báo cáo'
           sx={{ flex: 1, padding: '5px 10px', border: '1px solid #ccc', borderRadius: '20px' }}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -70,20 +62,25 @@ const UsersTable = () => {
               <TableCell style={{ width: '100px' }} align='center'>
                 Thứ tự
               </TableCell>
-              <TableCell style={{ width: '100px' }}>Avatar</TableCell>
+              <TableCell style={{ width: '100px' }} align='center'>
+                Ảnh đại diện
+              </TableCell>
+              <TableCell style={{ width: '200px' }}>Email</TableCell>
               <TableCell style={{ width: '200px' }}>Họ tên</TableCell>
-              <TableCell style={{ width: '200px' }}>Địa chỉ </TableCell>
-              <TableCell style={{ width: '150px' }}>Vai trò</TableCell>
-              <TableCell style={{ width: '150px', textAlign: 'center' }}>Xác thực</TableCell>
-              <TableCell style={{ width: '150px', textAlign: 'center' }}>Trạng thái</TableCell>
+              <TableCell style={{ width: '150px' }} align='center'>
+                Số lần cảnh cáo
+              </TableCell>
+              <TableCell style={{ width: '150px', textAlign: 'center' }}>Ghi chú</TableCell>
               <TableCell style={{ width: '150px' }} />
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredUsers?.length > 0 ? (
-              filteredUsers
+            {filteredwarnings?.length > 0 ? (
+              filteredwarnings
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((user, index) => <UserTableRow key={user.id} user={user} serialNumber={page * rowsPerPage + index + 1} />)
+                .map((warning, index) => (
+                  <WarningTableRow key={warning._id} warning={warning} setWarnings={setWarnings} serialNumber={page * rowsPerPage + index + 1} />
+                ))
             ) : (
               <TableRow>
                 <TableCell colSpan={7} align='center'>
@@ -97,7 +94,7 @@ const UsersTable = () => {
       <TablePagination
         rowsPerPageOptions={[4, 5, 6]}
         component='div'
-        count={filteredUsers.length}
+        count={filteredwarnings.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={(event, newPage) => setPage(newPage)}
@@ -112,4 +109,4 @@ const UsersTable = () => {
   )
 }
 
-export default UsersTable
+export default WarningsTable

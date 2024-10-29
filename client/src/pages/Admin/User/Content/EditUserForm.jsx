@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 import { updateStatusAPI } from '@/apis/user/userAPI'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ConfirmationDialog from '@/components/Common/ConfirmationDialog/ConfirmationDialog'
+import TableTitle from '@/components/Admin/Title/TableTitle'
 
 const EditUserForm = () => {
   const location = useLocation()
@@ -59,9 +60,8 @@ const EditUserForm = () => {
   return (
     <>
       <form onSubmit={handleSubmit(handleSave)}>
-        <Typography variant='h5' gutterBottom textAlign='center' p={2}>
-          Chỉnh sửa trạng thái người dùng: <strong>{user.fullname}</strong>
-        </Typography>
+        <TableTitle title={`Chỉnh sửa trạng thái cho ${user.fullname}`} />
+
         <TextField
           select
           label='Trạng thái'

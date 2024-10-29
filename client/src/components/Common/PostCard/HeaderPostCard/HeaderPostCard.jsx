@@ -10,7 +10,7 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import vi from 'date-fns/locale/vi'
 import StyledAvatar from '../../AvatarStatus/StyledAvatar'
 
-const HeaderPostCard = ({ userPost, post, visibleMenu }) => {
+const HeaderPostCard = ({ userPost, post, visibleMenu, admin }) => {
   const handleProfileClick = useProfileNavigation()
   return (
     <CardHeader
@@ -27,7 +27,7 @@ const HeaderPostCard = ({ userPost, post, visibleMenu }) => {
           {formatFullname(userPost.firstname, userPost.lastname)}
         </Typography>
       }
-      action={visibleMenu && <MoreVertButton userPost={userPost} post={post} />}
+      action={visibleMenu && !admin && <MoreVertButton userPost={userPost} post={post} />}
       subheader={formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: vi })}
     />
   )

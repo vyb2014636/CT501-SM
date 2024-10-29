@@ -7,3 +7,7 @@ export const sendReport = async (reporterID, reportedUserID, postID, reason) => 
   const response = await axiosIntercept.post('report/', { reporterID, reportedUserID, postID, reason })
   return response
 }
+export const deletePostByAdmin = async (reportID) => {
+  const response = await axiosIntercept.delete(`report/${reportID}/delete-post`)
+  return response
+}

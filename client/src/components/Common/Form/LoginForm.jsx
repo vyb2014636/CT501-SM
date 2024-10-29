@@ -8,7 +8,8 @@ import { login } from '@/features/auth/authThunk'
 import { toast } from 'react-toastify'
 import { fetchListNotificationAPI } from '@/features/notification/notificationThunk'
 import { fetchChats } from '@/features/chat/chatThunk'
-import socket from '@/services/socket'
+import { fetchUsersOnline } from '@/apis/auth/authAPI'
+import { setOnlineUsers } from '@/features/online/onlineSlice'
 
 const LoginForm = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' })
@@ -21,16 +22,17 @@ const LoginForm = () => {
     dispatch(login(credentials))
       .unwrap()
       .then(async () => {
+        const response = await fetchUsersOnline()
         dispatch(fetchListNotificationAPI({ page: 1 }))
+        dispatch(setOnlineUsers(response.users))
         dispatch(fetchChats())
         toast.success('Đăng nhập thành công')
-
-        // navigate('/')
       })
       .catch((error) => {
         toast.error(error.message || 'Đăng nhập thất bại')
       })
   }
+
   useEffect(() => {
     if (credentials.email && credentials.password) setDisabled(false)
     else setDisabled(true)

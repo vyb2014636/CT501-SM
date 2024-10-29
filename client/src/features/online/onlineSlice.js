@@ -12,10 +12,16 @@ const onlineSlice = createSlice({
     },
     setUserOffline: (state, action) => {
       delete state.onlineUsers[action.payload]
+    },
+    setOnlineUsers: (state, action) => {
+      state.onlineUsers = {}
+      action.payload.forEach((user) => {
+        state.onlineUsers[user._id] = true // Đặt trạng thái cho tất cả người dùng online
+      })
     }
   }
 })
 
-export const { setUserOnline, setUserOffline } = onlineSlice.actions
+export const { setUserOnline, setUserOffline, setOnlineUsers } = onlineSlice.actions
 
 export default onlineSlice.reducer

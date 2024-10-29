@@ -16,7 +16,8 @@ const getListUserNoFriend = async (myId) => {
   // Tìm những người dùng chưa kết bạn và chưa có yêu cầu kết bạn
   const suggestions = await userModel
     .find({
-      _id: { $ne: myId, $nin: excludedUserIds } // Loại bỏ bản thân và những người không phù hợp
+      _id: { $ne: myId, $nin: excludedUserIds },
+      isAdmin: false // Loại bỏ bản thân và những người không phù hợp
     })
     .select('avatar lastname firstname background')
   return suggestions

@@ -8,6 +8,10 @@ export const verifyEmailAPI = async (email, otp) => {
   const response = await axiosIntercept.post('auth/verifyEmail', { email, otp })
   return response
 }
+export const fetchUsersOnline = async () => {
+  const response = await axiosIntercept.get('auth/online')
+  return response
+}
 
 export const logout = async (user) => {
   const response = await axiosIntercept.get('auth/logout')

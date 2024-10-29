@@ -18,8 +18,8 @@ const menuItems = [
   { id: '1', text: 'Dashboard', icon: <Dashboard />, path: '/admin' },
   { id: '2', text: 'Người dùng', icon: <Person />, path: '/admin/user' },
   { id: '3', text: 'Danh sách khiếu nại', icon: <Description />, path: '/admin/report' },
-  { id: '4', text: 'Danh sách tố cáo', icon: <Block />, path: '/admin/complain' },
-  { id: '5', text: 'Danh sách khóa', icon: <Block />, path: '/admin/block' }
+  { id: '4', text: 'Danh sách vi phạm', icon: <Block />, path: '/admin/warning' },
+  { id: '5', text: 'Danh sách khóa', icon: <Block />, path: '/admin/complain' }
 ]
 
 const Sidebar = () => {
@@ -39,8 +39,8 @@ const Sidebar = () => {
     <Drawer
       variant='permanent'
       sx={{
-        width: 240,
-        '& .MuiDrawer-paper': { width: 240, boxSizing: 'border-box' }
+        width: 250,
+        '& .MuiDrawer-paper': { width: 250, boxSizing: 'border-box' }
       }}>
       <FlexColumn sx={{ justifyContent: '', pt: 4, color: '#0072E4' }}>
         <Logo />

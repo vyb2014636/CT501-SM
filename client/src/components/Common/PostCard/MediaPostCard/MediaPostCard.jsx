@@ -28,7 +28,7 @@ const MediaPostCard = (post) => {
               {image.isVideo ? (
                 <video
                   src={image.url}
-                  style={{ width: '100%', objectFit: 'cover', height: '100%', cursor: 'pointer' }}
+                  style={{ width: '100%', objectFit: 'unset', height: '100%', cursor: 'pointer' }}
                   controls
                   onClick={() => handleOpenModal(index)}
                 />
@@ -37,7 +37,7 @@ const MediaPostCard = (post) => {
                   loading='lazy'
                   src={image.url}
                   alt={`Post image ${index + 1}`}
-                  style={{ width: '100%', objectFit: 'cover', height: '100%', cursor: 'pointer' }}
+                  style={{ width: '100%', objectFit: 'unset', height: '100%', cursor: 'pointer' }}
                   onClick={() => handleOpenModal(index)}
                 />
               )}

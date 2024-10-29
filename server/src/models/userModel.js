@@ -30,9 +30,8 @@ var userSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    isBlock: {
-      type: Boolean,
-      default: false
+    isOnline: {
+      type: Boolean
     },
     isVerify: {
       type: Boolean,

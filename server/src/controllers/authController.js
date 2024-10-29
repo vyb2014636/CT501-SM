@@ -102,7 +102,7 @@ const logout = async (req, res, next) => {
     if (!cookie && !cookie.refreshToken) throw new ApiError(500, 'Hiện chưa đăng nhập')
 
     await User.findOneAndUpdate({ refreshToken: cookie.refreshToken }, { refreshToken: null }, { new: true })
-    await User.findByIdAndUpdate(id, { refreshToken: '', isActive: false }, { new: true })
+    await User.findByIdAndUpdate(id, { refreshToken: '', isOnline: false }, { new: true })
 
     res.clearCookie('refreshToken', {
       httpOnly: true,
@@ -154,10 +154,21 @@ const refreshAccessToken = async (req, res, next) => {
   }
 }
 
+const getUsersOnline = async (req, res, next) => {
+  try {
+    const users = await authService.getUsersOnline()
+    res.status(200).json({
+      users,
+      message: users?.length > 0 ? 'Danh sách người dùng đang hoạt động' : 'Không có người dùng nào hoạt động'
+    })
+  } catch (error) {}
+}
+
 export const authController = {
   register,
   verifyEmail,
   login,
   logout,
-  refreshAccessToken
+  refreshAccessToken,
+  getUsersOnline
 }

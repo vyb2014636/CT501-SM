@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import React from 'react'
-import ReportTable from '../User/Content/ReportTable'
+import ReportTable from './ReportTable'
 
 const Report = () => {
   return (

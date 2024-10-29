@@ -34,6 +34,11 @@ var postSchema = new mongoose.Schema(
     sharedPost: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
     sharesBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [commentSchema],
+    status: {
+      type: String,
+      enum: ['recycle', 'normal'],
+      default: 'normal'
+    },
     likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
     createdAt: { type: Date, default: Date.now }
   },

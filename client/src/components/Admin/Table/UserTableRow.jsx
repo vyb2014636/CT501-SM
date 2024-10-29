@@ -7,13 +7,14 @@ import { MoreVert } from '@mui/icons-material'
 import UserMenu from '@/components/Admin/Menu/UserMenu'
 import { TableCell, TableRow } from '@mui/material'
 
-const UserTableRow = ({ user }) => {
+const UserTableRow = ({ user, serialNumber }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const handleOpenMenu = (event, user) => setAnchorEl(event.currentTarget)
   const handleCloseMenu = () => setAnchorEl(null)
   return (
     <TableRow key={user.id} hover>
+      <TableCell align='center'>{serialNumber}</TableCell>
       <TableCell>
         <Avatar src={user.avatar} />
       </TableCell>

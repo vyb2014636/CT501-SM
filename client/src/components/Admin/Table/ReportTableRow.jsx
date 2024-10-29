@@ -1,23 +1,19 @@
-import React, { useState } from 'react'
-import Avatar from '@mui/material/Avatar'
+import React from 'react'
 import Chip from '@mui/material/Chip'
-import IconButton from '@mui/material/IconButton'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import { RemoveRedEye } from '@mui/icons-material'
-import UserMenu from '@/components/Admin/Menu/UserMenu'
-import { TableCell, TableRow, Tooltip } from '@mui/material'
+import { TableCell, TableRow } from '@mui/material'
+import ViewReportButton from '../Button/ViewReportButton'
 
-const ReportTableRow = ({ report }) => {
-  console.log(report)
+const ReportTableRow = ({ report, setReports, serialNumber }) => {
   return (
     <TableRow key={report.id} hover>
+      <TableCell align='center'>{serialNumber}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }}>{report.reportCode}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>{report.reporter.email}</TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
         {report.reportedUser.email}
       </TableCell>
       <TableCell sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{report.reason}</TableCell>
-      <TableCell>{report.post.sharedPost ? 'Bài chia sẻ' : 'Bài đăng gốc'}</TableCell>
+      <TableCell>{report.post?.sharedPost ? 'Bài chia sẻ' : 'Bài đăng gốc'}</TableCell>
       <TableCell sx={{ textAlign: 'center' }}>
         <Chip
           label={report.status === 'resolved' ? 'Đã xử lý' : 'Chưa xử lý'}
@@ -25,13 +21,7 @@ const ReportTableRow = ({ report }) => {
           variant='outlined'
         />
       </TableCell>
-      <TableCell align='center'>
-        <Tooltip title='Xem bài đăng'>
-          <IconButton>
-            <RemoveRedEye />
-          </IconButton>
-        </Tooltip>
-      </TableCell>
+      <TableCell align='center'>{report.status !== 'resolved' && <ViewReportButton report={report} setReports={setReports} />}</TableCell>
     </TableRow>
   )
 }

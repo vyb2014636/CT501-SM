@@ -33,7 +33,7 @@ const handleReport = async (req, res, next) => {
 const deletePostBasedOnReport = async (req, res, next) => {
   const { reportId } = req.params
   try {
-    const report = await reportService.deletePostIfReportValid(reportId)
+    const report = await reportService.deletePostIfReportValid(req.user.id, reportId)
     res.status(200).json({
       report,
       message: 'Đã xóa bài đăng'
