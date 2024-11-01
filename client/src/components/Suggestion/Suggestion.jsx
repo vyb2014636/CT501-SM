@@ -48,9 +48,13 @@ const Suggestion = () => {
             Những người bạn có thể biết
           </Typography>
         </ListItem>
-        {suggestions?.map((user, id) => (
-          <SuggestionCard userNoFriend={user} key={id} />
-        ))}
+        {suggestions.length > 0 ? (
+          suggestions?.map((user, id) => <SuggestionCard userNoFriend={user} key={id} />)
+        ) : (
+          <Typography borderRadius={4} p={2} variant='body1' sx={{ backgroundColor: 'background.paper' }}>
+            Bạn đã kết bạn với tất cả
+          </Typography>
+        )}
       </List>
     </FlexColumn>
   )

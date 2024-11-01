@@ -70,11 +70,13 @@ const createPost = async (describe, myId, images, videos) => {
 
 const getPost = async (postId) => {
   try {
-    let postQuery = postModel.findById(postId)
+    const post = await postModel.findById(postId).lean()
 
-    postQuery = postModel.populateFields(postQuery)
+    // if (post.status !== 'normal') throw new ApiError(400, 'Không hiển thị được bài đăng này')
 
-    const post = await postQuery.lean()
+    // postQuery = postModel.populateFields(postQuery)
+
+    // const post = await postQuery.lean()
 
     if (!post) throw new ApiError(404, 'Bài viết không tồn tại')
 
@@ -92,20 +94,16 @@ const getPosts = async (loggedInId, userId, limit, skip) => {
     if (!userId) {
       user = await userModel.findByIdPopulateAddress(loggedInId)
       const friendIds = user?.friends.map((friend) => friend._id)
-      filter = { byPost: { $in: [loggedInId, ...friendIds] } }
+      filter = { byPost: { $in: [loggedInId, ...friendIds] }, status: 'normal' }
     } else {
       user = await userModel.findByIdPopulateAddress(userId)
-      filter = { byPost: userId }
-      if (!user) throw new ApiError(404, 'Không tìm thấy')
+      if (!user) throw new ApiError(404, 'Không tìm thấy người dùng')
+      filter = { byPost: userId, status: 'normal' }
     }
 
     const totalPosts = await postModel.find(filter).countDocuments()
 
-    let postsQuery = postModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit)
-
-    postsQuery = postModel.populateFields(postsQuery)
-
-    const posts = await postsQuery.lean()
+    const posts = await postModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit)
 
     return { posts, totalPosts, user }
   } catch (error) {
@@ -118,6 +116,8 @@ const likePost = async (userId, postId) => {
     const post = await postModel.findByIdPopulates(postId)
 
     if (!post) throw new ApiError(404, 'Không tìm thấy bài post')
+
+    if (post.status !== 'normal') throw new ApiError(400, 'Bài đăng này có dấu hiệu vi phạm hoặc đã bị xóa')
 
     const isLiked = post.likes.includes(userId)
     let message = ''
@@ -147,6 +147,8 @@ const sharePost = async (postId, myId, describe) => {
     const originalPost = post.sharedPost ? post.sharedPost : post
 
     // if (originalPost.byPost.toString() === myId.id) throw new Error('Bạn không thể tự chia sẻ bài viết của chính mình')
+
+    if (originalPost.status !== 'normal') throw new ApiError(400, 'Bài đăng này có dấu hiệu vi phạm hoặc đã bị xóa')
 
     const sharedPost = new postModel({
       byPost: myId.id,

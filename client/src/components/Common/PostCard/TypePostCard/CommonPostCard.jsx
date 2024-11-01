@@ -21,7 +21,9 @@ const CommonPostCard = ({ noMedia, post, isLiked, handleClickLike }) => {
         </Typography>
       </CardContent>
       <Divider />
-      <InteractPostCard isLiked={isLiked} handleClickLike={handleClickLike} styleThreeButton={styleThreeButton} post={post} />
+      {post.status === 'normal' && (
+        <InteractPostCard isLiked={isLiked} handleClickLike={handleClickLike} styleThreeButton={styleThreeButton} post={post} />
+      )}
     </Card>
   )
 }

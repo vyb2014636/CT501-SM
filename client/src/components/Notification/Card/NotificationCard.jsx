@@ -15,7 +15,6 @@ const NotificationCard = ({ notification }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const handleProfileClick = useProfileNavigation()
-
   const renderNotificationMessage = (notification) => {
     const { sender, type, status } = notification
     const messages = {
@@ -23,9 +22,9 @@ const NotificationCard = ({ notification }) => {
       friendRequestReject: ' đã từ chối lời mời kết bạn của bạn.',
       newPost: ' đã đăng một bài viết mới.',
       sharedPost: ' đã chia sẻ một bài viết.',
-      deletePost: ': bài đăng của bạn đã bị xóa do bị báo cáo'
+      hiddenPost: ': bài đăng của bạn đã bị ẩn do bị vi phạm',
+      restorePost: ': bài đăng của bạn đã được phục hồi'
     }
-    console.log(sender)
     return (
       <Typography variant='body2' sx={{ marginLeft: 1, fontWeight: status === 'unread' ? 'bold' : 'normal', whiteSpace: 'normal' }}>
         <strong>{sender.isAdmin ? 'Hệ thống' : sender.fullname}</strong>
@@ -35,7 +34,7 @@ const NotificationCard = ({ notification }) => {
   }
 
   const handleNavigate = (notification) => {
-    const { type, sender, postId, status } = notification
+    const { type, sender, postId, status, reportId } = notification
     const from = sender && sender._id ? sender._id : null
     if (status === 'unread') dispatch(readNotificationAPI(notification._id))
 
@@ -44,6 +43,11 @@ const NotificationCard = ({ notification }) => {
       case 'friendRequestReject':
         handleProfileClick(from)
         break
+      case 'hiddenPost':
+        navigate(`/post/${postId._id}`, { state: { reportId: reportId } })
+        break
+
+      case 'restorePost':
       case 'newPost':
       case 'sharedPost':
         if (!postId) toast.info('Bài đăng đã bị xóa')
@@ -56,7 +60,11 @@ const NotificationCard = ({ notification }) => {
 
   return (
     <MenuItem sx={{ display: 'flex', padding: 2, alignItems: 'center', borderRadius: 0 }} onClick={() => handleNavigate(notification)}>
-      <Avatar src={!notification.sender.isAdmin && notification.sender.avatar} alt='User avatar' sx={{ width: 50, height: 50, marginRight: 2 }} />
+      <Avatar
+        src={(!notification.sender.isAdmin && notification.sender.avatar) || ''}
+        alt='User avatar'
+        sx={{ width: 50, height: 50, marginRight: 2 }}
+      />
 
       <Box sx={{ flexGrow: 1 }}>
         {renderNotificationMessage(notification)}

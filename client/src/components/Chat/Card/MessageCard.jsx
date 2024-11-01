@@ -8,15 +8,9 @@ import FlexRow from '@/components/Common/Flex/FlexRow'
 import { isMe } from '@/utils/helpers'
 
 const MessageCard = ({ message, currentUser }) => {
-  return (
+  return message.type === 'text' ? (
     <Box display='flex' justifyContent={message.sender._id === currentUser._id ? 'flex-end' : 'flex-start'}>
-      <FlexRow
-        sx={{
-          maxWidth: '60%',
-          alignItems: 'end',
-          m: 1,
-          gap: 1
-        }}>
+      <FlexRow sx={{ maxWidth: '60%', alignItems: 'end', m: 1, gap: 1 }}>
         {!isMe(message.sender._id, currentUser._id) && <Avatar src={message.sender.avatar} />}
         <Box
           p={3}
@@ -32,6 +26,12 @@ const MessageCard = ({ message, currentUser }) => {
         </Box>
       </FlexRow>
     </Box>
+  ) : (
+    message.type === 'notify' && (
+      <Box display='flex' justifyContent='center'>
+        <Typography>Thông báo</Typography>
+      </Box>
+    )
   )
 }
 

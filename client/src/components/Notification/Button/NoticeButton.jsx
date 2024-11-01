@@ -8,7 +8,6 @@ const NoticeButton = () => {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
   const { notifications, loading, hasMoreNotifications, totalUnread } = useSelector((state) => state.notification)
-  // const unreadCount = notifications.filter((notification) => notification.status === 'unread').length
 
   const handleClick = (event) => setAnchorEl(event.currentTarget)
 

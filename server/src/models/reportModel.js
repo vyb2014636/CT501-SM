@@ -23,7 +23,16 @@ const reportSchema = new mongoose.Schema(
       required: true
       // enum: ['spam', 'hate speech', 'inappropriate content']
     },
-    status: { type: String, enum: ['pending', 'resolved', 'warning'], default: 'pending' },
+    status: { type: String, enum: ['pending', 'resolved', 'warning', 'reprocess'], default: 'pending' },
+    replies: [
+      {
+        // Thay đổi thành mảng để lưu nhiều phản hồi
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Người gửi phản hồi
+        content: { type: String, required: true }, // Nội dung phản hồi
+        createdAt: { type: Date, default: Date.now } // Thời gian phản hồi
+      }
+    ],
+
     createdAt: {
       type: Date,
       default: Date.now
@@ -31,25 +40,30 @@ const reportSchema = new mongoose.Schema(
   },
   { timestamps: true }
 )
-reportSchema.pre(/^find/, function (next) {
+reportSchema.pre(/(find|findOne|findById)/, function (next) {
   this.populate('reporter')
     .populate('reportedUser')
+    .populate({
+      path: 'replies.user', // Populate user in replies
+      select: 'firstname lastname fullname email background avatar'
+    })
     .populate({
       path: 'post',
       populate: [
         {
           path: 'byPost',
-          select: 'firstname lastname email background avatar'
+          select: 'firstname lastname fullname email background avatar'
         },
         {
           path: 'sharesBy',
-          select: 'firstname lastname email background avatar'
+          select: 'firstname lastname fullname email background avatar'
         },
+
         {
           path: 'sharedPost',
           populate: {
             path: 'byPost',
-            select: 'firstname lastname email background avatar'
+            select: 'firstname lastname fullname email background avatar'
           }
         }
       ]

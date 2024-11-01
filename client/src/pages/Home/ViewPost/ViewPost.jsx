@@ -25,7 +25,7 @@ const ViewPost = () => {
       {loading && !viewPost ? (
         <SkeletonPosts />
       ) : !loading && !viewPost ? (
-        <Typography>Không tồn tại bài đăng hoặc bài đăng đã bị xóa</Typography>
+        <Typography>Không tồn tại bài đăng hoặc bài đăng đã ẩn</Typography>
       ) : (
         <PostCard post={viewPost} />
       )}

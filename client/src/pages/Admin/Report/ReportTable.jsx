@@ -65,7 +65,7 @@ const ReportTable = () => {
               <TableCell style={{ width: '200px' }}>Tài khoản báo cáo</TableCell>
               <TableCell style={{ width: '200px' }}>Tài khoản bị báo cáo</TableCell>
               <TableCell style={{ width: '200px' }}>Lý do</TableCell>
-              <TableCell style={{ width: '150px' }}>Bài đăng</TableCell>
+              <TableCell style={{ width: '100px' }}>Ngày gửi</TableCell>
               <TableCell style={{ width: '150px', textAlign: 'center' }}>Trạng thái</TableCell>
               <TableCell style={{ width: '150px' }} />
             </TableRow>

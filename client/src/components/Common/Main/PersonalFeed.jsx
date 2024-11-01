@@ -33,7 +33,7 @@ const PersonalFeed = ({ posts, user, currentUser, totalPosts }) => {
         <ProfileCard user={user} totalPosts={totalPosts} />
       )}
 
-      {loading && posts.length === 0 ? (
+      {!loading && posts.length === 0 ? (
         <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
           Không có bài viết nào được đăng
         </Typography>

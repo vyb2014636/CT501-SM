@@ -36,7 +36,7 @@ var postSchema = new mongoose.Schema(
     comments: [commentSchema],
     status: {
       type: String,
-      enum: ['recycle', 'normal'],
+      enum: ['recycle', 'normal', 'hidden'],
       default: 'normal'
     },
     likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
@@ -74,7 +74,25 @@ postSchema.statics.findByIdPopulateSharePost = function (postId) {
     }
   })
 }
+postSchema.pre(/(find|findOne|findById)/, function (next) {
+  this.populate({
+    path: 'sharedPost',
+    populate: {
+      path: 'byPost',
+      select: 'firstname lastname email background avatar'
+    }
+  })
+    .populate({
+      path: 'byPost',
+      select: 'firstname lastname email background avatar'
+    })
+    .populate({
+      path: 'sharesBy',
+      select: 'firstname lastname email background avatar'
+    })
 
+  next()
+})
 postSchema.statics.populateFields = function (query) {
   return query
     .populate({

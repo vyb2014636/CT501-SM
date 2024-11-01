@@ -30,13 +30,14 @@ const handleReport = async (req, res, next) => {
   }
 }
 
-const deletePostBasedOnReport = async (req, res, next) => {
+const resolveReport = async (req, res, next) => {
   const { reportId } = req.params
+  const { status, notify } = req.body
   try {
-    const report = await reportService.deletePostIfReportValid(req.user.id, reportId)
+    const report = await reportService.resolveReport(req.user.id, reportId, status, notify)
     res.status(200).json({
       report,
-      message: 'Đã xóa bài đăng'
+      message: report ? (notify === 'hiddenPost' ? 'Đã ẩn bài đăng' : 'Đã phục hồi bài đăng') : 'Không thao tác được'
     })
   } catch (error) {
     next(error)
@@ -55,4 +56,19 @@ const createReport = async (req, res, next) => {
   }
 }
 
-export const reportController = { getReports, handleReport, deletePostBasedOnReport, createReport }
+const respondToReport = async (req, res, next) => {
+  const { reportId } = req.params
+  const { content } = req.body
+  const userId = req.user.id
+  try {
+    const response = await reportService.respondToReport(reportId, userId, content)
+    res.status(200).json({
+      message: response ? 'Gửi phản hồi thành công' : 'Gửi phản hồi thất bại',
+      response
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const reportController = { getReports, handleReport, resolveReport, createReport, respondToReport }

@@ -5,10 +5,12 @@ import { sendNotification } from '~/sockets/'
 
 const sendMessage = async (chatId, senderId, content) => {
   if (!chatId || !senderId || !content) throw new ApiError(400, 'Nội dung và chatId không được để trống')
+
   const newMessage = await messageModel.create({
     sender: senderId,
     content,
-    chat: chatId
+    chat: chatId,
+    type: 'text'
   })
 
   const chat = await chatModel.findByIdAndUpdate(chatId, { latestMessage: newMessage })
