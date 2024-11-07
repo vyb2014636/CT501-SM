@@ -14,7 +14,7 @@ import { fetchListUserForAdmin } from '@/apis/user/userAPI'
 import { Typography } from '@mui/material'
 import TableTitle from '@/components/Admin/Title/TableTitle'
 
-const UsersTable = () => {
+const UsersTable = ({ history }) => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const [searchQuery, setSearchQuery] = useState('')
@@ -83,7 +83,9 @@ const UsersTable = () => {
             {filteredUsers?.length > 0 ? (
               filteredUsers
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((user, index) => <UserTableRow key={user.id} user={user} serialNumber={page * rowsPerPage + index + 1} />)
+                .map((user, index) => (
+                  <UserTableRow key={user.id} user={user} serialNumber={page * rowsPerPage + index + 1} history={history} setUsers={setUsers} />
+                ))
             ) : (
               <TableRow>
                 <TableCell colSpan={7} align='center'>
@@ -105,8 +107,8 @@ const UsersTable = () => {
           setRowsPerPage(parseInt(event.target.value, 10))
           setPage(0)
         }}
-        labelRowsPerPage='Số dòng trên trang' // Đổi tên ở đây
-        labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count}`} // Đổi văn bản ở đây
+        labelRowsPerPage='Số dòng trên trang'
+        labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count}`}
       />
     </>
   )

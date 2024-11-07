@@ -7,45 +7,45 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TablePagination from '@mui/material/TablePagination'
 import InputBase from '@mui/material/InputBase'
-import UserTableRow from '@/components/Admin/Table/UserTableRow'
 import Box from '@mui/material/Box'
-import ConfirmationDialog from '@/components/Common/ConfirmationDialog/ConfirmationDialog'
-import { fetchListUserForAdmin } from '@/apis/user/userAPI'
 import { Typography } from '@mui/material'
-import { getWarnings } from '@/apis/warning/warningAPI'
-import WarningTableRow from '../../../components/Admin/Table/WarningTableRow'
+import { getReports } from '@/apis/report/reportAPI'
+import ReportTableRow from '@/components/Admin/Table/ReportTableRow'
 import TableTitle from '@/components/Admin/Title/TableTitle'
 
-const WarningsTable = () => {
+const PendingReports = () => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(6)
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
-  const [warnings, setWarnings] = useState([])
+  const [reports, setReports] = useState([])
+  const [error, setError] = useState(false)
 
   useEffect(() => {
-    const fetchWarnings = async () => {
+    const fetchReports = async () => {
       setLoading(true)
       try {
-        const response = await getWarnings()
-        console.log(response)
-        setWarnings(response.warnings)
+        const response = await getReports('pending')
+        setReports(response.reports)
       } catch (error) {
+        setError(true)
+
         console.log(error.message)
       }
       setLoading(false)
     }
-    fetchWarnings()
+    fetchReports()
   }, [])
 
   if (loading) return <Typography>Loading....</Typography>
 
-  if (!loading && !warnings.length) return <Typography>Không có dữ liệu</Typography>
+  if (error) return <Typography>Lỗi khi tải</Typography>
 
-  const filteredwarnings = warnings.filter((warning) => warning.email.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredreports = reports.filter((report) => report.reporter.email.toLowerCase().includes(searchQuery.toLowerCase()))
+
   return (
     <>
-      <TableTitle title='Danh sách người dùng vi phạm' />
+      <TableTitle title='Danh sách chưa xử lý' />
 
       <Box sx={{ display: 'flex', alignItems: 'center', m: 2 }}>
         <InputBase
@@ -62,24 +62,21 @@ const WarningsTable = () => {
               <TableCell style={{ width: '100px' }} align='center'>
                 Thứ tự
               </TableCell>
-              <TableCell style={{ width: '100px' }} align='center'>
-                Ảnh đại diện
-              </TableCell>
-              <TableCell style={{ width: '200px' }}>Email</TableCell>
-              <TableCell style={{ width: '200px' }}>Họ tên</TableCell>
-              <TableCell style={{ width: '150px' }} align='center'>
-                Số lần cảnh cáo
-              </TableCell>
-              <TableCell style={{ width: '150px', textAlign: 'center' }}>Ghi chú</TableCell>
+              <TableCell style={{ width: '100px' }}>Mã báo cáo</TableCell>
+              <TableCell style={{ width: '200px' }}>Tài khoản báo cáo</TableCell>
+              <TableCell style={{ width: '200px' }}>Tài khoản bị báo cáo</TableCell>
+              <TableCell style={{ width: '200px' }}>Lý do</TableCell>
+              <TableCell style={{ width: '100px' }}>Ngày gửi</TableCell>
+              <TableCell style={{ width: '150px', textAlign: 'center' }}>Trạng thái</TableCell>
               <TableCell style={{ width: '150px' }} />
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredwarnings?.length > 0 ? (
-              filteredwarnings
+            {filteredreports?.length > 0 ? (
+              filteredreports
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((warning, index) => (
-                  <WarningTableRow key={warning._id} warning={warning} setWarnings={setWarnings} serialNumber={page * rowsPerPage + index + 1} />
+                .map((report, index) => (
+                  <ReportTableRow key={report._id} report={report} setReports={setReports} serialNumber={page * rowsPerPage + index + 1} />
                 ))
             ) : (
               <TableRow>
@@ -94,7 +91,7 @@ const WarningsTable = () => {
       <TablePagination
         rowsPerPageOptions={[4, 5, 6]}
         component='div'
-        count={filteredwarnings.length}
+        count={filteredreports.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={(event, newPage) => setPage(newPage)}
@@ -109,4 +106,4 @@ const WarningsTable = () => {
   )
 }
 
-export default WarningsTable
+export default PendingReports

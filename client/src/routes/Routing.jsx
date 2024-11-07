@@ -21,15 +21,18 @@ import ViewPost from '@/pages/Home/ViewPost/ViewPost'
 import MyPersonal from '@/pages/Personal/MyProfile/MyPersonal'
 import UserPersonal from '@/pages/Personal/Other/UserPersonal'
 import Chat from '@/pages/Chat'
-import { useSelector } from 'react-redux'
 import User from '@/pages/Admin/User/User'
 import AdminRoute from './AdminRoute'
 import UsersTable from '@/pages/Admin/User/Content/UsersTable'
 import EditUserForm from '@/pages/Admin/User/Content/EditUserForm'
 import Report from '@/pages/Admin/Report/Report'
-import Warning from '@/pages/Admin/Warning/Warning'
-import WarningsTable from '@/pages/Admin/Warning/WarningsTable'
-import WarningsUserTable from '@/pages/Admin/Warning/WarningsUserTable'
+import Violations from '@/pages/Admin/Report/Violation/Violations/Violations'
+import UserViolations from '@/pages/Admin/Report/Violation/Violations/UserViolations'
+import ResolvedReports from '@/pages/Admin/Report/Reports/Resolved/ResolvedReports'
+import PendingReportS from '@/pages/Admin/Report/Reports/Pending/PendingReports'
+import Violation from '@/pages/Admin/Report/Violation/Violation'
+import SpamViolations from '@/pages/Admin/Report/Violation/SpamViolations/SpamViolations'
+import History from '@/pages/Admin/Report/History/History'
 
 function Routing() {
   return (
@@ -58,11 +61,17 @@ function Routing() {
             <Route path='/admin/user' element={<UsersTable />} />
             <Route path='/admin/user/:userID' element={<EditUserForm />} />
           </Route>
-          <Route path='/admin/report' element={<Report />} />
-          <Route path='/admin/warning' element={<Warning />}>
-            <Route path='/admin/warning' element={<WarningsTable />} />
-            <Route path='/admin/warning/:userId' element={<WarningsUserTable />} />
+          <Route path='/admin/report' element={<Report />}>
+            <Route path='/admin/report/resolved' element={<ResolvedReports />} />
+            <Route path='/admin/report/pending' element={<PendingReportS />} />
           </Route>
+          <Route path='/admin/violation' element={<Violation />}>
+            <Route path='/admin/violation/reported' element={<Violations />} />
+            <Route path='/admin/violation/reported/:userId' element={<UserViolations />} />
+            <Route path='/admin/violation/spamViolation' element={<SpamViolations />} />
+          </Route>
+          <Route path='/admin/history' element={<History />} />
+
           <Route path='/admin/setting' element={<Setting />} />
         </Route>
       </Route>

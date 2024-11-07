@@ -6,8 +6,9 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { MoreVert } from '@mui/icons-material'
 import UserMenu from '@/components/Admin/Menu/UserMenu'
 import { TableCell, TableRow } from '@mui/material'
+import ViewHistoryButton from '../Button/ViewHistoryButton'
 
-const UserTableRow = ({ user, serialNumber }) => {
+const UserTableRow = ({ user, serialNumber, history, setUsers }) => {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const handleOpenMenu = (event, user) => setAnchorEl(event.currentTarget)
@@ -30,10 +31,16 @@ const UserTableRow = ({ user, serialNumber }) => {
         <Chip label={user.status === 'Active' ? 'Kích hoạt' : 'Đã khóa'} color={user.status === 'Active' ? 'success' : 'error'} variant='outlined' />
       </TableCell>
       <TableCell align='center'>
-        <IconButton onClick={(event) => handleOpenMenu(event, user)}>
-          <MoreVert />
-        </IconButton>
-        <UserMenu anchorEl={anchorEl} onClose={handleCloseMenu} user={user} />
+        {history ? (
+          <ViewHistoryButton user={user} setUsers={setUsers} />
+        ) : (
+          <>
+            <IconButton onClick={(event) => handleOpenMenu(event, user)}>
+              <MoreVert />
+            </IconButton>
+            <UserMenu anchorEl={anchorEl} onClose={handleCloseMenu} user={user} />
+          </>
+        )}
       </TableCell>
     </TableRow>
   )

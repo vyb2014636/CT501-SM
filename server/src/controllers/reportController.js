@@ -5,11 +5,25 @@ import { reportService } from '~/services/reportService'
 
 // Lấy danh sách báo cáo
 const getReports = async (req, res, next) => {
+  const { status } = req.query
   try {
-    const reports = await reportService.getAllReports()
+    const reports = await reportService.getAllReports(status)
     res.status(200).json({
       reports: reports,
       message: reports?.length > 0 ? 'Danh sách khiếu nại' : 'Danh sách rỗng'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// Lấy danh sách báo cáo
+const getSpamReports = async (req, res, next) => {
+  try {
+    const reports = await reportService.getSpamReports()
+    res.status(200).json({
+      reports: reports,
+      message: reports?.length > 0 ? 'Danh sách người dùng spam báo cáo' : 'Danh sách rỗng'
     })
   } catch (error) {
     next(error)
@@ -43,7 +57,18 @@ const resolveReport = async (req, res, next) => {
     next(error)
   }
 }
-
+const resolveNoVioletReport = async (req, res, next) => {
+  const { reportId } = req.params
+  try {
+    const report = await reportService.resolveNoVioletReport(reportId)
+    res.status(200).json({
+      report,
+      message: report ? 'Đã xử lý' : 'Xử lý thất bại'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 const createReport = async (req, res, next) => {
   try {
     const newReport = await reportService.createReport(req.body)
@@ -71,4 +96,4 @@ const respondToReport = async (req, res, next) => {
   }
 }
 
-export const reportController = { getReports, handleReport, resolveReport, createReport, respondToReport }
+export const reportController = { getReports, handleReport, resolveReport, createReport, respondToReport, resolveNoVioletReport, getSpamReports }

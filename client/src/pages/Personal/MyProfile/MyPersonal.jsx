@@ -21,7 +21,8 @@ const MyPersonal = () => {
       try {
         await Promise.all([dispatch(resetPostState()), dispatch(fetchAllPosts({ page: 1, userId: currentUser._id }))])
       } catch (error) {
-        toast.error(error.message)
+        // toast.error(error.message)
+        console.log(error.message)
         setError(true)
       } finally {
         setLoading(false)

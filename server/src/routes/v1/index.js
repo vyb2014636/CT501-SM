@@ -8,6 +8,7 @@ import { notification } from './notification'
 import { chat } from './chat'
 import { report } from './report'
 import { warning } from './warning'
+import { statistic } from './statistic'
 
 const router = express.Router()
 
@@ -20,5 +21,6 @@ router.use('/notification', notification)
 router.use('/chat', chat)
 router.use('/report', report)
 router.use('/warning', warning)
+router.use('/statistic', statistic)
 
 export const APIs_V1 = router

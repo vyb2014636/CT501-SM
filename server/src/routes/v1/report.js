@@ -7,9 +7,11 @@ const router = express.Router()
 
 router
   .get('/', verifyToken, verifyAdmin, reportController.getReports)
+  .get('/spamReports', verifyToken, verifyAdmin, reportController.getSpamReports)
   .post('/', verifyToken, reportController.createReport)
   .put('/handle', verifyToken, verifyAdmin, reportController.handleReport)
-  .put('/:reportId/delete-post', verifyToken, verifyAdmin, reportController.resolveReport)
+  .put('/:reportId/hiddenPost', verifyToken, verifyAdmin, reportController.resolveReport)
+  .put('/:reportId/unViolet', verifyToken, verifyAdmin, reportController.resolveNoVioletReport)
   .post('/:reportId/response', verifyToken, reportController.respondToReport)
 
 export const report = router

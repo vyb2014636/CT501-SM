@@ -1,6 +1,6 @@
 import axiosIntercept from '@/apis/axiosIntercept'
-export const getReports = async () => {
-  const response = await axiosIntercept.get('report/')
+export const getReports = async (status) => {
+  const response = await axiosIntercept.get('report/', { params: { status } })
   return response
 }
 export const sendReport = async (reporterID, reportedUserID, postID, reason) => {
@@ -9,8 +9,11 @@ export const sendReport = async (reporterID, reportedUserID, postID, reason) => 
 }
 
 export const hiddenPostByAdminAPI = async (reportID, status, notify) => {
-  console.log(status, notify)
-  const response = await axiosIntercept.put(`report/${reportID}/delete-post`, { status, notify })
+  const response = await axiosIntercept.put(`report/${reportID}/hiddenPost`, { status, notify })
+  return response
+}
+export const unVioletAPI = async (reportID) => {
+  const response = await axiosIntercept.put(`report/${reportID}/unViolet`)
   return response
 }
 export const respondToReportAPI = async (reportId, content) => {

@@ -101,6 +101,20 @@ const toggleUserStatus = async (req, res, next) => {
     next(error)
   }
 }
+
+const getHistoryByUser = async (req, res, next) => {
+  try {
+    const { userId } = req.query
+    const logs = await userService.getHistoryByUser(userId)
+
+    res.status(200).json({
+      logs,
+      message: 'Lịch sử hoạt động của người dùng'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 export const userController = {
   getSuggestions,
   unFriend,
@@ -110,5 +124,6 @@ export const userController = {
   searchUser,
   getAllSearch,
   getUsers,
-  toggleUserStatus
+  toggleUserStatus,
+  getHistoryByUser
 }

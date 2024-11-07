@@ -12,6 +12,7 @@ router.use(verifyToken)
 // Routes liên quan đến bạn bè
 router
   .get('/users', verifyAdmin, userController.getUsers)
+  .get('/userLog', verifyAdmin, userController.getHistoryByUser)
   .get('/noFriends', userController.getSuggestions) // Gợi ý người dùng chưa kết bạn
   .put('/unFriend', userController.unFriend) // Hủy kết bạn
 

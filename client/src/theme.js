@@ -25,6 +25,9 @@ const theme = extendTheme({
         },
         neutral: {
           primary: '#f0f2f5'
+        },
+        textColorSideBar: {
+          default: '#637381'
         }
       },
       spacing: (factor) => `${0.25 * factor}rem` // = 0.25 * 2rem = 0.5rem = 8px
@@ -54,6 +57,9 @@ const theme = extendTheme({
         },
         logo: {
           text: '#0072E4'
+        },
+        textColorSideBar: {
+          default: 'white'
         }
       },
       spacing: (factor) => `${0.25 * factor}rem` // = 0.25 * 2rem = 0.5rem = 8px

@@ -7,7 +7,7 @@ import SearchTextField from '../../../Search/SearchTextField'
 
 const LeftBar = () => {
   return (
-    <FlexBetween sx={{ gap: 2, p: 2 }}>
+    <FlexBetween sx={{ gap: 1, p: 2, position: 'relative' }}>
       <Logo />
       <SearchTextField />
     </FlexBetween>

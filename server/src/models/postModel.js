@@ -93,24 +93,6 @@ postSchema.pre(/(find|findOne|findById)/, function (next) {
 
   next()
 })
-postSchema.statics.populateFields = function (query) {
-  return query
-    .populate({
-      path: 'sharedPost',
-      populate: {
-        path: 'byPost',
-        select: 'firstname lastname email background avatar'
-      }
-    })
-    .populate({
-      path: 'byPost',
-      select: 'firstname lastname email background avatar'
-    })
-    .populate({
-      path: 'sharesBy',
-      select: 'firstname lastname email background avatar'
-    })
-}
 
 postSchema.statics.findByIdWithComments = function (postID) {
   return this.findById(postID)

@@ -21,15 +21,14 @@ const reportSchema = new mongoose.Schema(
     reason: {
       type: String,
       required: true
-      // enum: ['spam', 'hate speech', 'inappropriate content']
     },
     status: { type: String, enum: ['pending', 'resolved', 'warning', 'reprocess'], default: 'pending' },
+    isValidation: { type: Boolean, default: false },
     replies: [
       {
-        // Thay đổi thành mảng để lưu nhiều phản hồi
-        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Người gửi phản hồi
-        content: { type: String, required: true }, // Nội dung phản hồi
-        createdAt: { type: Date, default: Date.now } // Thời gian phản hồi
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        content: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now }
       }
     ],
 

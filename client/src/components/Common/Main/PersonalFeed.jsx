@@ -9,8 +9,11 @@ import SkeletonPosts from '../Skeleton/PostsSkeleton'
 import PostCard from '../PostCard/PostCard'
 import PostCreation from '@/components/PostCreation/Card/PostCreation'
 import ProfileCard from '../ProfileCard/ProfileCard'
+import NotFoundPage from '@/pages/Error/NotFoundPage'
 
 const PersonalFeed = ({ posts, user, currentUser, totalPosts }) => {
+  if (user?.isAdmin) return <NotFoundPage />
+
   const { loading, hasMorePosts } = useSelector((state) => state.post)
   const scrollPostsRef = useRef(null)
   const pageRef = useRef(1)

@@ -7,29 +7,28 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TablePagination from '@mui/material/TablePagination'
 import InputBase from '@mui/material/InputBase'
-import UserTableRow from '@/components/Admin/Table/UserTableRow'
 import Box from '@mui/material/Box'
-import ConfirmationDialog from '@/components/Common/ConfirmationDialog/ConfirmationDialog'
-import { fetchListUserForAdmin } from '@/apis/user/userAPI'
 import { Typography } from '@mui/material'
 import { getReports } from '@/apis/report/reportAPI'
 import ReportTableRow from '@/components/Admin/Table/ReportTableRow'
 import TableTitle from '@/components/Admin/Title/TableTitle'
 
-const ReportTable = () => {
+const ResolvedReports = () => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(6)
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [reports, setReports] = useState([])
 
   useEffect(() => {
     const fetchReports = async () => {
       setLoading(true)
       try {
-        const response = await getReports()
+        const response = await getReports('resolved')
         setReports(response.reports)
       } catch (error) {
+        setError(true)
         console.log(error.message)
       }
       setLoading(false)
@@ -39,12 +38,12 @@ const ReportTable = () => {
 
   if (loading) return <Typography>Loading....</Typography>
 
-  if (!loading && !reports.length) return <Typography>Không có dữ liệu</Typography>
+  if (error) return <Typography>Không có dữ liệu</Typography>
 
   const filteredreports = reports.filter((report) => report.reporter.email.toLowerCase().includes(searchQuery.toLowerCase()))
   return (
     <>
-      <TableTitle title='Danh sách khiếu nại' />
+      <TableTitle title='Danh sách đã xử lý' />
 
       <Box sx={{ display: 'flex', alignItems: 'center', m: 2 }}>
         <InputBase
@@ -105,4 +104,4 @@ const ReportTable = () => {
   )
 }
 
-export default ReportTable
+export default ResolvedReports

@@ -2,6 +2,7 @@ import ApiError from '~/middlewares/ApiError'
 import requestModel from '~/models/requestModel'
 import postModel from '~/models/postModel'
 import userModel from '~/models/userModel'
+import Log from '~/models/logModel'
 
 const getListUserNoFriend = async (myId) => {
   const user = await userModel.findById(myId).populate('friends').select('-password')
@@ -55,34 +56,32 @@ const uploadInfo = async (myId, reqBody) => {
 const searchUser = async (query) => {
   const searchTerms = query.toLowerCase().trim().split(' ')
 
+  // Tạo regex cho từng từ khóa
   const regex = searchTerms.map((term) => `(${term})`).join('.*')
 
+  // Đếm tổng số người dùng, bỏ qua admin
   const totalUsers = await userModel.countDocuments({
-    $or: [{ fullname: { $regex: regex, $options: 'i' } }, { normalizedFullName: { $regex: regex, $options: 'i' } }]
+    $and: [
+      { isAdmin: { $ne: true } }, // Bỏ qua người dùng là admin
+      {
+        $or: [{ fullname: { $regex: regex, $options: 'i' } }, { normalizedFullName: { $regex: regex, $options: 'i' } }]
+      }
+    ]
   })
 
+  // Tìm người dùng, bỏ qua admin
   const users = await userModel
     .find({
-      $or: [
+      $and: [
+        { isAdmin: { $ne: true } }, // Bỏ qua người dùng là admin
         {
-          fullname: { $regex: regex, $options: 'i' }
-        },
-        {
-          normalizedFullName: { $regex: regex, $options: 'i' }
+          $or: [{ fullname: { $regex: regex, $options: 'i' } }, { normalizedFullName: { $regex: regex, $options: 'i' } }]
         }
       ]
     })
     .limit(3)
 
-  let postsQuery = postModel
-    .find({
-      describe: { $regex: query, $options: 'i' }
-    })
-    .limit(3)
-
-  postsQuery = postModel.populateFields(postsQuery)
-
-  const posts = await postsQuery.lean()
+  const posts = await postModel.find({ describe: { $regex: query, $options: 'i' }, status: 'normal' }).limit(3)
 
   const limit = 3
   const hasMoreUsers = limit < totalUsers
@@ -137,6 +136,13 @@ const toggleUserStatus = async (userId, status) => {
     throw error
   }
 }
+const getHistoryByUser = async (userId) => {
+  // Tìm theo ID nếu là ObjectId, hoặc tìm theo tên đầy đủ nếu không
+  // const query = isObjectId ? { user: userIdentifier } : { 'user.fullname': { $regex: userIdentifier, $options: 'i' } }
+  const historyLogs = await Log.find({ user: userId }).sort({ createdAt: -1 }).lean()
+
+  return historyLogs
+}
 
 export const userService = {
   getListUserNoFriend,
@@ -146,5 +152,6 @@ export const userService = {
   searchUser,
   getAllSearch,
   getUsers,
-  toggleUserStatus
+  toggleUserStatus,
+  getHistoryByUser
 }

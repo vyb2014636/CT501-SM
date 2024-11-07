@@ -8,46 +8,49 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import TablePagination from '@mui/material/TablePagination'
 import InputBase from '@mui/material/InputBase'
-import UserTableRow from '@/components/Admin/Table/UserTableRow'
 import Box from '@mui/material/Box'
-import ConfirmationDialog from '@/components/Common/ConfirmationDialog/ConfirmationDialog'
 import { useNavigate, useParams } from 'react-router-dom'
-import WarningsUserTableRow from '@/components/Admin/Table/WarningsUserTableRow'
-import { getWarningsForUser } from '@/apis/warning/warningAPI'
+import UserViolationRow from '@/components/Admin/Table/UserViolationRow'
+import { getUserViolations } from '@/apis/warning/violationAPI'
 import TableTitle from '@/components/Admin/Title/TableTitle'
 
-const WarningsUserTable = () => {
+import BlockUnlockButton from '@/components/Admin/Button/BlockUnlockButton'
+
+const UserViolets = () => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(6)
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
-  const [warningsUser, setWarningsUser] = useState([])
+  const [violationsOfUser, setViolationsOfUser] = useState([])
+  const [status, setStatus] = useState('')
+  const [error, setError] = useState(false)
   const { userId } = useParams()
-  const navigate = useNavigate()
+
   useEffect(() => {
-    const fetchWarningsForUser = async () => {
+    const fetchViolationsForUser = async () => {
       setLoading(true)
       try {
-        const response = await getWarningsForUser(userId)
-        setWarningsUser(response.warningsUser)
+        const response = await getUserViolations(userId)
+        setViolationsOfUser(response.warningsUser)
+        setStatus(response.warningsUser[0].userId.status)
       } catch (error) {
+        setError(true)
         console.log(error.message)
       }
       setLoading(false)
     }
-    fetchWarningsForUser()
+    fetchViolationsForUser()
   }, [])
 
   if (loading) return <Typography>Loading....</Typography>
 
-  if (!loading && warningsUser?.length === 0) return <Typography>Không có dữ liệu</Typography>
+  if (error) return <Typography>Không có dữ liệu</Typography>
 
-  const filteredwarnings = warningsUser.filter((warning) => warning.message.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredViolationOfUser = violationsOfUser.filter((violation) => violation.message.toLowerCase().includes(searchQuery.toLowerCase()))
 
-  // const filteredwarnings = warnings.filter((warning) => warning.email.toLowerCase().includes(searchQuery.toLowerCase()))
   return (
     <>
-      <TableTitle title={`Danh sách vi phạm của người dùng ${warningsUser[0].userId.fullname}`} path='/admin/warning' />
+      <TableTitle title={`Danh sách vi phạm của người dùng ${violationsOfUser[0].userId.fullname}`} path='/admin/violation/reported' />
       <Box sx={{ display: 'flex', alignItems: 'center', m: 2 }}>
         <InputBase
           placeholder='Tìm kiếm nội dung vi phạm'
@@ -56,6 +59,7 @@ const WarningsUserTable = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </Box>
+
       <TableContainer>
         <Table>
           <TableHead>
@@ -71,17 +75,21 @@ const WarningsUserTable = () => {
               <TableCell style={{ width: '150px' }} align='center'>
                 Lý do vi phạm
               </TableCell>
-              <TableCell style={{ width: '150px' }} />
+              <TableCell style={{ width: '120px' }}>
+                <BlockUnlockButton isSet status={status} setStatus={setStatus} userId={userId} />
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredwarnings?.length > 0 ? (
-              filteredwarnings
+            {filteredViolationOfUser?.length > 0 ? (
+              filteredViolationOfUser
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((warning, index) => <WarningsUserTableRow key={warning._id} warning={warning} serialNumber={page * rowsPerPage + index + 1} />)
+                .map((userViolation, index) => (
+                  <UserViolationRow key={userViolation._id} userViolation={userViolation} serialNumber={page * rowsPerPage + index + 1} />
+                ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} align='center'>
+                <TableCell colSpan={6} align='center'>
                   Không tìm thấy nội dung tìm kiếm
                 </TableCell>
               </TableRow>
@@ -91,7 +99,7 @@ const WarningsUserTable = () => {
         <TablePagination
           rowsPerPageOptions={[4, 5, 6]}
           component='div'
-          count={filteredwarnings.length}
+          count={filteredViolationOfUser.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={(event, newPage) => setPage(newPage)}
@@ -107,4 +115,4 @@ const WarningsUserTable = () => {
   )
 }
 
-export default WarningsUserTable
+export default UserViolets

@@ -1,4 +1,5 @@
 import ApiError from '~/middlewares/ApiError'
+import logModel from '~/models/logModel'
 import notificationModel from '~/models/notificationModel'
 import postModel from '~/models/postModel'
 import userModel from '~/models/userModel'
@@ -62,7 +63,49 @@ const createPost = async (describe, myId, images, videos) => {
 
     await notifyFriendsAboutPost(myId.id, newPost, 'newPost')
 
+    await logModel.create({
+      user: myId.id,
+      action: 'CREATE_POST',
+      details: 'Người dùng đăng bài.',
+      post: newPost._id
+    })
     return newPost
+  } catch (error) {
+    throw error
+  }
+}
+const sharePost = async (postId, myId, describe) => {
+  try {
+    const post = await postModel.findById(postId).populate('sharedPost')
+
+    if (!post) throw new Error('Bài đăng bạn muốn chia sẻ không tồn tại')
+
+    const originalPost = post.sharedPost ? post.sharedPost : post
+
+    if (originalPost.status !== 'normal') throw new ApiError(400, 'Bài đăng này có dấu hiệu vi phạm hoặc đã bị xóa')
+
+    const sharedPost = new postModel({
+      byPost: myId.id,
+      describe,
+      sharedPost: originalPost._id
+    })
+
+    await sharedPost.save()
+
+    originalPost.sharesBy.push(myId.id)
+    await originalPost.save()
+
+    if (originalPost.byPost.toString() !== myId.id) await notifyShareToByPost(myId, originalPost.byPost, sharedPost._id, 'sharedPost')
+
+    await logModel.create({
+      user: myId.id,
+
+      action: 'SHARED_POST',
+      details: 'Người dùng chia sẻ bài đăng.',
+      post: newPost._id
+    })
+
+    return sharedPost
   } catch (error) {
     throw error
   }
@@ -71,12 +114,6 @@ const createPost = async (describe, myId, images, videos) => {
 const getPost = async (postId) => {
   try {
     const post = await postModel.findById(postId).lean()
-
-    // if (post.status !== 'normal') throw new ApiError(400, 'Không hiển thị được bài đăng này')
-
-    // postQuery = postModel.populateFields(postQuery)
-
-    // const post = await postQuery.lean()
 
     if (!post) throw new ApiError(404, 'Bài viết không tồn tại')
 
@@ -133,37 +170,6 @@ const likePost = async (userId, postId) => {
     await post.save()
 
     return { message, post, quantity }
-  } catch (error) {
-    throw error
-  }
-}
-
-const sharePost = async (postId, myId, describe) => {
-  try {
-    const post = await postModel.findById(postId).populate('sharedPost')
-
-    if (!post) throw new Error('Bài đăng bạn muốn chia sẻ không tồn tại')
-
-    const originalPost = post.sharedPost ? post.sharedPost : post
-
-    // if (originalPost.byPost.toString() === myId.id) throw new Error('Bạn không thể tự chia sẻ bài viết của chính mình')
-
-    if (originalPost.status !== 'normal') throw new ApiError(400, 'Bài đăng này có dấu hiệu vi phạm hoặc đã bị xóa')
-
-    const sharedPost = new postModel({
-      byPost: myId.id,
-      describe,
-      sharedPost: originalPost._id
-    })
-
-    await sharedPost.save()
-
-    originalPost.sharesBy.push(myId.id)
-    await originalPost.save()
-
-    if (originalPost.byPost.toString() !== myId.id) await notifyShareToByPost(myId, originalPost.byPost, sharedPost._id, 'sharedPost')
-
-    return sharedPost
   } catch (error) {
     throw error
   }

@@ -40,7 +40,7 @@ const getWarnings = async () => {
 
 const getWarningByUserId = async (userId) => {
   try {
-    const warningsUser = await warningModel.find({ userId }).populate('reportId').populate('userId', 'fullname email avatar isAdmin address')
+    const warningsUser = await warningModel.find({ userId }).populate('reportId').populate('userId', 'fullname email avatar isAdmin address status')
 
     return warningsUser
   } catch (error) {

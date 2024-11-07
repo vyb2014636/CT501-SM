@@ -2,14 +2,11 @@ import React from 'react'
 import Chip from '@mui/material/Chip'
 import { TableCell, TableRow } from '@mui/material'
 import ViewReportButton from '../Button/ViewReportButton'
-import { format } from 'date-fns'
 import ViewReplyReportButton from '../Button/ViewReplyReportButton'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import PostCard from '@/components/Common/PostCard/PostCard'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import { RemoveRedEye } from '@mui/icons-material'
+import { format } from 'date-fns'
 
 const ReportTableRow = ({ report, setReports, serialNumber }) => {
   return (
@@ -39,8 +36,16 @@ const ReportTableRow = ({ report, setReports, serialNumber }) => {
               </IconButton>
             </Tooltip>
           </ViewReportButton>
+        ) : report.status === 'reprocess' ? (
+          <ViewReplyReportButton report={report} setReports={setReports} />
         ) : (
-          report.status === 'reprocess' && <ViewReplyReportButton report={report} setReports={setReports} />
+          <ViewReportButton report={report} setReports={setReports} view>
+            <Tooltip title='Xem bài đăng'>
+              <IconButton>
+                <RemoveRedEye />
+              </IconButton>
+            </Tooltip>
+          </ViewReportButton>
         )}
       </TableCell>
     </TableRow>

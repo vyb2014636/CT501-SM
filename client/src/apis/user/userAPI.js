@@ -85,3 +85,8 @@ export const updateStatusAPI = async (userID, status) => {
   const response = await axiosIntercept.put('user/updateStatusForUser', { userID, status })
   return response
 }
+
+export const getHistoryForUser = async (userId) => {
+  const response = await axiosIntercept.get('user/userLog', { params: { userId } })
+  return response
+}

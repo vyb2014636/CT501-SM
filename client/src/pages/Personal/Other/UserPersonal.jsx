@@ -24,11 +24,13 @@ const UserPersonal = () => {
         await Promise.all([
           dispatch(resetPostState()),
           dispatch(resetFriendship()),
-          dispatch(fetchAllPosts({ page: 1, userId })),
+          dispatch(fetchAllPosts({ page: 1, userId })).unwrap(),
           dispatch(checkFriendshipStatus(userId))
         ])
       } catch (error) {
-        toast.error(error.message)
+        // toast.error(error.message)
+        console.log(error.message)
+
         setError(true)
       } finally {
         setLoading(false)
@@ -42,7 +44,6 @@ const UserPersonal = () => {
 
   // Kiểm tra loading
   if ((loading && totalPosts === 0) || !userPosts) return <ProfileSkeleton />
-
   return <PersonalFeed user={userPosts} posts={posts} totalPosts={totalPosts} />
 }
 

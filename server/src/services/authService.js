@@ -3,6 +3,7 @@ import postModel from '~/models/postModel'
 import userModel from '~/models/userModel'
 import bcrypt from 'bcrypt'
 import { generateAccessToken, generateRefreshToken } from '~/utils/jwt'
+import logModel from '~/models/logModel'
 
 const login = async (reqBody) => {
   try {
@@ -19,6 +20,12 @@ const login = async (reqBody) => {
       const accessToken = generateAccessToken(validUser)
       const refreshToken = generateRefreshToken(validUser)
       await userModel.findOneAndUpdate({ email: reqBody.email }, { refreshToken, isOnline: true }, { new: true })
+
+      await logModel.create({
+        user: validUser._id,
+        action: 'LOGIN',
+        details: 'Người dùng đăng nhập.'
+      })
 
       return {
         user: validUser,

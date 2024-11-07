@@ -5,6 +5,7 @@ import { generateAccessToken, generateRefreshToken } from '~/utils/jwt'
 import { VERIFICATION_EMAIL_TEMPLATE } from '~/utils/mailTemplates'
 import { sendMail } from '~/utils/sendMail'
 import { authService } from '~/services/authService'
+import logModel from '~/models/logModel'
 
 const register = async (req, res, next) => {
   const { email, lastname, firstname, password } = req.body
@@ -108,7 +109,11 @@ const logout = async (req, res, next) => {
       httpOnly: true,
       secure: true
     })
-
+    await logModel.create({
+      user: id,
+      action: 'LOGOUT',
+      details: 'Người dùng đăng xuất.'
+    })
     return res.status(200).json({
       success: true,
       message: 'Đăng xuất thành công'

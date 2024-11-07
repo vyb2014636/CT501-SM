@@ -25,7 +25,7 @@ const CardPost = ({ post }) => {
       ) : (
         <CommonPostCard post={post} isLiked={isLiked} handleClickLike={handleClickLike} />
       )}
-      {post.status === 'hidden' && <ReplyWarningForm reportId={location?.state?.reportId} />}
+      {post.status === 'hidden' && post.byPost._id.toString() === user._id.toString() && <ReplyWarningForm reportId={location?.state?.reportId} />}
     </>
   )
 }
