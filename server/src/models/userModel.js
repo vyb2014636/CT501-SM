@@ -58,6 +58,11 @@ var userSchema = new mongoose.Schema(
     background: String,
     refreshToken: String,
     friends: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
+    historySearch: [
+      {
+        content: { type: String }
+      }
+    ],
     address: {
       province: String,
       district: String,

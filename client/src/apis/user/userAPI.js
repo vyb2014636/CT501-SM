@@ -68,8 +68,8 @@ export const uploadInfo = async (formData) => {
   return response
 }
 
-export const searchAPI = async (query) => {
-  const response = await axiosIntercept.get('user/search', { params: { query: query } })
+export const searchAPI = async (query, isEnter = 'noSave') => {
+  const response = await axiosIntercept.get('user/search', { params: { query, isEnter } })
   return response
 }
 
@@ -88,5 +88,10 @@ export const updateStatusAPI = async (userID, status) => {
 
 export const getHistoryForUser = async (userId) => {
   const response = await axiosIntercept.get('user/userLog', { params: { userId } })
+  return response
+}
+
+export const deleteHistorySearch = async (query) => {
+  const response = await axiosIntercept.delete('user/removeSearch', { params: { query } })
   return response
 }

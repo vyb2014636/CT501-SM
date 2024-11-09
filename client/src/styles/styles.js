@@ -16,14 +16,14 @@ export const styleModal = {
 
 export const styleMain = {
   flex: 3,
-  mx: { xs: 10, sm: 20, md: 40, lg: 8 },
-  pr: 3,
+  mx: { xs: 0, sm: 10, md: 40, lg: 8 },
+  pr: 1,
   py: 2
 }
 
 export const scrollbarStyles = {
   '&::-webkit-scrollbar': {
-    width: '8px' // Độ rộng của scrollbar
+    width: '8px'
   },
   '&::-webkit-scrollbar-thumb': {
     backgroundColor: 'background.default',
@@ -36,6 +36,7 @@ export const scrollbarStyles = {
 export const scrollbarStyleMui = {
   overflowY: 'auto',
   overflowX: 'hidden',
+  scrollbarGutter: 'stable',
   '&::-webkit-scrollbar-thumb': { bgcolor: 'background.paper' },
   '&::-webkit-scrollbar-thumb:hover': { bgcolor: '#bfc2cf' },
   '&::-webkit-scrollbar': { width: 10 }

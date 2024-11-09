@@ -11,7 +11,7 @@ const Personal = () => {
 
   return (
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', overflow: 'hidden' }}>
-      <Box sx={{ display: 'flex', flexDirection: isNonScreenMobile ? 'row' : 'column', height: '100vh', px: !isNonScreenMobile && 32 }}>
+      <Box sx={{ display: 'flex', flexDirection: isNonScreenMobile ? 'row' : 'column', height: '100vh', px: !isNonScreenMobile && 2 }}>
         <LeftSide />
         <Outlet />
         <RightSide />

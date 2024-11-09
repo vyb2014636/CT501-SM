@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react'
-import TextField from '@mui/material/TextField'
-import IconButton from '@mui/material/IconButton'
+import React, { useState, useEffect, useRef } from 'react'
+import { Box, TextField, IconButton } from '@mui/material'
 import PageviewRoundedIcon from '@mui/icons-material/PageviewRounded'
-import Box from '@mui/material/Box'
+import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined'
 import { useNavigate } from 'react-router-dom'
 import useDebounce from '@/hooks/useDebounce'
 import { searchAPI } from '@/apis/user/userAPI'
-import { useProfileNavigation } from '@/hooks/useProfileNavigation'
-import { useSelector } from 'react-redux'
 import SearchList from './List/SearchList'
+import FlexRow from '../Common/Flex/FlexRow'
 
 const SearchTextField = () => {
   const [query, setQuery] = useState('')
@@ -16,9 +14,11 @@ const SearchTextField = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
-  const navigate = useNavigate()
+
   const debouncedQuery = useDebounce(query, 300)
-  const { user } = useSelector((state) => state.auth)
+  const navigate = useNavigate()
+
+  const inputRef = useRef(null)
 
   useEffect(() => {
     const handleSearch = async () => {
@@ -40,25 +40,29 @@ const SearchTextField = () => {
     handleSearch()
   }, [debouncedQuery])
 
-  const handleInputChange = (e) => {
-    setQuery(e.target.value)
+  useEffect(() => {
+    // Khi box mở (anchorEl không null), focus vào input dưới
+    if (anchorEl) {
+      inputRef.current?.focus()
+    }
+  }, [anchorEl]) // Mỗi khi anchorEl thay đổi, focus vào input
+
+  const handleOpenSearch = (e) => {
     setAnchorEl(e.currentTarget)
   }
 
-  const handleFocus = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+  const handleChangeInput = (e) => setQuery(e.target.value)
+  const handleFocus = (event) => setAnchorEl(event.currentTarget)
 
-  const handleProfileClick = useProfileNavigation()
-
-  const handleSearch = () => {
-    if (query.trim()) {
-      navigate(`/search/${encodeURIComponent(query.trim())}`)
+  const handleSearch = (searchQuery) => {
+    if (searchQuery.trim()) {
+      navigate(`/search/${encodeURIComponent(searchQuery.trim())}`)
     }
   }
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      handleSearch()
+      handleSearch(query)
     }
   }
 
@@ -70,10 +74,8 @@ const SearchTextField = () => {
           size='small'
           placeholder='Tìm kiếm'
           value={query}
-          onChange={handleInputChange}
-          onFocus={handleFocus}
+          onClick={handleOpenSearch}
           autoComplete='off'
-          onKeyDown={handleKeyDown}
           InputProps={{
             endAdornment: (
               <IconButton sx={{ cursor: 'pointer' }} onClick={handleSearch}>
@@ -86,7 +88,29 @@ const SearchTextField = () => {
           }}
         />
       </Box>
-      {query && query.trim !== '' && <SearchList loading={loading} users={users} userCurrent={user} />}
+
+      {anchorEl && (
+        <Box position='absolute' top={0} left={0} right={0} sx={{ backgroundColor: 'background.paper', minHeight: 100, zIndex: 1000, boxShadow: 3 }}>
+          <FlexRow gap={2} p={3}>
+            <IconButton onClick={() => setAnchorEl(null)}>
+              <KeyboardBackspaceOutlinedIcon />
+            </IconButton>
+            <TextField
+              variant='outlined'
+              size='small'
+              placeholder='Tìm kiếm'
+              fullWidth
+              autoComplete='off'
+              value={query}
+              onChange={handleChangeInput}
+              onFocus={handleFocus}
+              onKeyDown={handleKeyDown}
+              inputRef={inputRef} // Đưa ref vào input dưới
+            />
+          </FlexRow>
+          <SearchList loading={loading} users={users} query={query} setQuery={setQuery} handleSearch={handleSearch} />
+        </Box>
+      )}
     </>
   )
 }

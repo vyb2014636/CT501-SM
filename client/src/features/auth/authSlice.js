@@ -23,6 +23,14 @@ export const authSlice = createSlice({
     updateUser(state, action) {
       state.user = action.payload
     },
+    removeHistorySearch(state, action) {
+      const updatedHistorySearch = state.user.historySearch.filter((item) => item.content !== action.payload)
+
+      state.user = {
+        ...state.user,
+        historySearch: updatedHistorySearch
+      }
+    },
     updateFriends(state, action) {
       const { user, actionType } = action.payload // Giả sử payload chứa userId và actionType
 
@@ -75,6 +83,6 @@ export const authSlice = createSlice({
   }
 })
 
-export const { resetError, updateUser, updateFriends } = authSlice.actions
+export const { resetError, updateUser, updateFriends, removeHistorySearch } = authSlice.actions
 
 export default authSlice.reducer

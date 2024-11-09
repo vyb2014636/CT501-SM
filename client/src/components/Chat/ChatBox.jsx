@@ -21,11 +21,12 @@ const ChatBox = ({ chat }) => {
   const { messages, loading } = useSelector((state) => state.message)
   const currentUser = useSelector((state) => state.auth.user)
   const [newMessage, setNewMessage] = useState('')
-  const [editingInfo, setEditingInfo] = useState(false) // State để xác định có đang chỉnh sửa thông tin không
+  const [editingInfo, setEditingInfo] = useState(false)
 
   const messagesEndRef = useRef(null)
   useEffect(() => {
     dispatch(fetchMessages(chat._id))
+    setEditingInfo(false)
   }, [dispatch, chat])
 
   useEffect(() => {

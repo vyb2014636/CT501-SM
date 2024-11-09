@@ -19,6 +19,7 @@ const Chat = () => {
   useEffect(() => {
     dispatch(fetchChats())
   }, [dispatch])
+
   return (
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', height: '100vh', overflow: 'hidden' }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', px: !isNonScreenMobile && 32 }}>

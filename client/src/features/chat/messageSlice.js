@@ -26,7 +26,6 @@ const messageSlice = createSlice({
         state.loading = false
       })
       .addCase(sendNewMessage.fulfilled, (state, action) => {
-        console.log(action.payload.newMessage)
         state.messages.push(action.payload.newMessage)
       })
   }

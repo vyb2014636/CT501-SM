@@ -58,11 +58,12 @@ const uploadBackground = async (req, res, next) => {
 }
 
 const searchUser = async (req, res, next) => {
-  const { query } = req.query
+  const { query, isEnter } = req.query
+  const { id } = req.user
   try {
-    const { users, posts, hasMoreUsers } = await userService.searchUser(query)
+    const { users, posts, hasMoreUsers, user } = await userService.searchUser(query, isEnter, id)
 
-    res.status(200).json({ message: 'danh sách', users, posts, hasMoreUsers })
+    res.status(200).json({ message: 'danh sách', users, posts, hasMoreUsers, user })
   } catch (error) {
     next(error)
   }
@@ -115,6 +116,21 @@ const getHistoryByUser = async (req, res, next) => {
     next(error)
   }
 }
+
+const deleteHistorySearch = async (req, res, next) => {
+  try {
+    const { query } = req.query
+    const { id } = req.user
+    const deleteSearch = await userService.deleteHistorySearch(id, query)
+
+    res.status(200).json({
+      deleteSearch,
+      message: 'Đã xóa tìm kiếm này'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 export const userController = {
   getSuggestions,
   unFriend,
@@ -125,5 +141,6 @@ export const userController = {
   getAllSearch,
   getUsers,
   toggleUserStatus,
-  getHistoryByUser
+  getHistoryByUser,
+  deleteHistorySearch
 }

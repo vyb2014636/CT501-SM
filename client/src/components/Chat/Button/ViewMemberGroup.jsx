@@ -28,7 +28,7 @@ const ViewMemberGroup = ({ chat }) => {
             <FlexRow gap={2}>
               <Avatar src={user.avatar} />
               <Typography>{user.fullname}</Typography>
-              <Typography variant='caption'>({user._id.toString() === chat.groupAdmin._id.toString() ? 'Trưởng nhóm' : 'Thành viên'})</Typography>
+              <Typography variant='caption'>({user._id.toString() === chat.groupAdmin?._id.toString() ? 'Trưởng nhóm' : 'Thành viên'})</Typography>
             </FlexRow>
           ))}
         </FlexColumn>

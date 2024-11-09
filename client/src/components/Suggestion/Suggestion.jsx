@@ -8,6 +8,7 @@ import { getListSuggestion } from '@/apis/user/userAPI'
 import FlexColumn from '../Common/Flex/FlexColumn'
 import SuggestionCard from './ListSuggestion/SuggestionCard'
 import { useSelector } from 'react-redux'
+import { SentimentDissatisfied } from '@mui/icons-material'
 
 const Suggestion = () => {
   const [loading, setLoading] = useState(true)
@@ -51,9 +52,13 @@ const Suggestion = () => {
         {suggestions.length > 0 ? (
           suggestions?.map((user, id) => <SuggestionCard userNoFriend={user} key={id} />)
         ) : (
-          <Typography borderRadius={4} p={2} variant='body1' sx={{ backgroundColor: 'background.paper' }}>
-            Bạn đã kết bạn với tất cả
-          </Typography>
+          <FlexColumn alignItems='center'>
+            <SentimentDissatisfied sx={{ fontSize: 50, color: 'gray', mb: 1 }} />
+
+            <Typography borderRadius={4} p={2} variant='body1' sx={{ backgroundColor: 'background.paper' }} align='center' fontWeight='bold'>
+              Bạn đã kết bạn với tất cả
+            </Typography>
+          </FlexColumn>
         )}
       </List>
     </FlexColumn>

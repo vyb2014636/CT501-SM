@@ -28,6 +28,7 @@ router
   .put('/uploadAvatar', uploadCloud.single('avatar'), userController.uploadAvatar) // Upload ảnh đại diện
   .put('/uploadBackground', uploadCloud.single('background'), userController.uploadBackground) // Upload ảnh nền
 
+router.delete('/removeSearch', userController.deleteHistorySearch)
 // Route yêu thích (tạm placeholder)
 router.get('/favorites', (req, res) => {
   return res.status(200).json({

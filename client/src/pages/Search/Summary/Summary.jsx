@@ -6,6 +6,8 @@ import { Box, Typography } from '@mui/material'
 import PostBox from '@/components/Search/Box/PostBox'
 import { searchAPI } from '@/apis/user/userAPI'
 import { toast } from 'react-toastify'
+import { updateUser } from '@/features/auth/authSlice'
+import { useDispatch } from 'react-redux'
 
 const Summary = () => {
   const { query } = useParams()
@@ -14,13 +16,15 @@ const Summary = () => {
   const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const dispatch = useDispatch()
 
   const fetchSearchUser = async () => {
     try {
       setLoading(true)
-      const response = await searchAPI(query)
+      const response = await searchAPI(query, 'saveHistory')
       setUsersSearch(response.users)
       setPostsSearch(response.posts)
+      dispatch(updateUser(response.user))
       setHasMore(response.hasMoreUsers)
     } catch (error) {
       toast.error(error.message)

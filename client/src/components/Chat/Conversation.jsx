@@ -23,13 +23,7 @@ const Conversation = ({ loadingChats, chats, selectedChat }) => {
     return otherUser?.fullname?.toLowerCase().includes(search.toLowerCase()) || groupName.toLowerCase().includes(search.toLowerCase())
   })
 
-  // const handleSearchChange = debounce((value) => {
-  //   setSearch(value)
-  // }, 300)
-
   if (loadingChats) return <Typography>...loading</Typography>
-
-  // if (!loadingChats && chats.length === 0) return <Typography>Không có tin nhắn nào gần đây đã nhắn</Typography>
 
   return (
     <FlexColumn height={1}>

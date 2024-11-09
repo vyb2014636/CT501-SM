@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 export const useProfileNavigation = () => {
   const navigate = useNavigate()
-  const currentUserId = useSelector((state) => state.auth.user._id)
+  const currentUserId = useSelector((state) => state.auth.user?._id)
 
   const handleProfileClick = (userId) => {
     if (currentUserId === userId) {
