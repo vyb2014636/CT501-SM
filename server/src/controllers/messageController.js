@@ -15,7 +15,7 @@ export const getMessages = async (req, res, next) => {
   try {
     const messages = await messagesService.getMessages(chatId)
 
-    res.status(200).json({ message: 'Danh sách tin nhắn của đoạn chat', messages })
+    res.status(200).json({ message: 'Danh sách tin nhắn của đoạn chat', messages, chatId })
   } catch (error) {
     next(error)
   }

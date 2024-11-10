@@ -19,7 +19,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: ['post', 'comment', 'loading', 'frienship', 'chat', 'message']
+  blacklist: ['post', 'comment', 'loading', 'frienship', 'message']
 }
 
 const rootReducer = combineReducers({

@@ -1,47 +1,43 @@
-import React, { memo, useEffect } from 'react'
-import Avatar from '@mui/material/Avatar'
+import React, { memo, useMemo, useCallback } from 'react'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import FlexColumn from '@/components/Common/Flex/FlexColumn'
-import { isMe } from '@/utils/helpers'
 import { accessChat } from '@/features/chat/chatThunk'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import StyledAvatar from '@/components/Common/AvatarStatus/StyledAvatar'
-import socket from '@/services/socket'
-import { store } from '@/redux/store'
+import { isMe } from '@/utils/helpers'
 
 const ConversationCard = ({ chat, selectedChat, currentUser }) => {
   const dispatch = useDispatch()
-  const handleAccessChat = async (chat) => {
+
+  // Sử dụng useCallback để tránh việc tạo lại hàm handleAccessChat mỗi lần render
+  const handleAccessChat = useCallback(() => {
     dispatch(accessChat({ chatID: chat._id }))
-  }
-  const otherUser = chat.users.find((user) => user._id !== currentUser._id)
-  const latestMessage = chat?.latestMessage
-  // useEffect(() => {
-  //   socket.on('receive_message', (data) => {
-  //     if (selectedChat?._id === chat?._id) handleAccessChat(chat)
-  //   })
-  // }, [dispatch])
+  }, [chat._id, dispatch])
+
+  const otherUser = useMemo(() => chat.users.find((user) => user._id !== currentUser._id), [chat.users, currentUser._id])
+  const latestMessage = useMemo(() => chat?.latestMessage)
+
+  const isMessageUnread = useMemo(() => {
+    return latestMessage && !latestMessage.readBy.includes(currentUser._id) && !isMe(latestMessage.sender._id, currentUser._id)
+  }, [latestMessage, currentUser])
+
+  const messageContent = useMemo(() => {
+    if (!latestMessage) return 'Chưa có tin nhắn'
+    return latestMessage.sender._id === currentUser._id
+      ? `Bạn: ${latestMessage.content}`
+      : chat.isGroupChat
+      ? `${latestMessage.sender.fullname}: ${latestMessage.content}`
+      : latestMessage.content
+  }, [latestMessage, currentUser, chat.isGroupChat])
 
   return (
-    <MenuItem key={chat?._id} onClick={() => handleAccessChat(chat)} selected={selectedChat?._id === chat._id}>
+    <MenuItem key={chat?._id} onClick={handleAccessChat} selected={selectedChat?._id === chat._id}>
       <StyledAvatar user={otherUser} chat={chat} />
       <FlexColumn ml={2}>
         <Typography fontWeight='bold'>{chat.chatName ? chat.chatName : otherUser?.fullname}</Typography>
-        <Typography
-          variant='caption'
-          fontWeight={
-            latestMessage && isMe(latestMessage.sender._id, currentUser._id)
-              ? ''
-              : !latestMessage?.readBy.includes(currentUser._id) && latestMessage
-              ? 'bold'
-              : ''
-          }>
-          {latestMessage
-            ? latestMessage.sender._id === currentUser._id
-              ? `Bạn: ${latestMessage.content}`
-              : latestMessage.content
-            : 'Chưa có tin nhắn'}
+        <Typography variant='caption' fontWeight={isMessageUnread ? 'bold' : 'normal'}>
+          {messageContent}
         </Typography>
       </FlexColumn>
     </MenuItem>

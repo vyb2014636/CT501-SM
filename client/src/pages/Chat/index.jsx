@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Box from '@mui/material/Box'
 import LeftSide from '@/components/Common/LeftSide/LeftSide'
 import RightSide from '@/components/Common/RightSide/RightSide'
@@ -9,16 +9,28 @@ import Conversation from '@/components/Chat/Conversation'
 import { useDispatch, useSelector } from 'react-redux'
 import FlexRow from '@/components/Common/Flex/FlexRow'
 import ChatBox from '@/components/Chat/ChatBox'
-import { fetchChats } from '@/features/chat/chatThunk'
+import { accessChat, fetchChats } from '@/features/chat/chatThunk'
 import { Typography } from '@mui/material'
+import socket from '@/services/socket'
 
 const Chat = () => {
   const dispatch = useDispatch()
   const isNonScreenMobile = useMediaQuery('(min-width: 1050px)')
   const { chats, selectedChat, loading } = useSelector((state) => state.chat)
+
   useEffect(() => {
-    dispatch(fetchChats())
-  }, [dispatch])
+    const handleMessageReceived = (data) => {
+      if (selectedChat && selectedChat._id && data.chatID === selectedChat._id) {
+        dispatch(accessChat({ chatID: selectedChat._id }))
+      }
+    }
+
+    socket.on('receive_message', handleMessageReceived)
+
+    return () => {
+      socket.off('receive_message', handleMessageReceived)
+    }
+  }, [dispatch, selectedChat])
 
   return (
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', height: '100vh', overflow: 'hidden' }}>
@@ -33,7 +45,7 @@ const Chat = () => {
             <Conversation loadingChats={loading} chats={chats} selectedChat={selectedChat} />
           </Box>
           {selectedChat ? (
-            <ChatBox chat={selectedChat} />
+            <ChatBox selectedChat={selectedChat} />
           ) : (
             <Box sx={{ flex: 3, backgroundColor: 'background.paper', borderRadius: 4, height: 1 }}>
               <Typography m={4}>Vui lòng chọn cuộc hội thoại</Typography>

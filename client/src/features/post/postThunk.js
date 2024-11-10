@@ -2,9 +2,12 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import axiosIntercept from '@/apis/axiosIntercept'
 
 export const fetchAllPosts = createAsyncThunk('post/allPost', async ({ page, userId, limit }, { rejectWithValue }) => {
-  const response = await axiosIntercept.get(`/post`, { params: { page: page, userId: userId || undefined, limit: limit || 3 } })
-  if (!response.statusCode) return response
-  else return rejectWithValue(error)
+  try {
+    const response = await axiosIntercept.get(`/post`, { params: { page: page, userId: userId || undefined, limit: limit || 3 } })
+    return response
+  } catch (error) {
+    rejectWithValue(error)
+  }
 })
 
 export const fetchPost = createAsyncThunk('post/post', async (postId, { rejectWithValue }) => {

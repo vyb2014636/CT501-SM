@@ -61,11 +61,11 @@ import { setUserOffline, setUserOnline } from '@/features/online/onlineSlice'
 
 // Khởi tạo socket với các tùy chọn
 const socket = io(env.SOCKET_URL, {
-  autoConnect: false // Tắt tự động kết nối
-  // reconnection: true, // Kích hoạt kết nối lại
-  // reconnectionAttempts: Infinity, // Không giới hạn số lần kết nối lại
-  // reconnectionDelay: 1000, // Thời gian trễ giữa các lần kết nối lại
-  // timeout: 20000 // Thời gian tối đa chờ kết nối
+  autoConnect: false, // Tắt tự động kết nối
+  reconnection: true, // Kích hoạt kết nối lại
+  reconnectionAttempts: Infinity, // Không giới hạn số lần kết nối lại
+  reconnectionDelay: 1000, // Thời gian trễ giữa các lần kết nối lại
+  timeout: 20000 // Thời gian tối đa chờ kết nối
 })
 
 // Hàm kết nối người dùng
@@ -132,7 +132,7 @@ socket.on('unFriend', (data) => {
   store.dispatch(updateFriends({ user: data.unFriend, actionType: 'remove' }))
 })
 socket.on('receive_message', (data) => {
-  store.dispatch(receiveMessage(data.newMessage))
+  store.dispatch(receiveMessage({ newMessage: data.newMessage, chatId: data.chatID }))
   store.dispatch(updateLastMessage(data))
 })
 

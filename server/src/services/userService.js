@@ -185,8 +185,12 @@ const deleteHistorySearch = async (myId, query) => {
 }
 
 const getLogHistoryByUser = async (userId) => {
-  const historyLogs = await Log.find({ user: userId }).sort({ createdAt: -1 }).lean()
-  return historyLogs
+  try {
+    const historyLogs = await Log.find({ user: userId }).sort({ createdAt: -1 }).lean()
+    return historyLogs
+  } catch (error) {
+    throw error
+  }
 }
 
 export const userService = {

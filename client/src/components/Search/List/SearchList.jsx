@@ -21,6 +21,7 @@ const SearchList = ({ loading, users, query, setQuery, handleSearch }) => {
   const handleProfileClick = useProfileNavigation()
   const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
+
   const handleHistorySearchClick = (content) => {
     setQuery(content)
     handleSearch(content)
@@ -28,10 +29,10 @@ const SearchList = ({ loading, users, query, setQuery, handleSearch }) => {
 
   const handleDeleteSearch = async (query) => {
     try {
-      const response = await deleteHistorySearch(query)
+      await deleteHistorySearch(query)
       dispatch(removeHistorySearch(query))
     } catch (error) {
-      console.log(error.message)
+      console.error(error.message)
     }
   }
 
@@ -48,11 +49,7 @@ const SearchList = ({ loading, users, query, setQuery, handleSearch }) => {
                     variant='body1'
                     fontWeight='medium'
                     noWrap
-                    sx={{
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      maxWidth: { xs: '300px', sm: '280px' }
-                    }}>
+                    sx={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: { xs: '300px', sm: '280px' } }}>
                     {item.content}
                   </Typography>
                 </FlexRow>
@@ -72,13 +69,7 @@ const SearchList = ({ loading, users, query, setQuery, handleSearch }) => {
           <Box sx={{ display: 'flex', justifyContent: 'center', padding: 2 }}>
             <CircularProgress color='primary' />
           </Box>
-        ) : !loading && users.length === 0 ? (
-          <ListItem alignItems='center'>
-            <Typography variant='body1' fontWeight='bold' align='center' p={3}>
-              Không tìm thấy
-            </Typography>
-          </ListItem>
-        ) : (
+        ) : users.length > 0 ? (
           users.map((userSearch) => (
             <ListItemButton key={userSearch._id} onClick={() => handleProfileClick(userSearch._id)}>
               <ListItemAvatar>
@@ -87,6 +78,12 @@ const SearchList = ({ loading, users, query, setQuery, handleSearch }) => {
               <ListItemText primary={`${userSearch.firstname} ${userSearch.lastname}`} />
             </ListItemButton>
           ))
+        ) : (
+          <ListItem alignItems='center'>
+            <Typography variant='body1' fontWeight='bold' align='center' p={3}>
+              Không tìm thấy kết quả
+            </Typography>
+          </ListItem>
         )}
       </List>
     </Box>

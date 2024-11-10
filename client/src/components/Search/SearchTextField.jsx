@@ -14,38 +14,35 @@ const SearchTextField = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
-
   const debouncedQuery = useDebounce(query, 300)
   const navigate = useNavigate()
-
   const inputRef = useRef(null)
+  const handleSearchDebounce = async () => {
+    if (debouncedQuery) {
+      setLoading(true)
+      try {
+        // await new Promise((resolve) => setTimeout(resolve, 500))
+        const response = await searchAPI(debouncedQuery)
+        setUsers(response.users)
+      } catch (error) {
+        console.error('Error fetching search users', error)
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
+    } else {
+      setLoading(true)
+      setUsers([])
+    }
+  }
 
   useEffect(() => {
-    const handleSearch = async () => {
-      if (debouncedQuery.length > 0) {
-        setLoading(true)
-        try {
-          const response = await searchAPI(debouncedQuery)
-          setUsers(response.users)
-        } catch (error) {
-          console.error('Error fetching search users', error)
-          setError(true)
-        }
-        setLoading(false)
-      } else {
-        setUsers([])
-      }
-    }
-
-    handleSearch()
+    handleSearchDebounce()
   }, [debouncedQuery])
 
   useEffect(() => {
-    // Khi box mở (anchorEl không null), focus vào input dưới
-    if (anchorEl) {
-      inputRef.current?.focus()
-    }
-  }, [anchorEl]) // Mỗi khi anchorEl thay đổi, focus vào input
+    if (anchorEl) inputRef.current?.focus()
+  }, [anchorEl])
 
   const handleOpenSearch = (e) => {
     setAnchorEl(e.currentTarget)
@@ -55,15 +52,11 @@ const SearchTextField = () => {
   const handleFocus = (event) => setAnchorEl(event.currentTarget)
 
   const handleSearch = (searchQuery) => {
-    if (searchQuery.trim()) {
-      navigate(`/search/${encodeURIComponent(searchQuery.trim())}`)
-    }
+    if (searchQuery.trim()) navigate(`/search/${encodeURIComponent(searchQuery.trim())}`)
   }
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch(query)
-    }
+    if (e.key === 'Enter') handleSearch(query)
   }
 
   return (
@@ -100,12 +93,12 @@ const SearchTextField = () => {
               size='small'
               placeholder='Tìm kiếm'
               fullWidth
-              autoComplete='off'
               value={query}
               onChange={handleChangeInput}
               onFocus={handleFocus}
               onKeyDown={handleKeyDown}
-              inputRef={inputRef} // Đưa ref vào input dưới
+              inputRef={inputRef}
+              autoComplete='off'
             />
           </FlexRow>
           <SearchList loading={loading} users={users} query={query} setQuery={setQuery} handleSearch={handleSearch} />

@@ -7,7 +7,7 @@ const chatSlice = createSlice({
     chats: [],
     selectedChat: null,
     status: 'idle',
-    loading: true,
+    loading: false,
     error: null
   },
   reducers: {
@@ -21,7 +21,7 @@ const chatSlice = createSlice({
       state.chats = []
       state.selectedChat = null
       state.status = 'idle'
-      state.loading = true
+      state.loading = false
     },
     updateLastMessage: (state, action) => {
       const chatIndex = state.chats.findIndex((chat) => chat._id === action.payload.chatID)
@@ -59,6 +59,7 @@ const chatSlice = createSlice({
         if (chatIndex !== -1) state.chats[chatIndex] = newChat
 
         state.selectedChat = newChat
+
         state.loading = false
       })
       .addCase(sendNewMessage.fulfilled, (state, action) => {
