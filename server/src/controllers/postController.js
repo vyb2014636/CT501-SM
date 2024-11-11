@@ -157,6 +157,42 @@ const likeReply = async (req, res, next) => {
   }
 }
 
+const putInTrashPost = async (req, res, next) => {
+  try {
+    const { postId } = req.body
+    const userId = req.user.id
+
+    const post = await postService.putInTrashPost(postId, userId)
+
+    res.status(200).json({ post, message: post ? 'Đã chuyển bài đăng vào thùng rác' : 'Không chuyển bài đăng vào thùng rác được' })
+  } catch (error) {
+    next(error)
+  }
+}
+const restorePostFromTrash = async (req, res, next) => {
+  try {
+    const { postId } = req.body
+    const userId = req.user.id
+
+    const post = await postService.restorePostFromTrash(postId, userId)
+
+    res.status(200).json({ post, message: post ? 'Đã phục hồi bài đăng ' : 'Không phục hồi bài đăng được' })
+  } catch (error) {
+    next(error)
+  }
+}
+const getPostsTrash = async (req, res, next) => {
+  try {
+    const userId = req.user.id
+
+    const posts = await postService.getPostsTrash(userId)
+
+    res.status(200).json({ posts, message: posts?.length > 0 ? 'Danh sách các bài đăng trong thùng rác ' : 'Không có bài đăng nào trong thùng rác' })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const postController = {
   createPost,
   getPosts,
@@ -168,5 +204,8 @@ export const postController = {
   addReply,
   likeComment,
   likeReply,
-  getPost
+  getPost,
+  putInTrashPost,
+  restorePostFromTrash,
+  getPostsTrash
 }

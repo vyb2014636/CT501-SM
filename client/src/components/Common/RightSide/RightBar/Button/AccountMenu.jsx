@@ -17,7 +17,8 @@ import { resetNotificationState } from '@/features/notification/notificationSlic
 import { resetFriendship } from '@/features/request/friendshipSlice'
 import { disconnectUser } from '@/services/socket'
 import { resetStateChat } from '@/features/chat/chatSlice'
-
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 const styleTriangle = {
   elevation: 0,
   sx: {
@@ -96,6 +97,18 @@ const AccountButton = () => {
             <Settings fontSize='small' />
           </ListItemIcon>
           Cài đặt
+        </MenuItem>
+        <MenuItem onClick={() => navigate(`/favorite`)}>
+          <ListItemIcon>
+            <FavoriteBorderOutlinedIcon fontSize='small' />
+          </ListItemIcon>
+          Yêu thích
+        </MenuItem>
+        <MenuItem onClick={() => navigate(`/trash`)}>
+          <ListItemIcon>
+            <DeleteOutlineOutlinedIcon fontSize='small' />
+          </ListItemIcon>
+          Thùng rác
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>

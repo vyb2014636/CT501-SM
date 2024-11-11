@@ -1,3 +1,25 @@
+import Swal from 'sweetalert2'
+
+export const confirmAction = (text, action) => {
+  Swal.fire({
+    title: 'Xác nhận ',
+    text: text,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Đồng ý',
+    cancelButtonText: 'Hủy'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      action()
+      Swal.fire({
+        icon: 'success',
+        title: 'Thành công',
+        confirmButtonText: 'OK'
+      })
+    }
+  })
+}
+
 export const setFalse = (...setters) => setters.forEach((setter) => setter(false))
 
 export const setValues = (...statePairs) => {

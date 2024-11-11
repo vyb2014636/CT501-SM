@@ -8,7 +8,9 @@ const modalStyle = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: '80%',
-  maxWidth: '600px',
+  maxWidth: 600,
+  height: 600,
+  maxHeight: 600,
   bgcolor: 'background.paper',
   borderRadius: '8px',
   boxShadow: 24,
@@ -25,24 +27,33 @@ const ModalMedia = ({ open, handleClose, media, currentIndex, setCurrentIndex })
   const handlePrev = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + media.length) % media.length)
   }
-
   return (
     <Modal open={open} onClose={handleClose}>
       <Box sx={modalStyle}>
         <IconButton onClick={handleClose} sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}>
           <Close />
         </IconButton>
-        <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', height: '100%' }}>
+        <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', height: 1 }}>
           {currentIndex > 0 && (
             <IconButton onClick={handlePrev} sx={{ position: 'absolute', left: 0 }}>
               <ArrowBack />
             </IconButton>
           )}
-          {media[currentIndex].isVideo ? (
-            <video src={media[currentIndex].url} controls autoPlay style={{ width: '100%', borderRadius: '8px' }} />
-          ) : (
-            <img src={media[currentIndex].url} alt='modal' style={{ width: '100%', borderRadius: '8px' }} />
-          )}
+
+          <Box
+            sx={{
+              cursor: 'pointer',
+              objectFit: 'fill',
+              width: 1,
+              height: 1,
+              border: '1px solid rgba(0, 0, 0, 0.1)' // Thêm border nhẹ
+            }}
+            component={media[currentIndex].isVideo ? 'video' : 'img'}
+            src={media[currentIndex].url}
+            controls={media[currentIndex].isVideo}
+            loading='lazy'
+          />
+
           {currentIndex < media?.length - 1 && (
             <IconButton onClick={handleNext} sx={{ position: 'absolute', right: 0 }}>
               <ArrowForward />

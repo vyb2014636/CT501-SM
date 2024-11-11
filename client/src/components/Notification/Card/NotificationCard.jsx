@@ -1,8 +1,11 @@
+import React from 'react'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
+import IconButton from '@mui/material/IconButton'
 import CircleIcon from '@mui/icons-material/Circle'
+import CloseIcon from '@mui/icons-material/Close'
 import { useNavigate } from 'react-router-dom'
 import { useProfileNavigation } from '@/hooks/useProfileNavigation'
 import { useDispatch } from 'react-redux'
@@ -15,6 +18,8 @@ const NotificationCard = ({ notification }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const handleProfileClick = useProfileNavigation()
+
+  // Hàm render thông báo
   const renderNotificationMessage = (notification) => {
     const { sender, type, status } = notification
     const messages = {
@@ -33,6 +38,7 @@ const NotificationCard = ({ notification }) => {
     )
   }
 
+  // Hàm điều hướng khi người dùng nhấn vào thông báo
   const handleNavigate = (notification) => {
     const { type, sender, postId, status, reportId } = notification
     const from = sender && sender._id ? sender._id : null
@@ -46,7 +52,6 @@ const NotificationCard = ({ notification }) => {
       case 'hiddenPost':
         navigate(`/post/${postId._id}`, { state: { reportId: reportId } })
         break
-
       case 'restorePost':
       case 'newPost':
       case 'sharedPost':
@@ -58,8 +63,23 @@ const NotificationCard = ({ notification }) => {
     }
   }
 
+  // Hàm xóa thông báo
+  const handleDeleteNotification = (notificationId) => {
+    // dispatch(deleteNotificationAPI(notificationId))
+    toast.success('Đã xóa thông báo')
+  }
+
   return (
-    <MenuItem sx={{ display: 'flex', padding: 2, alignItems: 'center', borderRadius: 0 }} onClick={() => handleNavigate(notification)}>
+    <MenuItem
+      sx={{
+        display: 'flex',
+        padding: 2,
+        alignItems: 'center',
+        borderRadius: 0,
+        position: 'relative',
+        '&:hover .delete-button': { opacity: 1, bgcolor: 'background.paper' }
+      }}
+      onClick={() => handleNavigate(notification)}>
       <Avatar
         src={(!notification.sender.isAdmin && notification.sender.avatar) || ''}
         alt='User avatar'
@@ -71,12 +91,29 @@ const NotificationCard = ({ notification }) => {
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginTop: 0.5 }}>
           <Typography variant='caption' sx={{ color: '#4caf50' }}>
-            {/* Hiển thị thời gian theo kiểu 'x giờ trước' */}
             {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true, locale: vi })}
           </Typography>
-          {/* <Typography variant='caption'>• 38 cảm xúc</Typography>
-          <Typography variant='caption'>• 11 bình luận</Typography> */}
         </Box>
+      </Box>
+
+      {/* Hiển thị nút 'X' để xóa thông báo khi hover */}
+      <Box
+        className='delete-button'
+        sx={{
+          position: 'absolute',
+          borderRadius: '50%',
+          transform: 'translateX(-50%)',
+          right: 0,
+          opacity: 0,
+          transition: 'opacity 0.1s ease'
+        }}>
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation()
+            handleDeleteNotification(notification._id)
+          }}>
+          <CloseIcon />
+        </IconButton>
       </Box>
 
       {/* Icons */}

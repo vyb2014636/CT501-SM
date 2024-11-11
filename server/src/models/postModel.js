@@ -36,7 +36,7 @@ var postSchema = new mongoose.Schema(
     comments: [commentSchema],
     status: {
       type: String,
-      enum: ['recycle', 'normal', 'hidden'],
+      enum: ['trash', 'normal', 'hidden'],
       default: 'normal'
     },
     likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
@@ -57,7 +57,7 @@ postSchema.statics.findByIdPopulates = function (postId) {
     })
     .populate({
       path: 'byPost',
-      select: 'firstname lastname email background avatar'
+      select: 'firstname lastname email background avatar friends'
     })
     .populate({
       path: 'sharesBy',

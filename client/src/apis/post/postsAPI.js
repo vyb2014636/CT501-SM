@@ -36,6 +36,18 @@ export const sharePostAPI = async (postId, describe) => {
   const response = await axiosIntercept.post('post/share', { postId, describe })
   return response
 }
+export const moveToTrashAPI = async (postId) => {
+  const response = await axiosIntercept.put('post/trash', { postId })
+  return response
+}
+export const restoreFromTrashAPI = async (postId) => {
+  const response = await axiosIntercept.put('post/restore', { postId })
+  return response
+}
+export const getPostsTrashAPI = async (postId) => {
+  const response = await axiosIntercept.get('post/trashPosts')
+  return response
+}
 
 // // Lấy danh sách bình luận
 // export const fetchComments = async (postId, page) => {

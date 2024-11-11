@@ -10,7 +10,7 @@ import { Typography } from '@mui/material'
 const ModalWrapper = ({ open, onClose, title, modal, height, maxHeight = 650, children }) => {
   return (
     <Modal open={open} onClose={onClose} aria-labelledby={`modal-${modal}-label`} aria-describedby={`modal-${modal}-description`}>
-      <FlexColumn sx={{ ...styleModal, height: height, maxHeight: maxHeight, p: 0, overflow: 'hidden' }}>
+      <FlexColumn sx={{ ...styleModal, height: height, maxHeight: maxHeight, p: 0, pb: 2, overflow: 'hidden' }}>
         <Typography align='center' fontWeight={900} variant='h6' my={2} padding={0}>
           {title}
         </Typography>

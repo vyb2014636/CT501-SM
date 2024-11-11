@@ -31,6 +31,29 @@ export const postSlice = createSlice({
       state.status = 'succeeded'
       state.error = false
       state.loading = false
+    },
+    updatedPost: (state, action) => {
+      const index = state.posts.findIndex((post) => post._id === action.payload.post._id)
+
+      if (index !== -1) {
+        if (action.payload.action === 'trash') {
+          //Đưa bài đăng vào thùng rác
+          state.posts.splice(index, 1)
+        } else {
+          //Cập nhật bài đăng
+          state.posts[index] = action.payload.post
+        }
+      }
+
+      // else {
+      //   //Phục hồi bài đăng
+      //   let insertIndex = state.posts.findIndex((post) => new Date(post.createdAt) < new Date(action.payload.post.createdAt))
+      //   if (insertIndex === -1) {
+      //     insertIndex = state.posts?.length
+      //   }
+
+      //   state.posts.splice(insertIndex, 0, action.payload.post)
+      // }
     }
   },
   extraReducers: (builder) => {
@@ -83,5 +106,5 @@ export const postSlice = createSlice({
   }
 })
 
-export const { resetPostState, searchPosts } = postSlice.actions
+export const { resetPostState, searchPosts, updatedPost } = postSlice.actions
 export default postSlice.reducer

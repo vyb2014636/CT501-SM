@@ -20,12 +20,15 @@ router
   .get('/comments/replies', verifyToken, postController.getReplies)
   .get('/comments', verifyToken, postController.getComments)
   .get('/post/:postId', verifyToken, postController.getPost)
+  .get('/trashPosts', verifyToken, postController.getPostsTrash)
   .post('/share', verifyToken, postController.sharePost)
   .post('/addComment', verifyToken, postController.addComment)
   .post('/addReply', verifyToken, postController.addReply)
   .put('/like', verifyToken, postController.likePost)
   .put('/likeComment', verifyToken, postController.likeComment)
   .put('/likeReply', verifyToken, postController.likeReply)
+  .put('/trash', verifyToken, postController.putInTrashPost)
+  .put('/restore', verifyToken, postController.restorePostFromTrash)
 
 // router
 //   .route('/')

@@ -11,6 +11,9 @@ import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import { scrollbarStyleMui } from '@/styles/styles'
 import { useState } from 'react'
+import ModalWrapper from '../../Modal/ModalWrapper'
+import { ArrowBack, ArrowForward, Close } from '@mui/icons-material'
+import FlexCenter from '../../Flex/FlexCenter'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -64,37 +67,23 @@ const ImagesTab = ({ posts }) => {
           ))}
         </Masonry>
       )}
-
-      {/* Dialog to show image details */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>
-          <IconButton
-            edge='end'
-            color='inherit'
-            onClick={handleClose}
-            aria-label='close'
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500]
-            }}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent sx={{ ...scrollbarStyleMui }}>
+      <ModalWrapper title='Ảnh' open={open} onClose={handleClose} height={600}>
+        <IconButton onClick={handleClose} sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}>
+          <Close />
+        </IconButton>
+        <FlexCenter height={1} width={1}>
           <Box
+            sx={{
+              objectFit: 'contain',
+              height: 1,
+              border: '1px solid rgba(0, 0, 0, 0.1)'
+            }}
             component='img'
             src={selectedImage}
-            alt='Image detail'
-            sx={{
-              width: '100%',
-              height: 'auto',
-              objectFit: 'contain'
-            }}
+            loading='lazy'
           />
-        </DialogContent>
-      </Dialog>
+        </FlexCenter>
+      </ModalWrapper>
     </Box>
   )
 }

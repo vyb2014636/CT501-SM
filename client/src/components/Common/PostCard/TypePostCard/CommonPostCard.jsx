@@ -13,7 +13,7 @@ const CommonPostCard = ({ noMedia, post, isLiked, handleClickLike }) => {
   return (
     <Card sx={styleCardGeneral}>
       <HeaderPostCard userPost={post.byPost} post={post} visibleMenu />
-      <ContentPostCard describe={post?.describe || 'Lỗi hiển thị nội dung'} />
+      <ContentPostCard describe={post?.describe} />
       {!noMedia && MediaPostCard(post)}
       <CardContent>
         <Typography variant='body2'>

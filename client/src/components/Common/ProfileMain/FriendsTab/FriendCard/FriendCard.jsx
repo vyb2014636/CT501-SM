@@ -12,7 +12,7 @@ const FriendCard = ({ user }) => {
   return (
     <FlexRow
       sx={{
-        p: 2,
+        p: 1,
         width: { xs: '100%', sm: '49%' },
         gap: 3,
         alignItems: 'center',
@@ -49,7 +49,6 @@ const FriendCard = ({ user }) => {
           justifyContent: { xs: 'space-between', sm: 'center' }
         }}>
         <Box>
-          {/* Tooltip for the fullname */}
           <Tooltip title={user.fullname} placement='top'>
             <Typography
               variant='body1'

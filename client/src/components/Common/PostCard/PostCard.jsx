@@ -12,15 +12,15 @@ const CardPost = ({ post }) => {
   const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   const location = useLocation()
-
   const isLiked = post?.likes?.includes(user?._id)
 
   const handleClickLike = useCallback(() => {
     dispatch(toggleLikePost(post._id))
   }, [dispatch, post._id])
+
   return (
     <>
-      {post.sharedPost ? (
+      {post.sharedPost || post.sharedPost === null ? (
         <SharePostCard post={post} isLiked={isLiked} handleClickLike={handleClickLike} />
       ) : (
         <CommonPostCard post={post} isLiked={isLiked} handleClickLike={handleClickLike} />

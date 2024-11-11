@@ -80,10 +80,9 @@ const sharePost = async (postId, myId, describe) => {
 
     if (!post) throw new Error('Bài đăng bạn muốn chia sẻ không tồn tại')
 
-    const originalPost = post.sharedPost ? post.sharedPost : post
-
+    const originalPost = post.sharedPost || post.sharedPost === null ? post.sharedPost : post
+    if (post.sharedPost === null) throw new ApiError(400, 'Bài đăng đã bị xóa')
     if (originalPost.status !== 'normal') throw new ApiError(400, 'Bài đăng này có dấu hiệu vi phạm hoặc đã bị xóa')
-
     const sharedPost = new postModel({
       byPost: myId.id,
       describe,
@@ -102,7 +101,7 @@ const sharePost = async (postId, myId, describe) => {
 
       action: 'SHARED_POST',
       details: 'Người dùng chia sẻ bài đăng.',
-      post: newPost._id
+      post: sharedPost._id
     })
 
     return sharedPost
@@ -123,6 +122,15 @@ const getPost = async (postId) => {
   }
 }
 
+const getPostsTrash = async (myId) => {
+  try {
+    const posts = await postModel.find({ byPost: myId, status: 'trash' })
+    return posts
+  } catch (error) {
+    throw error
+  }
+}
+
 const getPosts = async (loggedInId, userId, limit, skip) => {
   try {
     let filter = { byPost: loggedInId }
@@ -132,10 +140,12 @@ const getPosts = async (loggedInId, userId, limit, skip) => {
       user = await userModel.findByIdPopulateAddress(loggedInId)
       const friendIds = user?.friends.map((friend) => friend._id)
       filter = { byPost: { $in: [loggedInId, ...friendIds] }, status: 'normal' }
+      // filter = { byPost: { $in: [loggedInId, ...friendIds] } }
     } else {
       user = await userModel.findByIdPopulateAddress(userId)
       if (!user) throw new ApiError(404, 'Không tìm thấy người dùng')
       filter = { byPost: userId, status: 'normal' }
+      // filter = { byPost: userId }
     }
 
     const totalPosts = await postModel.find(filter).countDocuments()
@@ -357,6 +367,31 @@ const likeReply = async (postId, commentId, replyId, userId) => {
   }
 }
 
+const putInTrashPost = async (postId, userId) => {
+  try {
+    if (!(postId || userId)) throw new ApiError(403, 'Vui lòng cung cấp đủ trường')
+    const post = await postModel.findByIdAndUpdate(postId, { status: 'trash' }, { new: true }).lean()
+    return post
+  } catch (error) {
+    throw error
+  }
+}
+
+const restorePostFromTrash = async (postId, userId) => {
+  try {
+    if (!(postId || userId)) throw new ApiError(403, 'Vui lòng cung cấp đủ trường')
+    const post = await postModel.findOneAndUpdate({ _id: postId, status: 'trash' }, { status: 'normal' }, { new: true }).lean()
+    // if(post){
+    //   sendNotification(receiver, 'trashPost', {
+    //     userName: my.fullname,
+    //     notification: notification
+    //   })
+    // }
+    return post
+  } catch (error) {
+    throw error
+  }
+}
 export const postService = {
   createPost,
   getPosts,
@@ -368,5 +403,8 @@ export const postService = {
   addReply,
   likeComment,
   likeReply,
-  getPost
+  getPost,
+  putInTrashPost,
+  restorePostFromTrash,
+  getPostsTrash
 }

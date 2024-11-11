@@ -30,17 +30,15 @@ const MediaPostCard = (post) => {
   let media = [...images, ...videos]
   const mediaCount = media?.length
 
-  // Số lượng ảnh cần hiển thị, tối đa 5 ảnh
   const displayedMedia = media?.slice(0, 5)
 
   return (
     displayedMedia?.length > 0 && (
       <CardMedia>
-        {/* Wrapping media items inside a Box to manage the 3-column layout */}
         <Box
           sx={{
             display: 'flex',
-            flexWrap: 'wrap', // Cho phép các ảnh tự động xuống hàng
+            flexWrap: 'wrap',
             gap: 2,
             width: 1,
             height: displayedMedia?.length === 2 || displayedMedia?.length === 3 ? '300px' : '500px',

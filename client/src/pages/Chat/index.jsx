@@ -34,7 +34,7 @@ const Chat = () => {
 
   return (
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', height: '100vh', overflow: 'hidden' }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', px: !isNonScreenMobile && 32 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', px: !isNonScreenMobile && 4 }}>
         <FlexRow sx={{ height: (theme) => theme.myApp.heighHeader }}>
           <LeftSide />
           <Box sx={{ ...styleMain, ...scrollbarStyleMui }}></Box>
