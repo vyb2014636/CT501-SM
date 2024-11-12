@@ -81,8 +81,6 @@ const Header = () => {
             flexDirection: 'column',
             justifyContent: 'start'
           }}>
-          {/* {data.map((option) => ( */}
-
           <MenuItem>
             <HomeOutlinedIcon />
             <Box component='span' p={2}>

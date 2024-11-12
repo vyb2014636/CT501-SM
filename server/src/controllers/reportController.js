@@ -71,7 +71,8 @@ const resolveNoVioletReport = async (req, res, next) => {
 }
 const createReport = async (req, res, next) => {
   try {
-    const newReport = await reportService.createReport(req.body)
+    const myId = req.user.id
+    const newReport = await reportService.createReport(req.body, myId)
     res.status(200).json({
       newReport,
       message: newReport ? 'Báo cáo đã được gửi' : 'Báo cáo không gửi được'

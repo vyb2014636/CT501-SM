@@ -20,6 +20,7 @@ router
 router
   .get('/search', userController.searchUser) // Tìm kiếm người dùng
   .get('/searchAll', userController.getAllSearch) // Tìm kiếm tất cả người dùng
+  .delete('/removeSearch', userController.deleteHistorySearch)
 
 // Routes liên quan đến upload thông tin và ảnh
 router
@@ -28,12 +29,9 @@ router
   .put('/uploadAvatar', uploadCloud.single('avatar'), userController.uploadAvatar) // Upload ảnh đại diện
   .put('/uploadBackground', uploadCloud.single('background'), userController.uploadBackground) // Upload ảnh nền
 
-router.delete('/removeSearch', userController.deleteHistorySearch)
-// Route yêu thích (tạm placeholder)
-router.get('/favorites', (req, res) => {
-  return res.status(200).json({
-    message: 'signup'
-  })
-})
+router
+  .get('/favorites', userController.getFavorites)
+  .post('/favorite/:postId', userController.addFavorite)
+  .delete('/favorite/:postId', userController.removeFavorite)
 
 export const user = router

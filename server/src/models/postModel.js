@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-
 const replySchema = new mongoose.Schema({
   user: { type: mongoose.Types.ObjectId, ref: 'User' },
   content: String,
@@ -40,11 +39,17 @@ var postSchema = new mongoose.Schema(
       default: 'normal'
     },
     likes: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
+    trashDate: {
+      type: Date,
+      expires: '60' // Thiết lập TTL để xóa bài viết sau 30 ngày kể từ trashDate
+    },
     createdAt: { type: Date, default: Date.now }
   },
   { timestamps: true }
 )
 postSchema.index({ createdAt: -1 })
+
+postSchema.index({ trashDate: 1 }, { expireAfterSeconds: 60 }) // TTL 60 giây
 
 postSchema.statics.findByIdPopulates = function (postId) {
   return this.findById(postId)
@@ -65,12 +70,23 @@ postSchema.statics.findByIdPopulates = function (postId) {
     })
 }
 
+postSchema.pre('save', function (next) {
+  if (this.isModified('status')) {
+    if (this.status === 'trash') {
+      this.trashDate = Date.now()
+    }
+    if (this.status === 'normal') {
+      this.trashDate = undefined
+    }
+  }
+  next()
+})
 postSchema.statics.findByIdPopulateSharePost = function (postId) {
   return this.findById(postId).populate({
     path: 'sharedPost',
     populate: {
       path: 'byPost',
-      select: 'firstname lastname email background avatar'
+      select: 'firstname lastname fullname email background avatar'
     }
   })
 }
@@ -79,16 +95,16 @@ postSchema.pre(/(find|findOne|findById)/, function (next) {
     path: 'sharedPost',
     populate: {
       path: 'byPost',
-      select: 'firstname lastname email background avatar'
+      select: 'firstname lastname fullname email background avatar'
     }
   })
     .populate({
       path: 'byPost',
-      select: 'firstname lastname email background avatar'
+      select: 'firstname lastname fullname email background avatar'
     })
     .populate({
       path: 'sharesBy',
-      select: 'firstname lastname email background avatar'
+      select: 'firstname lastname fullname email background avatar'
     })
 
   next()

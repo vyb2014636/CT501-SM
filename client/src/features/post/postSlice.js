@@ -16,6 +16,9 @@ export const postSlice = createSlice({
     hasMorePosts: true
   },
   reducers: {
+    selectViewPost: (state, action) => {
+      state.viewPost = action.payload
+    },
     resetPostState: (state) => {
       state.posts = []
       state.totalPosts = 0
@@ -106,5 +109,5 @@ export const postSlice = createSlice({
   }
 })
 
-export const { resetPostState, searchPosts, updatedPost } = postSlice.actions
+export const { resetPostState, searchPosts, updatedPost, selectViewPost } = postSlice.actions
 export default postSlice.reducer

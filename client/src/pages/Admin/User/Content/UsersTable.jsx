@@ -9,9 +9,8 @@ import TablePagination from '@mui/material/TablePagination'
 import InputBase from '@mui/material/InputBase'
 import UserTableRow from '@/components/Admin/Table/UserTableRow'
 import Box from '@mui/material/Box'
-import ConfirmationDialog from '@/components/Common/ConfirmationDialog/ConfirmationDialog'
 import { fetchListUserForAdmin } from '@/apis/user/userAPI'
-import { Typography } from '@mui/material'
+import { Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material'
 import TableTitle from '@/components/Admin/Title/TableTitle'
 
 const UsersTable = ({ history }) => {
@@ -20,12 +19,14 @@ const UsersTable = ({ history }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [users, setUsers] = useState([])
+  const [sortBy, setSortBy] = useState('lastname')
+  const [sortOrder, setSortOrder] = useState('asc')
 
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true)
       try {
-        const response = await fetchListUserForAdmin()
+        const response = await fetchListUserForAdmin(searchQuery, sortBy, sortOrder) // Gọi API với tham số sort
         setUsers(response.users)
       } catch (error) {
         console.log(error.message)
@@ -33,23 +34,7 @@ const UsersTable = ({ history }) => {
       setLoading(false)
     }
     fetchUsers()
-
-    // Khôi phục trạng thái từ localStorage
-    // const savedEditMode = localStorage.getItem('editMode')
-
-    // const savedUser = JSON.parse(localStorage.getItem('selectedUser'))
-
-    // if (savedEditMode && savedUser) {
-    //   setEditMode(JSON.parse(savedEditMode))
-    //   setSelectedUser(savedUser)
-    // }
-  }, [])
-
-  if (loading) return <Typography>Loading....</Typography>
-
-  if (!loading && !users.length) return <Typography>Không có dữ liệu</Typography>
-
-  const filteredUsers = users.filter((user) => user.fullname.toLowerCase().includes(searchQuery.toLowerCase()))
+  }, [searchQuery, sortBy, sortOrder]) // Gọi lại API khi searchQuery, sortBy hoặc sortOrder thay đổi
 
   return (
     <>
@@ -60,9 +45,28 @@ const UsersTable = ({ history }) => {
           placeholder='Tìm kiếm'
           sx={{ flex: 1, padding: '5px 10px', border: '1px solid #ccc', borderRadius: '20px' }}
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => setSearchQuery(e.target.value)} // Cập nhật searchQuery khi người dùng nhập
         />
       </Box>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', m: 2, p: 2 }}>
+        <FormControl sx={{ minWidth: 120, mr: 2 }}>
+          <InputLabel>Tiêu chí</InputLabel>
+          <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} label='Tiêu chí'>
+            <MenuItem value='lastname'>Họ tên</MenuItem>
+            <MenuItem value='createdAt'>Ngày tạo</MenuItem>
+            <MenuItem value='status'>Trạng thái</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel>Thứ tự</InputLabel>
+          <Select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} label='Thứ tự'>
+            <MenuItem value='asc'>Tăng dần</MenuItem>
+            <MenuItem value='desc'>Giảm dần</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
       <TableContainer>
         <Table>
           <TableHead>
@@ -72,7 +76,7 @@ const UsersTable = ({ history }) => {
               </TableCell>
               <TableCell style={{ width: '100px' }}>Avatar</TableCell>
               <TableCell style={{ width: '200px' }}>Họ tên</TableCell>
-              <TableCell style={{ width: '200px' }}>Địa chỉ </TableCell>
+              <TableCell style={{ width: '200px' }}>Địa chỉ</TableCell>
               <TableCell style={{ width: '150px' }}>Vai trò</TableCell>
               <TableCell style={{ width: '150px', textAlign: 'center' }}>Xác thực</TableCell>
               <TableCell style={{ width: '150px', textAlign: 'center' }}>Trạng thái</TableCell>
@@ -80,15 +84,21 @@ const UsersTable = ({ history }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredUsers?.length > 0 ? (
-              filteredUsers
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={8} align='center'>
+                  <Typography>Loading...</Typography>
+                </TableCell>
+              </TableRow>
+            ) : users.length > 0 ? (
+              users
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((user, index) => (
                   <UserTableRow key={user.id} user={user} serialNumber={page * rowsPerPage + index + 1} history={history} setUsers={setUsers} />
                 ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} align='center'>
+                <TableCell colSpan={8} align='center'>
                   Không tìm thấy nội dung tìm kiếm
                 </TableCell>
               </TableRow>
@@ -96,10 +106,11 @@ const UsersTable = ({ history }) => {
           </TableBody>
         </Table>
       </TableContainer>
+
       <TablePagination
         rowsPerPageOptions={[4, 5, 6]}
         component='div'
-        count={filteredUsers.length}
+        count={users.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={(event, newPage) => setPage(newPage)}

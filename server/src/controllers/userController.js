@@ -81,7 +81,8 @@ const getAllSearch = async (req, res, next) => {
 
 const getUsers = async (req, res, next) => {
   try {
-    const users = await userService.getUsers()
+    const { searchQuery, sortBy, sortOrder } = req.query
+    const users = await userService.getUsers(searchQuery, sortBy, sortOrder)
     res.status(200).json({ message: 'danh sách tất cả người dùng bạn tìm', users })
   } catch (error) {
     next(error)
@@ -106,10 +107,11 @@ const toggleUserStatus = async (req, res, next) => {
 const getHistoryByUser = async (req, res, next) => {
   try {
     const { userId } = req.query
-    const logs = await userService.getHistoryByUser(userId)
+    const { historyLogs, activities } = await userService.getLogHistoryByUser(userId)
 
     res.status(200).json({
-      logs,
+      logs: historyLogs,
+      activities,
       message: 'Lịch sử hoạt động của người dùng'
     })
   } catch (error) {
@@ -131,6 +133,54 @@ const deleteHistorySearch = async (req, res, next) => {
     next(error)
   }
 }
+
+const getFavorites = async (req, res, next) => {
+  try {
+    const { id } = req.user
+    const { limit, page } = req.query
+    const { favorites, totalFavorites, hasMoreFavorites } = await userService.getFavorites(id, page, limit)
+
+    res.status(200).json({
+      favorites,
+      totalFavorites,
+      hasMoreFavorites,
+      message: 'Danh sách yêu thích'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const addFavorite = async (req, res, next) => {
+  try {
+    const { id } = req.user
+    const { postId } = req.params
+    const { user, post } = await userService.addFavorite(id, postId)
+
+    res.status(200).json({
+      user,
+      post,
+      message: 'Thêm thành công'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+const removeFavorite = async (req, res, next) => {
+  try {
+    const { id } = req.user
+    const { postId } = req.params
+    const { user, post } = await userService.removeFavorite(id, postId)
+    res.status(200).json({
+      user,
+      post,
+      message: 'Bỏ yêu thích thành công'
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const userController = {
   getSuggestions,
   unFriend,
@@ -142,5 +192,8 @@ export const userController = {
   getUsers,
   toggleUserStatus,
   getHistoryByUser,
-  deleteHistorySearch
+  deleteHistorySearch,
+  getFavorites,
+  removeFavorite,
+  addFavorite
 }

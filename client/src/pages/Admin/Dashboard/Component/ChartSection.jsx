@@ -1,32 +1,33 @@
 import React, { useEffect, useState } from 'react'
-import { Grid, Card, Typography } from '@mui/material'
-import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
-import axios from 'axios'
-import { statisticAPI } from '@/apis/statistic/statisticAPI'
+import { Grid, Card, Typography, Box } from '@mui/material'
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts'
+import { statisticAPI } from '@/apis/statistic/statisticAPI' // API của bạn
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'] // Màu sắc cho biểu đồ tròn
+// Màu sắc cho biểu đồ tròn
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
 
 const ChartSection = () => {
   const [dataPie, setDataPie] = useState([]) // Dữ liệu cho biểu đồ tròn
   const [dataBar, setDataBar] = useState([]) // Dữ liệu cho biểu đồ cột
 
+  // Lấy dữ liệu từ API khi component được mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { stats } = await statisticAPI()
+        const { stats } = await statisticAPI() // Gọi API để lấy dữ liệu thống kê
 
-        // Cấu trúc dữ liệu cho biểu đồ tròn hiển thị các số liệu về người dùng
+        // Cập nhật dữ liệu cho biểu đồ tròn
         setDataPie([
           { name: 'Tổng số người dùng', value: stats.totalUsers },
           { name: 'Người dùng mới trong tháng', value: stats.newUsersThisMonth },
           { name: 'Người dùng bị khóa', value: stats.totalBannedUsers }
         ])
 
-        // Cấu trúc dữ liệu cho biểu đồ cột hiển thị phần trăm tăng trưởng
+        // Cập nhật dữ liệu cho biểu đồ cột
         setDataBar([
-          { name: 'Người dùng mới', visits: parseFloat(stats.growthNewUsers) },
-          { name: 'Bài đăng', visits: parseFloat(stats.growthTotalPosts) },
-          { name: 'Người dùng bị khóa', visits: parseFloat(stats.growthBannedUsers) }
+          { name: 'Người dùng mới', reduce: parseFloat(stats.growthNewUsers), isGrowth: parseFloat(stats.growthNewUsers) >= 0 },
+          { name: 'Bài đăng', reduce: parseFloat(stats.growthTotalPosts), isGrowth: parseFloat(stats.growthTotalPosts) >= 0 },
+          { name: 'Người dùng bị khóa', reduce: parseFloat(stats.growthBannedUsers), isGrowth: parseFloat(stats.growthBannedUsers) >= 0 }
         ])
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu:', error)
@@ -36,34 +37,72 @@ const ChartSection = () => {
     fetchData()
   }, [])
 
+  // Tạo custom Tooltip để hiển thị phần trăm tăng hoặc giảm
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const { name, reduce, isGrowth } = payload[0].payload
+      return (
+        <Box sx={{ backgroundColor: 'white', padding: 1, borderRadius: 1, boxShadow: 2 }}>
+          <Typography variant='body2'>{name}</Typography>
+          <Typography variant='h6'>
+            {isGrowth ? '+' : '-'}
+            {Math.abs(reduce)}%
+          </Typography>
+        </Box>
+      )
+    }
+
+    return null
+  }
+
   return (
-    <Grid container spacing={3} mt={5}>
-      {/* Biểu đồ tròn hiển thị số liệu về người dùng */}
-      <Grid item xs={6}>
-        <Card sx={{ padding: 3 }}>
-          <Typography variant='h6'>Thống kê người dùng</Typography>
-          <PieChart width={400} height={200}>
-            <Pie data={dataPie} dataKey='value' outerRadius={80} fill='#8884d8'>
+    <Grid container spacing={3} mt={5} sx={{ height: 400 }}>
+      <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', height: 1 }}>
+        <Card sx={{ padding: 3, boxShadow: 3, height: '100%' }}>
+          <Typography variant='h6' gutterBottom>
+            Thống kê người dùng
+          </Typography>
+          <Box display='flex' justifyContent='space-between' alignItems='center' sx={{ height: '100%' }}>
+            {/* Biểu đồ tròn nằm bên trái */}
+            <Box flex={1} display='flex' justifyContent='center'>
+              <PieChart width={250} height={250}>
+                <Pie data={dataPie} dataKey='value' outerRadius={100} fill='#8884d8' label>
+                  {dataPie.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </Box>
+
+            {/* Legend nằm bên phải */}
+            <Box flex={1} display='flex' flexDirection='column' justifyContent='space-evenly' padding={2}>
               {dataPie.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Box key={index} display='flex' alignItems='center' mb={1}>
+                  <Box sx={{ backgroundColor: COLORS[index % COLORS.length], width: 20, height: 20, marginRight: 2 }} />
+                  <Typography variant='body2'>
+                    {entry.name}: {entry.value}
+                  </Typography>
+                </Box>
               ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
+            </Box>
+          </Box>
         </Card>
       </Grid>
 
       {/* Biểu đồ cột hiển thị phần trăm tăng trưởng */}
-      <Grid item xs={6}>
-        <Card sx={{ padding: 3 }}>
-          <Typography variant='h6'>Tăng trưởng</Typography>
-          <ResponsiveContainer width='100%' height={200}>
+      <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', height: 1 }}>
+        <Card sx={{ padding: 3, boxShadow: 3, height: '100%' }}>
+          <Typography variant='h6' gutterBottom>
+            Tăng trưởng
+          </Typography>
+          <ResponsiveContainer width='100%' height={300}>
             <BarChart data={dataBar}>
               <CartesianGrid strokeDasharray='3 3' />
               <XAxis dataKey='name' />
               <YAxis />
-              <Tooltip />
-              <Bar dataKey='visits' fill='#82ca9d' />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey='reduce' fill='#82ca9d' barSize={60} radius={[10, 10, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Card>

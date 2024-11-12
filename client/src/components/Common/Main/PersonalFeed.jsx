@@ -1,10 +1,6 @@
 import React, { memo, useRef } from 'react'
 import Box from '@mui/material/Box'
-
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchAllPosts } from '@/features/post/postThunk'
 import { scrollbarStyleMui, styleMain } from '@/styles/styles'
-import useScrollInfinite from '@/hooks/useScrollInfinite'
 import ProfileCard from '../ProfileCard/ProfileCard'
 import NotFoundPage from '@/pages/Error/NotFoundPage'
 import ProfileMain from '../ProfileMain/ProfileMain'

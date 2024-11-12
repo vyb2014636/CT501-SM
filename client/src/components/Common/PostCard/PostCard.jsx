@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom'
 
 import ReplyWarningForm from '@/components/Warning/Form/ReplyWarningForm'
 
-const CardPost = ({ post }) => {
+const CardPost = ({ post, visibleMenu }) => {
   const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   const location = useLocation()
@@ -21,9 +21,9 @@ const CardPost = ({ post }) => {
   return (
     <>
       {post.sharedPost || post.sharedPost === null ? (
-        <SharePostCard post={post} isLiked={isLiked} handleClickLike={handleClickLike} />
+        <SharePostCard post={post} isLiked={isLiked} handleClickLike={handleClickLike} visibleMenu={visibleMenu} />
       ) : (
-        <CommonPostCard post={post} isLiked={isLiked} handleClickLike={handleClickLike} />
+        <CommonPostCard post={post} isLiked={isLiked} handleClickLike={handleClickLike} visibleMenu={visibleMenu} />
       )}
       {post.status === 'hidden' && post.byPost._id.toString() === user._id.toString() && <ReplyWarningForm reportId={location?.state?.reportId} />}
     </>

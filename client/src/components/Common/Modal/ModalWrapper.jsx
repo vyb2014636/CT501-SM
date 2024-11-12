@@ -1,7 +1,6 @@
 // ModalWrapper.jsx
 import React from 'react'
 import Modal from '@mui/material/Modal'
-import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import FlexColumn from '../Flex/FlexColumn'
 import { styleModal } from '@/styles/styles'

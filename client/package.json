@@ -15,6 +15,7 @@
     "@mui/icons-material": "5.11.16",
     "@mui/lab": "5.0.0-alpha.123",
     "@mui/material": "5.13.0",
+    "@mui/x-date-pickers": "^7.22.2",
     "@reduxjs/toolkit": "^2.2.6",
     "axios": "^1.7.5",
     "date-fns": "^4.1.0",

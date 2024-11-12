@@ -3,6 +3,7 @@ import requestModel from '~/models/requestModel'
 import postModel from '~/models/postModel'
 import userModel from '~/models/userModel'
 import Log from '~/models/logModel'
+import mongoose from 'mongoose'
 
 // Một hàm tiện ích để populate friends
 const populateUserFriends = async (user) => {
@@ -145,9 +146,25 @@ const getAllSearch = async (query) => {
   return users
 }
 
-const getUsers = async () => {
+const getUsers = async (searchQuery = '', sortBy = '', sortOrder = '') => {
   try {
-    const users = await userModel.find({ isAdmin: false }).select('fullname address avatar isAdmin isVerify status background').lean()
+    const searchCondition = searchQuery
+      ? {
+          fullname: { $regex: searchQuery, $options: 'i' }
+        }
+      : {}
+
+    let sortCondition = {}
+    if (sortBy && sortOrder) {
+      sortCondition[sortBy] = sortOrder === 'asc' ? 1 : -1
+    }
+
+    const users = await userModel
+      .find({ isAdmin: false, ...searchCondition })
+      .select('fullname address avatar isAdmin isVerify status background')
+      .sort(sortCondition)
+      .lean()
+
     return users
   } catch (error) {
     throw error
@@ -186,8 +203,130 @@ const deleteHistorySearch = async (myId, query) => {
 
 const getLogHistoryByUser = async (userId) => {
   try {
+    // const { userId } = req.params;
+    // const page = parseInt(req.query.page) || 1; // Trang hiện tại, mặc định là 1
+    // const limit = parseInt(req.query.limit) || 10; // Số lượng mỗi lần tải, mặc định là 10
+    // const skip = (page - 1) * limit;
+
+    const sixMonthsAgo = new Date()
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+
+    // // Tổng số hoạt động
+    // const totalActivities = await Activity.countDocuments({
+    //   userId: mongoose.Types.ObjectId(userId),
+    //   createdAt: { $gte: sixMonthsAgo }
+    // });
+
+    const activities = await Log.aggregate([
+      {
+        $match: {
+          user: new mongoose.Types.ObjectId(userId),
+          createdAt: { $gte: sixMonthsAgo }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          activities: { $push: '$$ROOT' }
+        }
+      },
+      { $sort: { _id: -1 } } // Ngày giảm dần
+      // { $skip: skip },
+      // { $limit: limit }
+    ])
+
     const historyLogs = await Log.find({ user: userId }).sort({ createdAt: -1 }).lean()
-    return historyLogs
+
+    for (let group of activities) {
+      group.activities = await Log.populate(group.activities, [
+        { path: 'user', select: '-password -refreshToken' },
+        {
+          path: 'post',
+          populate: [
+            { path: 'byPost', select: 'firstname lastname fullname email background avatar' }, // Thông tin người tạo bài viết
+            { path: 'sharesBy', select: 'firstname lastname fullname email background avatar' }, // Người chia sẻ bài viết
+            {
+              path: 'sharedPost', // Bài viết được chia sẻ
+              populate: {
+                path: 'byPost',
+                select: 'firstname lastname fullname email background avatar' // Thông tin người tạo bài viết được chia sẻ
+              }
+            }
+          ]
+        }
+      ])
+    }
+
+    return { historyLogs, activities }
+  } catch (error) {
+    throw error
+  }
+}
+const addFavorite = async (userId, postId) => {
+  try {
+    const post = await postModel.findById(postId)
+    if (!post) throw new ApiError(404, 'Bài đăng không tồn tại')
+
+    const user = await userModel.findById(userId).select('-password -refreshToken')
+
+    if (!user) throw new ApiError(404, 'Người dùng không tồn tại')
+
+    if (user.favorites.includes(postId)) throw new ApiError(400, 'Bài đăng đã có trong danh sách yêu thích')
+
+    user.favorites.push(postId)
+
+    await user.save()
+
+    return { user, post }
+  } catch (error) {
+    throw error
+  }
+}
+
+const removeFavorite = async (userId, postId) => {
+  try {
+    const post = await postModel.findById(postId)
+    if (!post) throw new ApiError(404, 'Bài đăng không tồn tại')
+
+    const user = await userModel.findById(userId).select('-password -refreshToken')
+
+    if (!user) throw new ApiError(404, 'Người dùng không tồn tại')
+
+    if (!user.favorites.includes(postId)) throw new ApiError(400, 'Bài đăng không có trong danh sách yêu thích')
+
+    user.favorites = user.favorites.filter((id) => id.toString() !== postId)
+
+    await user.save()
+
+    return { user, post }
+  } catch (error) {
+    throw error
+  }
+}
+
+const getFavorites = async (userId, page = 1, limit = 5) => {
+  try {
+    const user = await userModel.findById(userId)
+    if (!user) throw new ApiError(404, 'Người dùng không tồn tại')
+
+    const favorites = await userModel
+      .findById(userId)
+      .populate({
+        path: 'favorites',
+        options: {
+          skip: (page - 1) * limit,
+          limit: limit
+        }
+      })
+      .select('favorites')
+      .lean()
+
+    const total = user?.favorites?.length
+    return {
+      favorites: favorites?.favorites,
+      totalFavorites: total,
+      hasMoreFavorites: page * limit < total
+    }
   } catch (error) {
     throw error
   }
@@ -203,5 +342,8 @@ export const userService = {
   getUsers,
   toggleUserStatus,
   getLogHistoryByUser,
-  deleteHistorySearch
+  deleteHistorySearch,
+  addFavorite,
+  removeFavorite,
+  getFavorites
 }

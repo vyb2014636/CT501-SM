@@ -5,17 +5,17 @@ import Typography from '@mui/material/Typography'
 import { getPostsTrashAPI } from '@/apis/post/postsAPI'
 import PostCard from '@/components/Common/PostCard/PostCard'
 import SkeletonPosts from '@/components/Common/Skeleton/PostsSkeleton'
+import TrashCard from './TrashCard/TrashCard'
 
 const Trash = () => {
-  const [posts, setPosts] = useState([])
+  const [days, setDays] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setErrror] = useState(false)
   const fetchTrashPosts = async () => {
     try {
       setLoading(true)
       const response = await getPostsTrashAPI()
-      console.log(response)
-      setPosts(response.posts)
+      setDays(response.posts)
       setLoading(false)
     } catch (error) {
       setErrror(true)
@@ -26,15 +26,14 @@ const Trash = () => {
   useEffect(() => {
     fetchTrashPosts()
   }, [])
-
   return (
     <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
       {loading ? (
         <SkeletonPosts />
-      ) : !loading && posts?.length === 0 ? (
+      ) : !loading && days?.length === 0 ? (
         <Typography>Không tồn tại bài đăng trong 30 ngày</Typography>
       ) : (
-        posts.map((post) => <PostCard post={post} />)
+        days.map((day) => <TrashCard day={day} key={day._id} setDays={setDays} />)
       )}
     </Box>
   )

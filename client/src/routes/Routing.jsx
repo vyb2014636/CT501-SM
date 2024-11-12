@@ -34,6 +34,7 @@ import Violation from '@/pages/Admin/Report/Violation/Violation'
 import SpamViolations from '@/pages/Admin/Report/Violation/SpamViolations/SpamViolations'
 import History from '@/pages/Admin/Report/History/History'
 import Trash from '@/pages/Home/Trash/Trash'
+import ReProcessReport from '@/pages/Admin/Report/Reports/ReProcess/ReProcessReport'
 
 function Routing() {
   return (
@@ -64,8 +65,9 @@ function Routing() {
             <Route path='/admin/user/:userID' element={<EditUserForm />} />
           </Route>
           <Route path='/admin/report' element={<Report />}>
-            <Route path='/admin/report/resolved' element={<ResolvedReports />} />
             <Route path='/admin/report/pending' element={<PendingReportS />} />
+            <Route path='/admin/report/reprocess' element={<ReProcessReport />} />
+            <Route path='/admin/report/resolved' element={<ResolvedReports />} />
           </Route>
           <Route path='/admin/violation' element={<Violation />}>
             <Route path='/admin/violation/reported' element={<Violations />} />

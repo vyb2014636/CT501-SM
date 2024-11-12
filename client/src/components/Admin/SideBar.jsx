@@ -20,8 +20,9 @@ const menuItems = [
     icon: <Description />,
     path: '/admin/report',
     subItems: [
-      { id: 'resolved', text: 'Danh sách đã xử lý', path: '/admin/report/resolved' },
-      { id: 'pending', text: 'Danh sách chưa xử lý', path: '/admin/report/pending' }
+      { id: 'pending', text: 'Danh sách chưa xử lý', path: '/admin/report/pending' },
+      { id: 'reprocess', text: 'Danh sách phản hồi', path: '/admin/report/reprocess' },
+      { id: 'resolved', text: 'Danh sách đã xử lý', path: '/admin/report/resolved' }
     ]
   },
   {

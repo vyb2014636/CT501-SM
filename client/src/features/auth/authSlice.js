@@ -31,6 +31,12 @@ export const authSlice = createSlice({
         historySearch: updatedHistorySearch
       }
     },
+    updatedFavorites(state, action) {
+      state.user = {
+        ...state.user,
+        favorites: action.payload.favorites
+      }
+    },
     updateFriends(state, action) {
       const { user, actionType } = action.payload // Giả sử payload chứa userId và actionType
 
@@ -83,6 +89,6 @@ export const authSlice = createSlice({
   }
 })
 
-export const { resetError, updateUser, updateFriends, removeHistorySearch } = authSlice.actions
+export const { resetError, updateUser, updateFriends, removeHistorySearch, updatedFavorites } = authSlice.actions
 
 export default authSlice.reducer

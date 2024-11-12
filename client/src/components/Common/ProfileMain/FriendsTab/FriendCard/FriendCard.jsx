@@ -20,7 +20,7 @@ const FriendCard = ({ user }) => {
         borderColor: 'background.default',
         borderRadius: 2
       }}>
-      <Box
+      {/* <Box
         component='img'
         src={user.avatar || avatarDF}
         onError={(e) => (e.target.src = avatarDF)} // Fallback on image load error
@@ -36,6 +36,20 @@ const FriendCard = ({ user }) => {
             filter: 'brightness(0.7)',
             transition: 'filter 0.3s ease'
           }
+        }}
+        onClick={() => handleProfileClick(user._id)}
+      /> */}
+      <Avatar
+        src={user.avatar}
+        sx={{
+          width: { xs: 50, sm: 80 }, // Responsive size
+          height: { xs: 50, sm: 80 },
+          borderRadius: 3,
+          '&:hover': {
+            filter: 'brightness(0.7)',
+            transition: 'filter 0.3s ease'
+          },
+          cursor: 'pointer'
         }}
         onClick={() => handleProfileClick(user._id)}
       />

@@ -34,7 +34,7 @@ const MainFeed = ({ posts, totalPosts }) => {
       ) : (
         <>
           {posts.map((post) => (
-            <PostCard key={post._id} post={post} />
+            <PostCard key={post._id} post={post} visibleMenu={true} />
           ))}
           {loading && posts.length > 0 && <SkeletonPosts />}
 

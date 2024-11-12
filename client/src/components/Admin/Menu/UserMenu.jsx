@@ -36,7 +36,6 @@ const UserMenu = ({ anchorEl, onClose, user }) => {
 
   const renderWarningModal = () => (
     <ModalWrapper open={openWarning} onClose={() => setOpenWarning(false)} title='Cảnh báo'>
-      {/* <ShareForm user={user} post={post} descibeShare={descibeShare} setDescribeShare={setDescribeShare} handleSubmitShare={handleSubmitShare} /> */}
       <WarningForm />
     </ModalWrapper>
   )
@@ -44,13 +43,6 @@ const UserMenu = ({ anchorEl, onClose, user }) => {
   return (
     <>
       <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
-        <MenuItem
-          onClick={() => {
-            setOpenWarning(true)
-            onClose()
-          }}>
-          Cảnh báo
-        </MenuItem>
         <MenuItem
           onClick={() => {
             setActionType('edit')

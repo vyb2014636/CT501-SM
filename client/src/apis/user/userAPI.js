@@ -77,8 +77,8 @@ export const fetchAllSearchAPI = async (query) => {
   const response = await axiosIntercept.get('user/searchAll', { params: { query: query } })
   return response
 }
-export const fetchListUserForAdmin = async () => {
-  const response = await axiosIntercept.get('user/users')
+export const fetchListUserForAdmin = async (searchQuery, sortBy, sortOrder) => {
+  const response = await axiosIntercept.get('user/users', { params: { searchQuery, sortBy, sortOrder } })
   return response
 }
 export const updateStatusAPI = async (userID, status) => {
@@ -93,5 +93,17 @@ export const getHistoryForUser = async (userId) => {
 
 export const deleteHistorySearch = async (query) => {
   const response = await axiosIntercept.delete('user/removeSearch', { params: { query } })
+  return response
+}
+export const getFavoritesAPI = async (page) => {
+  const response = await axiosIntercept.get('user/favorites', { params: { page } })
+  return response
+}
+export const addFavoriteAPI = async (postId) => {
+  const response = await axiosIntercept.post(`user/favorite/${postId}`)
+  return response
+}
+export const removeFavoriteAPI = async (postId) => {
+  const response = await axiosIntercept.delete(`user/favorite/${postId}`)
   return response
 }

@@ -4,6 +4,7 @@ import notificationModel from '~/models/notificationModel'
 import postModel from '~/models/postModel'
 import userModel from '~/models/userModel'
 import { sendNotification } from '~/sockets/'
+import mongoose from 'mongoose'
 
 const notifyFriendsAboutPost = async (userId, post, type) => {
   try {
@@ -124,8 +125,36 @@ const getPost = async (postId) => {
 
 const getPostsTrash = async (myId) => {
   try {
-    const posts = await postModel.find({ byPost: myId, status: 'trash' })
-    return posts
+    const oneMonthAgo = new Date()
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1) // Lấy thời gian 1 tháng trước
+
+    const days = await postModel.aggregate([
+      {
+        $match: {
+          byPost: new mongoose.Types.ObjectId(myId), // Lọc bài viết theo user ID
+          status: 'trash',
+          createdAt: { $gte: oneMonthAgo } // Chỉ lấy bài viết trong vòng 1 tháng
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%d tháng %m, %Y', date: '$trashDate' } }, // Nhóm theo ngày
+          posts: { $push: '$$ROOT' } // Đưa toàn bộ bài viết vào danh sách
+        }
+      },
+      { $sort: { _id: -1 } } // Sắp xếp ngày giảm dần
+    ])
+
+    for (let group of days) {
+      // Populate cho mỗi bài post trong nhóm
+      group.posts = await postModel.populate(group.posts, [
+        { path: 'byPost' },
+        { path: 'sharedPost', populate: { path: 'byPost', select: 'firstname lastname email background avatar' } },
+        { path: 'sharesBy', select: 'firstname lastname email background avatar' }
+      ])
+    }
+
+    return days
   } catch (error) {
     throw error
   }
@@ -203,25 +232,6 @@ const getComments = async (postID, page, limit) => {
   } catch (error) {
     throw error
   }
-  //  try {
-  //   const post = await Post.findByIdPopulates(postID)
-
-  //   const totalComments = post.comments.length
-  //   const slicedComments = post.comments.slice((page - 1) * limit, page * limit)
-  //   await Post.populate(slicedComments, {
-  //     path: 'user replies.user likes',
-  //     select: 'firstname lastname avatar '
-  //   })
-
-  //   const hasMoreComments = page * limit < totalComments
-  //   return {
-  //     ...post.toObject(),
-  //     comments: slicedComments,
-  //     hasMoreComments
-  //   }
-  //  } catch (error) {
-  //   throw error
-  //  }
 }
 
 const addComment = async (postID, content, myId) => {
@@ -370,7 +380,19 @@ const likeReply = async (postId, commentId, replyId, userId) => {
 const putInTrashPost = async (postId, userId) => {
   try {
     if (!(postId || userId)) throw new ApiError(403, 'Vui lòng cung cấp đủ trường')
-    const post = await postModel.findByIdAndUpdate(postId, { status: 'trash' }, { new: true }).lean()
+
+    // Lấy bài viết theo ID
+    const post = await postModel.findById(postId)
+
+    if (!post) throw new ApiError(404, 'Bài viết không tồn tại')
+
+    // Cập nhật trạng thái thành trash và lưu lại thời gian trashDate
+    post.status = 'trash'
+    post.trashDate = Date.now()
+
+    // Lưu bài viết với trạng thái mới
+    await post.save()
+
     return post
   } catch (error) {
     throw error
@@ -380,18 +402,32 @@ const putInTrashPost = async (postId, userId) => {
 const restorePostFromTrash = async (postId, userId) => {
   try {
     if (!(postId || userId)) throw new ApiError(403, 'Vui lòng cung cấp đủ trường')
-    const post = await postModel.findOneAndUpdate({ _id: postId, status: 'trash' }, { status: 'normal' }, { new: true }).lean()
-    // if(post){
-    //   sendNotification(receiver, 'trashPost', {
+
+    // Cập nhật trạng thái bài viết từ "trash" thành "normal" và xóa trường trashDate
+    const post = await postModel.findOneAndUpdate(
+      { _id: postId, status: 'trash' },
+      { status: 'normal', trashDate: null }, // Gán null cho trashDate để xóa TTL
+      { new: true }
+    )
+
+    if (!post) {
+      throw new ApiError(404, 'Bài viết không tồn tại hoặc không ở trạng thái trash')
+    }
+
+    // Gửi thông báo (nếu có)
+    // if (post) {
+    //   sendNotification(receiver, 'restorePost', {
     //     userName: my.fullname,
-    //     notification: notification
-    //   })
+    //     notification: 'Bài viết đã được phục hồi.'
+    //   });
     // }
+
     return post
   } catch (error) {
     throw error
   }
 }
+
 export const postService = {
   createPost,
   getPosts,

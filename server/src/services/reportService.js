@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import postModel from '~/models/postModel'
 import notificationModel from '~/models/notificationModel'
 import warningModel from '~/models/warningModel'
+import logModel from '~/models/logModel'
 import UserReportStats from '~/models/userReportStats'
 
 const notifyReport = async (adminID, userReceiver, type, postId, reportId) => {
@@ -137,7 +138,7 @@ const resolveNoVioletReport = async (reportId) => {
   }
 }
 
-const createReport = async (reqBody) => {
+const createReport = async (reqBody, myId) => {
   const { reporterID, reportedUserID, postID, reason } = reqBody
 
   if (reason === '' || !reporterID || !reportedUserID || !postID)
@@ -176,10 +177,10 @@ const createReport = async (reqBody) => {
   })
 
   await logModel.create({
-    user: myId.id,
+    user: myId,
     action: 'REPORT_POST',
     details: 'Người dùng đã báo cáo bài viết.',
-    data: { post: newReport.post }
+    post: newReport.post._id
   })
 
   return await newReport.save()

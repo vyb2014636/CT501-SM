@@ -9,10 +9,10 @@ import HeaderPostCard from '../HeaderPostCard/HeaderPostCard'
 import ContentPostCard from '../ContentPostCard/ContentPostCard'
 import InteractPostCard from '../InteractPostCard/InteractPostCard'
 import MediaPostCard from '../MediaPostCard/MediaPostCard'
-const CommonPostCard = ({ noMedia, post, isLiked, handleClickLike }) => {
+const CommonPostCard = ({ noMedia, post, isLiked, handleClickLike, visibleMenu }) => {
   return (
     <Card sx={styleCardGeneral}>
-      <HeaderPostCard userPost={post.byPost} post={post} visibleMenu />
+      <HeaderPostCard userPost={post.byPost} post={post} visibleMenu={visibleMenu} />
       <ContentPostCard describe={post?.describe} />
       {!noMedia && MediaPostCard(post)}
       <CardContent>

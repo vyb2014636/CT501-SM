@@ -18,9 +18,9 @@ const ViewPostLog = ({ postLog }) => {
           <RemoveRedEye />
         </IconButton>
       </Tooltip>
-      <ModalWrapper open={open} onClose={handleClose} title='Lịch sử bài đăng'>
+      <ModalWrapper open={open} onClose={handleClose} title='Lịch sử bài đăng' height={600}>
         <Box overflow='auto' p={4}>
-          <PostCard post={postLog} />
+          <PostCard post={postLog} visibleMenu={false} />
         </Box>
       </ModalWrapper>
     </>

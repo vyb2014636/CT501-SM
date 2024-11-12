@@ -9,12 +9,11 @@ import InteractPostCard from '../InteractPostCard/InteractPostCard'
 import HeaderPostCard from '../HeaderPostCard/HeaderPostCard'
 import MediaPostCard from '../MediaPostCard/MediaPostCard'
 
-const SharePostCard = ({ noMedia, post, isLiked, handleClickLike }) => {
-  console.log(post.sharedPost)
+const SharePostCard = ({ noMedia, post, isLiked, handleClickLike, visibleMenu }) => {
   return (
     <>
       <Card sx={styleCardGeneral}>
-        <HeaderPostCard userPost={post.byPost} post={post} visibleMenu />
+        <HeaderPostCard userPost={post.byPost} post={post} visibleMenu={visibleMenu} />
         <ContentPostCard describe={post.describe} />
         {post?.sharedPost?.status === 'normal' ? (
           <Card sx={{ mx: 'auto', m: 2, borderRadius: '16px', border: '1px solid', borderColor: 'background.default' }}>

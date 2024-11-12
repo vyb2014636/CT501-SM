@@ -7,6 +7,7 @@ import PostCard from '../../PostCard/PostCard'
 import { useDispatch, useSelector } from 'react-redux'
 import useScrollInfinite from '@/hooks/useScrollInfinite'
 import { fetchAllPosts } from '@/features/post/postThunk'
+import PostSkeleton from '../../Skeleton/Children/PostSkeleton'
 
 const PostsTab = ({ posts, currentUser, scrollRef, userId }) => {
   const { loading, hasMorePosts, totalPosts } = useSelector((state) => state.post)
@@ -32,9 +33,9 @@ const PostsTab = ({ posts, currentUser, scrollRef, userId }) => {
       ) : (
         <>
           {posts.map((post) => (
-            <PostCard key={post._id} post={post} />
+            <PostCard key={post._id} post={post} visibleMenu={true} />
           ))}
-          {loading && posts.length > 0 && <SkeletonPosts />}
+          {loading && posts.length > 0 && <PostSkeleton />}
           {!loading && posts.length !== 0 && posts.length >= totalPosts && (
             <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
               Đã hết bài viết

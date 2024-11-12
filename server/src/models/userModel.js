@@ -58,6 +58,7 @@ var userSchema = new mongoose.Schema(
     background: String,
     refreshToken: String,
     friends: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
+    favorites: [{ type: mongoose.Types.ObjectId, ref: 'Post' }],
     historySearch: [
       {
         content: { type: String }

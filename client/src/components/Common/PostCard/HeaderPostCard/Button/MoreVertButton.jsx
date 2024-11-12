@@ -13,8 +13,11 @@ import { moveToTrashAPI, restoreFromTrashAPI } from '@/apis/post/postsAPI'
 import { updatedPost } from '@/features/post/postSlice'
 import { toast } from 'react-toastify'
 import RestoreOutlinedIcon from '@mui/icons-material/RestoreOutlined'
+import { updateUser, updatedFavorites } from '@/features/auth/authSlice'
+import { addFavoriteAPI, removeFavoriteAPI } from '@/apis/user/userAPI'
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined'
 
-const MoreVertButton = ({ userPost, post }) => {
+const MoreVertButton = ({ userPost, post, setDays, day }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
@@ -38,12 +41,41 @@ const MoreVertButton = ({ userPost, post }) => {
     confirmAction('Bạn có chắc muốn phục hồi bài đăng này?', async () => {
       try {
         const response = await restoreFromTrashAPI(postId)
-        // dispatch(updatedPost({ post: response.post, action: 'trash' }))
-        // console.log(response.post)
+        // Loại bỏ bài viết khỏi ngày đã truyền vào
+        const updatedPosts = day.posts.filter((post) => post._id !== postId)
+
+        setDays((prevDays) => {
+          return prevDays.map((d) => {
+            if (d._id === day._id) {
+              return { ...d, posts: updatedPosts }
+            }
+            return d
+          })
+        })
       } catch (error) {
         toast.error(error.message)
       }
     })
+  }
+  const addFavorite = async (postId) => {
+    setAnchorEl(null)
+    try {
+      const response = await addFavoriteAPI(postId)
+      dispatch(updatedFavorites(response.user))
+      toast.success(response.message)
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+  const removeFavorite = async (postId) => {
+    setAnchorEl(null)
+    try {
+      const response = await removeFavoriteAPI(postId)
+      dispatch(updatedFavorites(response.user))
+      toast.success(response.message)
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
   return (
@@ -70,19 +102,31 @@ const MoreVertButton = ({ userPost, post }) => {
             <Typography ml={1}>Gỡ bài đăng</Typography>
           </MenuItem>
         ) : userPost._id === user._id && post.status === 'trash' ? (
-          <MenuItem onClick={() => restoreFromTrash(post._id)}>
-            <RestoreOutlinedIcon />
-            <Typography ml={1}>Phục hồi</Typography>
-          </MenuItem>
+          [
+            <MenuItem key='restore' onClick={() => restoreFromTrash(post._id)}>
+              <RestoreOutlinedIcon />
+              <Typography ml={1}>Phục hồi</Typography>
+            </MenuItem>,
+            <MenuItem key='delete' onClick={() => setAnchorEl(null)}>
+              <DeleteOutlinedIcon />
+              <Typography ml={1}>Xóa</Typography>
+            </MenuItem>
+          ]
         ) : (
           <ReportButton setAnchorEl={setAnchorEl} post={post} userPost={userPost} />
         )}
-        {post.status === 'normal' && (
-          <MenuItem onClick={() => setAnchorEl(null)}>
-            <FavoriteBorderOutlinedIcon />
-            <Typography ml={1}>Yêu thích</Typography>
-          </MenuItem>
-        )}
+        {post.status === 'normal' &&
+          (user.favorites.includes(post._id) ? (
+            <MenuItem onClick={() => removeFavorite(post._id)}>
+              <FavoriteOutlinedIcon />
+              <Typography ml={1}>Bỏ yêu thích</Typography>
+            </MenuItem>
+          ) : (
+            <MenuItem onClick={() => addFavorite(post._id)}>
+              <FavoriteBorderOutlinedIcon />
+              <Typography ml={1}>Yêu thích</Typography>
+            </MenuItem>
+          ))}
       </Menu>
     </>
   )
