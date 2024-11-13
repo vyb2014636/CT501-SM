@@ -91,6 +91,9 @@ const AccountButton = () => {
         <MenuItem onClick={() => navigate(`/personal`)}>
           <Avatar /> Tài khoản của tôi
         </MenuItem>
+        <MenuItem onClick={() => navigate(`/settings`)}>
+          <Avatar /> Trung tâm tài khoản
+        </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>

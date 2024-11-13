@@ -169,11 +169,91 @@ const getUsersOnline = async (req, res, next) => {
   } catch (error) {}
 }
 
+const enable2FA = async (req, res, next) => {
+  try {
+    const { email } = req.body
+
+    const { qrCode, secret } = await authService.enable2FA(email)
+    return res.status(200).json({ qrCode, secret: secret.base32 })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const disable2FA = async (req, res, next) => {
+  try {
+    const myId = req.user.id
+
+    const is2FAEnabled = await authService.disable2FA(myId)
+    return res.status(200).json({ is2FAEnabled })
+  } catch (error) {
+    next(error)
+  }
+}
+const verifyAndEnable2FA = async (req, res, next) => {
+  try {
+    const { email, token } = req.body
+
+    const is2FAEnabled = await authService.verifyAndEnable2FA(email, token)
+    return res.status(200).json({ is2FAEnabled })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const verify2FA = async (req, res, next) => {
+  try {
+    const { email, token } = req.body
+
+    const { user, accessToken, refreshToken } = await authService.verify2FA(email, token)
+    return res.status(200).json({ user, accessToken, refreshToken })
+  } catch (error) {
+    next(error)
+  }
+}
+const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body
+    const myId = req.user.id
+    const user = await authService.changePassword(myId, currentPassword, newPassword)
+    return res.status(200).json({ user })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const requestPasswordReset = async (req, res, next) => {
+  try {
+    const { email } = req.body
+    const { message } = await authService.requestPasswordReset(email)
+    return res.status(200).json({ message })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const { resetToken, newPassword } = req.body
+    const { message } = await authService.resetPassword(email)
+    return res.status(200).json({ message })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const authController = {
   register,
   verifyEmail,
   login,
   logout,
   refreshAccessToken,
-  getUsersOnline
+  getUsersOnline,
+  enable2FA,
+  verifyAndEnable2FA,
+  verify2FA,
+  disable2FA,
+  changePassword,
+  requestPasswordReset,
+  resetPassword
 }

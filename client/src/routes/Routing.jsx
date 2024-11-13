@@ -35,6 +35,8 @@ import SpamViolations from '@/pages/Admin/Report/Violation/SpamViolations/SpamVi
 import History from '@/pages/Admin/Report/History/History'
 import Trash from '@/pages/Home/Trash/Trash'
 import ReProcessReport from '@/pages/Admin/Report/Reports/ReProcess/ReProcessReport'
+import Verify2FA from '@/pages/Auth/Login/Verify2FA/Verify2FA'
+import AccountCenter from '@/pages/AccountCenter'
 
 function Routing() {
   return (
@@ -55,6 +57,7 @@ function Routing() {
           <Route path='/search/:query' element={<Summary />} />
           <Route path='/search/:query/people' element={<AllUser />} />
         </Route>
+        <Route path='/settings' element={<AccountCenter />} />
       </Route>
 
       <Route element={<AdminRoute />}>
@@ -84,6 +87,7 @@ function Routing() {
           <Route path='/auth' element={<Login />} />
           <Route path='/auth/signup' element={<Register />} />
           <Route path='/auth/verify' element={<Verify />} />
+          <Route path='/auth/2FA' element={<Verify2FA />} />
         </Route>
       </Route>
       {/* Route for 404 Not Found */}

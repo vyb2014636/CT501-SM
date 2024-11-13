@@ -11,9 +11,10 @@ const axiosIntercept = axios.create({
 export const setupAxiosInterceptors = (store) => {
   axiosIntercept.interceptors.request.use(
     (config) => {
-      // Do something before request is sent, e.g., adding authorization tokens
-      const accessToken = localStorage.getItem('accessToken') // Hoặc từ nguồn lưu trữ khác
-      if (accessToken) {
+      // const accessToken = localStorage.getItem('accessToken')
+      const state = store.getState()
+      const accessToken = state.auth.accessToken
+      if (accessToken && accessToken !== '') {
         config.headers.token = `Bearer ${accessToken}`
       }
       return config

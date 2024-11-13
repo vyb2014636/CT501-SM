@@ -52,6 +52,13 @@ var userSchema = new mongoose.Schema(
       type: Date,
       expires: '1m'
     },
+    resetPasswordToken: {
+      type: String
+    },
+    resetPasswordExpire: {
+      type: Date
+    },
+
     avatar: {
       type: String
     },
@@ -68,6 +75,12 @@ var userSchema = new mongoose.Schema(
       province: String,
       district: String,
       ward: String
+    },
+    is2FAEnabled: { type: Boolean, default: false },
+    twoFactorSecret: { type: String },
+    lastPasswordChange: {
+      type: Date,
+      default: null
     }
   },
   {
@@ -76,7 +89,7 @@ var userSchema = new mongoose.Schema(
 )
 
 userSchema.statics.findByIdPopulateAddress = function (userId) {
-  return this.findById(userId).populate('friends address.province address.district address.ward').select('-password')
+  return this.findById(userId).populate('friends address.province address.district address.ward').select('-password ')
 }
 userSchema.pre('save', function (next) {
   this.fullname = `${this.firstname} ${this.lastname}`

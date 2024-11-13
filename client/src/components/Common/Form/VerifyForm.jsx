@@ -31,10 +31,22 @@ const VerifyForm = ({ email, timeExpired, setTimeExpired }) => {
     }
   }
 
+  const handlePaste = (e) => {
+    e.preventDefault()
+    const pasteData = e.clipboardData.getData('Text')
+
+    // Chỉ cho phép dán số và tối đa 6 ký tự
+    if (/^\d{6}$/.test(pasteData)) {
+      setOtp(pasteData.split(''))
+      document.getElementById(`input-${5}`).focus()
+    } else {
+      toast.error('Mã OTP không hợp lệ')
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const codeString = codes.join('')
-    console.log(email)
     setValues([setLoading, true], [setDisabled, true])
     const setTimeoutLoading = setTimeout(async () => {
       try {
@@ -86,9 +98,11 @@ const VerifyForm = ({ email, timeExpired, setTimeExpired }) => {
             value={value}
             onChange={(e) => handleChange(e, index)}
             onKeyDown={(e) => handleKeyDownBackspace(e, index)}
+            onPaste={handlePaste}
             inputProps={{
               maxLength: 1,
-              style: { textAlign: 'center', fontSize: '12px', width: '24px', height: '24px' }
+              style: { textAlign: 'center', fontSize: '12px', width: '24px', height: '24px' },
+              autoFocus: index === 0 ? true : false // Đảm bảo ô đầu tiên được focus
             }}
           />
         ))}

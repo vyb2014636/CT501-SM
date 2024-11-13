@@ -7,14 +7,23 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
   return axiosIntercept
     .post('/auth/login', { email, password })
     .then((response) => {
-      const { accessToken, refreshToken } = response
-      setToken('accessToken', accessToken)
-      setToken('refreshToken', refreshToken)
+      // const { accessToken, refreshToken } = response
+      // setToken('accessToken', accessToken)
+      // setToken('refreshToken', refreshToken)
       return response
     })
     .catch((error) => rejectWithValue(error))
 })
 
+export const loginWith2FA = createAsyncThunk('auth/login2FA', async (credentials, { rejectWithValue }) => {
+  const { email, token } = credentials
+  return axiosIntercept
+    .post('/auth/verify2FA', { email, token })
+    .then((response) => {
+      return response
+    })
+    .catch((error) => rejectWithValue(error))
+})
 export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
   axiosIntercept
     .get('/auth/logout')
@@ -28,8 +37,8 @@ export const refreshToken = createAsyncThunk('auth/refreshToken', async (_, { re
   const response = await axiosIntercept
     .post('/auth/refreshToken')
     .then((response) => {
-      setToken('accessToken', response.accessToken)
-      setToken('refreshToken', response.refreshToken)
+      // setToken('accessToken', response.accessToken)
+      // setToken('refreshToken', response.refreshToken)
       return response
     })
     .catch((error) => rejectWithValue(error))

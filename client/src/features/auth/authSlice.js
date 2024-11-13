@@ -1,6 +1,6 @@
 // src/features/authSlice.js
 import { createSlice } from '@reduxjs/toolkit'
-import { login, logout, refreshToken } from './authThunk' // Đảm bảo đường dẫn chính xác
+import { login, loginWith2FA, logout, refreshToken } from './authThunk' // Đảm bảo đường dẫn chính xác
 import { removeToken } from '@/utils/tokenHelper' // Đảm bảo import removeToken
 import { acceptFriendRequest, unFriend } from '../request/requestThunk'
 
@@ -13,7 +13,8 @@ export const authSlice = createSlice({
     status: 'idle',
     error: null,
     loading: false,
-    isAuthenticated: false
+    isAuthenticated: false,
+    is2FAEnabled: false
   },
   reducers: {
     resetError(state) {
@@ -45,6 +46,9 @@ export const authSlice = createSlice({
       } else if (actionType === 'remove') {
         state.user.friends = state.user.friends.filter((friend) => friend._id !== user._id) // Xóa bạn khỏi danh sách
       }
+    },
+    updated2FA(state, action) {
+      state.user.is2FAEnabled = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -56,12 +60,14 @@ export const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         const { accessToken, refreshToken, user } = action.payload
-        state.accessToken = accessToken
-        state.refreshToken = refreshToken
-        state.user = user
-        state.status = 'succeeded'
-        state.loading = false
-        state.isAuthenticated = true
+        if (!user.is2FAEnabled) {
+          state.accessToken = accessToken
+          state.refreshToken = refreshToken
+          state.user = user
+          state.status = 'succeeded'
+          state.loading = false
+          state.isAuthenticated = true
+        }
       })
       .addCase(login.rejected, (state, action) => {
         state.status = 'failed'
@@ -69,13 +75,37 @@ export const authSlice = createSlice({
         state.isAuthenticated = false
         state.error = action.payload
       })
+
+      .addCase(loginWith2FA.pending, (state) => {
+        state.status = 'loading'
+        state.loading = true
+        state.isAuthenticated = false
+      })
+      .addCase(loginWith2FA.fulfilled, (state, action) => {
+        const { accessToken, refreshToken, user } = action.payload
+        if (user.is2FAEnabled) {
+          state.accessToken = accessToken
+          state.refreshToken = refreshToken
+          state.user = user
+          state.status = 'succeeded'
+          state.loading = false
+          state.isAuthenticated = true
+        }
+      })
+      .addCase(loginWith2FA.rejected, (state, action) => {
+        state.status = 'failed'
+        state.loading = false
+        state.isAuthenticated = false
+        state.error = action.payload
+      })
+
       .addCase(logout.fulfilled, (state, action) => {
         state.user = null
         state.accessToken = null
         state.refreshToken = null
         state.error = null
-        removeToken('accessToken')
-        removeToken('refreshToken')
+        // removeToken('accessToken')
+        // removeToken('refreshToken')
         state.status = 'idle'
         state.loading = false
         state.isAuthenticated = false
@@ -89,6 +119,6 @@ export const authSlice = createSlice({
   }
 })
 
-export const { resetError, updateUser, updateFriends, removeHistorySearch, updatedFavorites } = authSlice.actions
+export const { resetError, updateUser, updateFriends, removeHistorySearch, updatedFavorites, updated2FA } = authSlice.actions
 
 export default authSlice.reducer

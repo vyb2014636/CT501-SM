@@ -8,7 +8,7 @@ import { setOnlineUsers } from './features/online/onlineSlice'
 import { fetchUsersOnline } from './apis/auth/authAPI'
 
 function App() {
-  const { user } = useSelector((state) => state.auth)
+  const { user, isAuthenticated } = useSelector((state) => state.auth)
 
   useEffect(() => {
     if (user) {
