@@ -17,12 +17,12 @@ export const logout = async (user) => {
   const response = await axiosIntercept.get('auth/logout')
   return response
 }
-export const enable2FAAPI = async (email) => {
-  const response = await axiosIntercept.post('auth/enable-2fa', { email })
+export const enable2FAAPI = async (email, password) => {
+  const response = await axiosIntercept.post('auth/enable-2fa', { email, password })
   return response
 }
-export const disable2FAAPI = async (email) => {
-  const response = await axiosIntercept.post('auth/disable-2fa')
+export const disable2FAAPI = async (password) => {
+  const response = await axiosIntercept.post('auth/disable-2fa', { password })
   return response
 }
 export const verifyEnable2FAAPI = async (email, token) => {
@@ -32,5 +32,18 @@ export const verifyEnable2FAAPI = async (email, token) => {
 
 export const changePasswordAPI = async (currentPassword, newPassword) => {
   const response = await axiosIntercept.post('auth/changePassword', { currentPassword, newPassword })
+  return response
+}
+
+export const forgotPasswordAPI = async (email) => {
+  const response = await axiosIntercept.post('auth/forgotPassword', { email })
+  return response
+}
+export const resetPasswordAPI = async (email, resetToken, newPassword) => {
+  const response = await axiosIntercept.post('auth/resetPassword', { email, resetToken, newPassword })
+  return response
+}
+export const verifyResetOTP = async (email, resetToken) => {
+  const response = await axiosIntercept.get('auth/verifyResetOTP', { params: { email, resetToken } })
   return response
 }

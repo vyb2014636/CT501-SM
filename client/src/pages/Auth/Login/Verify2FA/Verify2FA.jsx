@@ -18,15 +18,13 @@ const Verify2FA = ({ user, setIs2FAEnabled }) => {
   if (!user) return <NotFoundPage />
 
   useEffect(() => {
-    // Đếm ngược thời gian
     const timer = setInterval(() => {
       setCountdown((prev) => prev - 1)
     }, 1000)
 
-    // Kiểm tra khi thời gian hết
     if (countdown <= 0) {
       toast.error('Mã OTP đã hết hạn. Vui lòng thử lại.')
-      setIs2FAEnabled(false) // Đặt lại trạng thái 2FA
+      setIs2FAEnabled(false)
     }
 
     return () => clearInterval(timer)
@@ -52,7 +50,6 @@ const Verify2FA = ({ user, setIs2FAEnabled }) => {
     e.preventDefault()
     const pasteData = e.clipboardData.getData('Text')
 
-    // Chỉ cho phép dán số và tối đa 6 ký tự
     if (/^\d{6}$/.test(pasteData)) {
       setOtp(pasteData.split(''))
       document.getElementById(`input-2fa-${5}`).focus()

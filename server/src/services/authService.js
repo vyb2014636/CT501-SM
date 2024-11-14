@@ -96,11 +96,15 @@ const getUsersOnline = async () => {
   }
 }
 
-const enable2FA = async (email) => {
+const enable2FA = async (myId, email, password) => {
   try {
-    const user = await userModel.findOne({ email })
+    const user = await userModel.findById(myId)
 
     if (!user) throw new ApiError(404, 'Người dùng không tồn tại.')
+
+    const isMatch = await bcrypt.compare(password, user.password)
+
+    if (!isMatch) throw new ApiError(400, 'Mật khẩu không chính xác')
 
     const secret = speakeasy.generateSecret({ name: `Vmedia (${email})` })
     user.twoFactorSecret = secret.base32
@@ -108,6 +112,28 @@ const enable2FA = async (email) => {
 
     const qrCode = await QRCode.toDataURL(secret.otpauth_url)
     return { qrCode, secret }
+  } catch (error) {
+    throw error
+  }
+}
+
+const disable2FA = async (myId, password) => {
+  try {
+    const user = await userModel.findById(myId)
+
+    if (!user) throw new ApiError(404, 'Người dùng không tồn tại.')
+
+    const isMatch = await bcrypt.compare(password, user.password)
+
+    if (!isMatch) throw new ApiError(400, 'Mật khẩu không chính xác')
+
+    if (!user.is2FAEnabled) throw new ApiError(400, 'Chế độ xác thực 2FA đã tắt.')
+
+    user.is2FAEnabled = false
+    user.twoFactorSecret = undefined
+    await user.save()
+
+    return user.is2FAEnabled
   } catch (error) {
     throw error
   }
@@ -133,24 +159,6 @@ const verifyAndEnable2FA = async (email, token) => {
   }
 }
 
-const disable2FA = async (myId) => {
-  try {
-    const user = await userModel.findById(myId)
-
-    if (!user) throw new ApiError(404, 'Người dùng không tồn tại.')
-
-    if (!user.is2FAEnabled) throw new ApiError(400, 'Chế độ xác thực 2FA đã tắt.')
-
-    user.is2FAEnabled = false
-    user.twoFactorSecret = undefined
-    await user.save()
-
-    return user.is2FAEnabled
-  } catch (error) {
-    throw error
-  }
-}
-
 const changePassword = async (userId, currentPassword, newPassword) => {
   try {
     const user = await userModel.findById(userId).populate('friends', 'firstname lastname fullname avatar background')
@@ -166,7 +174,7 @@ const changePassword = async (userId, currentPassword, newPassword) => {
     const hashedPassword = await bcrypt.hash(newPassword, salt)
 
     user.password = hashedPassword
-    user.lastPasswordChange = Date.now() // Cập nhật thời gian thay đổi mật khẩu
+    user.lastPasswordChange = Date.now()
     await user.save()
 
     user.password = undefined
@@ -183,30 +191,29 @@ const requestPasswordReset = async (email) => {
     if (!user) throw new ApiError(404, 'Không tìm thấy người dùng với email này')
 
     const OTP = Math.floor(100000 + Math.random() * 900000).toString()
-    const otpHash = await bcrypt.hash(OTP, 10)
+    // const otpHash = await bcrypt.hash(OTP, 10)
     const html = VERIFICATION_EMAIL_TEMPLATE.replace('{verificationCode}', OTP)
 
     await sendMail({ email: email, html, subject: 'OTP để tìm lại mật khẩu' })
 
-    user.resetPasswordToken = otpHash
+    user.resetPasswordToken = OTP
     user.resetPasswordExpire = Date.now() + 1 * 60 * 1000 //1 phút
     await user.save()
 
-    return { message: 'Đã gửi email hướng dẫn thay đổi mật khẩu' }
+    return { message: 'Đã gửi email hướng dẫn thay đổi mật khẩu', OTP }
   } catch (error) {
     throw error
   }
 }
 
-const resetPassword = async (resetToken, newPassword) => {
+const resetPassword = async (email, resetToken, newPassword) => {
   try {
-    // Tìm người dùng với reset token và kiểm tra thời gian hết hạn
     const user = await userModel.findOne({
-      resetPasswordToken: resetToken,
-      resetPasswordExpire: { $gt: Date.now() }
+      email,
+      resetPasswordToken: resetToken
     })
 
-    if (!user) throw new ApiError(400, 'Mã khôi phục mật khẩu không hợp lệ hoặc đã hết hạn')
+    if (!user) throw new ApiError(400, 'Mã khôi phục mật khẩu không hợp lệ ')
 
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(newPassword, salt)
@@ -222,6 +229,18 @@ const resetPassword = async (resetToken, newPassword) => {
   }
 }
 
+const verifyOTPPassword = async (email, resetToken) => {
+  const user = await userModel.findOne({
+    email,
+    resetPasswordToken: resetToken,
+    resetPasswordExpire: { $gt: Date.now() }
+  })
+
+  if (!user) throw new ApiError(400, 'Mã khôi phục mật khẩu không hợp lệ hoặc đã hết hạn')
+
+  return { message: 'OTP chính xác', OTP: user.resetPasswordToken }
+}
+
 export const authService = {
   login,
   getUsersOnline,
@@ -231,5 +250,6 @@ export const authService = {
   disable2FA,
   requestPasswordReset,
   changePassword,
-  resetPassword
+  resetPassword,
+  verifyOTPPassword
 }

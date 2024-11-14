@@ -53,6 +53,7 @@ const EditInfoButton = ({ user }) => {
     }
     try {
       const response = await uploadInfo(data)
+      console.log(response)
       dispatch(updateUser(response.user))
       toast.success('Cập nhật thông tin thành công!')
       setInitialFormData(formData)

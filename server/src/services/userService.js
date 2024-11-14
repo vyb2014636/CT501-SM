@@ -95,7 +95,7 @@ const uploadInfo = async (myId, reqBody) => {
 
   const updatedUser = await userModel.findByIdAndUpdate(myId, updateData, { new: true })
   if (!updatedUser) throw new ApiError(404, 'Không tìm thấy người dùng')
-
+  await updatedUser.save()
   return populateUserFriends(updatedUser)
 }
 

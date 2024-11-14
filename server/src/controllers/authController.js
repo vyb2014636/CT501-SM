@@ -171,9 +171,10 @@ const getUsersOnline = async (req, res, next) => {
 
 const enable2FA = async (req, res, next) => {
   try {
-    const { email } = req.body
+    const myId = req.user.id
+    const { email, password } = req.body
 
-    const { qrCode, secret } = await authService.enable2FA(email)
+    const { qrCode, secret } = await authService.enable2FA(myId, email, password)
     return res.status(200).json({ qrCode, secret: secret.base32 })
   } catch (error) {
     next(error)
@@ -183,8 +184,8 @@ const enable2FA = async (req, res, next) => {
 const disable2FA = async (req, res, next) => {
   try {
     const myId = req.user.id
-
-    const is2FAEnabled = await authService.disable2FA(myId)
+    const { password } = req.body
+    const is2FAEnabled = await authService.disable2FA(myId, password)
     return res.status(200).json({ is2FAEnabled })
   } catch (error) {
     next(error)
@@ -225,8 +226,18 @@ const changePassword = async (req, res, next) => {
 const requestPasswordReset = async (req, res, next) => {
   try {
     const { email } = req.body
-    const { message } = await authService.requestPasswordReset(email)
-    return res.status(200).json({ message })
+    const { message, OTP } = await authService.requestPasswordReset(email)
+    return res.status(200).json({ message, OTP })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const verifyOTPPassword = async (req, res, next) => {
+  try {
+    const { email, resetToken } = req.query
+    const { message, OTP } = await authService.verifyOTPPassword(email, resetToken)
+    return res.status(200).json({ message, OTP })
   } catch (error) {
     next(error)
   }
@@ -234,8 +245,8 @@ const requestPasswordReset = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
   try {
-    const { resetToken, newPassword } = req.body
-    const { message } = await authService.resetPassword(email)
+    const { email, resetToken, newPassword } = req.body
+    const { message } = await authService.resetPassword(email, resetToken, newPassword)
     return res.status(200).json({ message })
   } catch (error) {
     next(error)
@@ -255,5 +266,6 @@ export const authController = {
   disable2FA,
   changePassword,
   requestPasswordReset,
-  resetPassword
+  resetPassword,
+  verifyOTPPassword
 }

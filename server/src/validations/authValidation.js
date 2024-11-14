@@ -125,6 +125,15 @@ const validChangePassword = async (req, res, next) => {
 
 const validResetPassword = async (req, res, next) => {
   const correctCondition = Joi.object({
+    email: Joi.string()
+      .required()
+      .email({ tlds: { allow: true } })
+      .required()
+      .messages({
+        'string.email': 'Địa chỉ email không hợp lệ.',
+        'any.required': 'Địa chỉ email là bắt buộc.',
+        'string.empty': 'Không được để rỗng'
+      }),
     resetToken: Joi.string().required().messages({
       'string.empty': 'Mã khôi phục mật khẩu không được để rỗng',
       'any.required': 'Mã khôi phục mật khẩu là bắt buộc.'

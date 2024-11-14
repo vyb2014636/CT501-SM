@@ -19,6 +19,7 @@ router
   .get('/logout', verifyToken, authController.logout)
   .get('/online', verifyToken, authController.getUsersOnline)
   .get('/refreshToken', verifyToken, authController.refreshAccessToken)
+  .get('/verifyResetOTP', authController.verifyOTPPassword)
 // .get('/:id',verifyToken,authController.profile)
 
 export const auth = router

@@ -37,6 +37,7 @@ import Trash from '@/pages/Home/Trash/Trash'
 import ReProcessReport from '@/pages/Admin/Report/Reports/ReProcess/ReProcessReport'
 import Verify2FA from '@/pages/Auth/Login/Verify2FA/Verify2FA'
 import AccountCenter from '@/pages/AccountCenter'
+import ForgotPassword from '@/pages/Auth/ForgotPassword/ForgotPassword'
 
 function Routing() {
   return (
@@ -87,6 +88,7 @@ function Routing() {
           <Route path='/auth' element={<Login />} />
           <Route path='/auth/signup' element={<Register />} />
           <Route path='/auth/verify' element={<Verify />} />
+          <Route path='/auth/forgotPassword' element={<ForgotPassword />} />
           <Route path='/auth/2FA' element={<Verify2FA />} />
         </Route>
       </Route>

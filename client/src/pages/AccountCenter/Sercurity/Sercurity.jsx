@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { Box, Typography, List, ListItemButton, ListItemText, Divider, Snackbar, Alert } from '@mui/material'
+import Box from '@mui/material/Box'
+import List from '@mui/material/List'
+import Typography from '@mui/material/Typography'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
+import Divider from '@mui/material/Divider'
+import Snackbar from '@mui/material/Snackbar'
+import Alert from '@mui/material/Alert'
 import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined'
 import ChangePassword from './ChangePassword'
 import TwoFactorAuth from './TwoFactorAuth'
@@ -22,17 +29,15 @@ const Sercurity = () => {
   const dispatch = useDispatch()
 
   const handleChangePasswordClick = () => {
-    // Kiểm tra thời gian thay đổi mật khẩu
     const lastPasswordChange = new Date(currentUser?.lastPasswordChange)
     const currentTime = new Date()
     const timeDiff = currentTime - lastPasswordChange
-    const timeDiffInHours = timeDiff / (1000 * 3600) // Chuyển đổi từ milliseconds sang giờ
+    const timeDiffInHours = timeDiff / (1000 * 3600)
 
     if (timeDiffInHours < 24) {
-      // Nếu thay đổi mật khẩu trong vòng 24 giờ, thông báo cho người dùng
       setOpenSnackbar(true)
     } else {
-      setOpenModal(true) // Mở modal nếu không có vấn đề
+      setOpenModal(true)
     }
   }
 
@@ -47,7 +52,6 @@ const Sercurity = () => {
   const handleUpdate2FAStatus = (isEnabled) => {
     dispatch(updated2FA(isEnabled))
   }
-  console.log(currentUser)
   return (
     <Box width={1}>
       <Typography variant='h4' fontWeight='bold' gutterBottom>
@@ -79,7 +83,6 @@ const Sercurity = () => {
         <ChangePassword onClose={handleCloseModal} />
       </ModalWrapper>
 
-      {/* Snackbar thông báo khi không thể đổi mật khẩu trong 24h */}
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity='info' sx={{ width: '100%' }}>
           Bạn đã thay đổi mật khẩu trong vòng 24 giờ. Hãy quay lại sau để thay đổi mật khẩu.

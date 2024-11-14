@@ -13,7 +13,8 @@ const LeftSection = () => {
         backgroundColor: 'background.default',
         padding: { xs: 3, md: 4 },
         width: { xs: '100%', md: '50%' },
-        textAlign: { xs: 'center', md: 'left' }
+        textAlign: { xs: 'center', md: 'left' },
+        flex: 3
       }}>
       <Logo />
       <Typography color='textSecondary' mt={1}>

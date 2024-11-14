@@ -6,128 +6,165 @@ import { enable2FAAPI, verifyEnable2FAAPI, disable2FAAPI } from '@/apis/auth/aut
 import { toast } from 'react-toastify'
 import { useDispatch } from 'react-redux'
 import { updated2FA } from '@/features/auth/authSlice'
+import { passwordValidation } from '@/utils/validationRules'
+import { closeBackdrop, openBackdrop } from '@/features/loading/loadingSlice'
 
 const TwoFactorAuth = ({ is2FAEnabled = false, onToggle2FA = () => {}, email }) => {
-  const [isLoading, setIsLoading] = useState(false)
   const [qrCode, setQrCode] = useState('')
   const [secret, setSecret] = useState('')
-  const [isFormVisible, setFormVisible] = useState(false)
-  const [openModal, setOpenModal] = useState(false)
+  const [openPasswordModal, setOpenPasswordModal] = useState(false)
+  const [isEnabling2FA, setIsEnabling2FA] = useState(false) // Theo dõi trạng thái bật hay tắt 2FA
+  const [openOtpModal, setOpenOtpModal] = useState(false)
   const dispatch = useDispatch()
+
   const {
     control,
     handleSubmit,
-    formState: { errors },
-    watch
-  } = useForm()
+    formState: { errors, isValid },
+    watch,
+    reset
+  } = useForm({
+    defaultValues: {
+      token: '',
+      password: ''
+    }
+  })
 
   const token = watch('token')
 
-  const handle2FASwitch = async (event) => {
+  const handleSwitchChange = (event) => {
     const checked = event.target.checked
+    setIsEnabling2FA(checked) // Theo dõi hành động bật/tắt
+    setOpenPasswordModal(true) // Mở modal yêu cầu nhập mật khẩu
+  }
 
-    if (checked) {
-      setIsLoading(true)
-      try {
-        const response = await enable2FAAPI(email)
+  const handlePasswordSubmit = async (data) => {
+    const { password } = data
+    dispatch(openBackdrop())
+    try {
+      if (isEnabling2FA) {
+        // Bật 2FA
+        const response = await enable2FAAPI(email, password)
         setQrCode(response.qrCode)
         setSecret(response.secret)
-        setFormVisible(true)
-        setOpenModal(true)
-      } catch (error) {
-        console.error('Error enabling 2FA:', error.message)
-        toast.error('Lỗi khi bật xác thực 2FA')
-      }
-      setIsLoading(false)
-    } else {
-      // Khi tắt 2FA
-      setIsLoading(true)
-      try {
-        const response = await disable2FAAPI()
+        setOpenOtpModal(true)
+        toast.success('Mật khẩu hợp lệ! Vui lòng quét mã QR để tiếp tục.')
+      } else {
+        const response = await disable2FAAPI(password)
         dispatch(updated2FA(response.is2FAEnabled))
         onToggle2FA(false)
-        toast.success(response.message)
-      } catch (error) {
-        console.error('Error disabling 2FA:', error.message)
-        toast.error('Lỗi khi tắt xác thực 2FA')
+        toast.success('Đã tắt chế độ xác thưc 2FA')
       }
-      setIsLoading(false)
+      setOpenPasswordModal(false)
+      reset({ password: '' })
+    } catch (error) {
+      toast.error('Mật khẩu không chính xác. Vui lòng thử lại!')
+    } finally {
+      dispatch(closeBackdrop())
     }
   }
 
-  const handleSubmitToken = async (data) => {
+  const handleOtpSubmit = async (data) => {
+    const { token } = data
+    dispatch(openBackdrop())
+
     try {
-      const token = data.token
       const response = await verifyEnable2FAAPI(email, token)
-      onToggle2FA(true)
-      setOpenModal(false)
       dispatch(updated2FA(response.is2FAEnabled))
-      toast.success('Bật thành công')
+      onToggle2FA(true)
+      setOpenOtpModal(false)
+      toast.success('Xác thực 2FA thành công!')
     } catch (error) {
-      toast.error(error.message)
+      toast.error('Mã OTP không hợp lệ. Vui lòng thử lại!')
+    } finally {
+      dispatch(closeBackdrop())
     }
   }
 
   return (
     <Box py={3}>
       <FormControlLabel
-        control={<Switch checked={is2FAEnabled} onChange={handle2FASwitch} />}
+        control={<Switch checked={is2FAEnabled} onChange={handleSwitchChange} />}
         label={is2FAEnabled ? 'Đã bật' : 'Chưa bật'}
         labelPlacement='start'
       />
 
-      {/* Modal chứa form nhập mã OTP khi 2FA được bật */}
-      <ModalWrapper open={openModal} onClose={() => setOpenModal(false)} title='Xác thực 2 bước'>
+      {/* Modal nhập mật khẩu */}
+      <ModalWrapper
+        open={openPasswordModal}
+        onClose={() => {
+          reset({ password: '' })
+          setOpenPasswordModal(false)
+        }}
+        title='Xác nhận mật khẩu'>
+        <form onSubmit={handleSubmit(handlePasswordSubmit)}>
+          <Controller
+            name='password'
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label='Mật khẩu'
+                type='password'
+                variant='outlined'
+                fullWidth
+                margin='normal'
+                error={!!errors.password}
+                helperText={errors.password?.message}
+              />
+            )}
+          />
+
+          <Box sx={{ mt: 2 }}>
+            <Button variant='contained' color='primary' fullWidth type='submit'>
+              Xác nhận
+            </Button>
+          </Box>
+        </form>
+      </ModalWrapper>
+
+      {/* Modal nhập OTP */}
+      <ModalWrapper open={openOtpModal} onClose={() => setOpenOtpModal(false)} title='Xác thực 2 bước'>
         <Box sx={{ mt: 2, p: 2 }}>
-          {isLoading ? (
-            <CircularProgress />
-          ) : (
-            <>
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <img src={qrCode} alt='QR Code' />
-              </Box>
+          <>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <img src={qrCode} alt='QR Code' />
+            </Box>
 
-              <Typography variant='body2' sx={{ textAlign: 'center', mt: 2 }}>
-                Quét mã QR bằng ứng dụng xác thực của bạn (Google Authenticator, Authy, v.v.) và nhập mã OTP bên dưới:
-              </Typography>
+            <Typography variant='body2' sx={{ textAlign: 'center', mt: 2 }}>
+              Quét mã QR bằng ứng dụng xác thực của bạn (Google Authenticator, Authy, v.v.) và nhập mã OTP bên dưới:
+            </Typography>
 
-              <form onSubmit={handleSubmit(handleSubmitToken)}>
-                <Controller
-                  name='token'
-                  control={control}
-                  rules={{ required: 'Mã xác thực là bắt buộc', pattern: /^[0-9]{6}$/ }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label='Mã xác thực'
-                      variant='outlined'
-                      fullWidth
-                      margin='normal'
-                      error={!!errors.token}
-                      helperText={errors.token ? 'Mã phải là 6 chữ số' : ''}
-                      inputProps={{
-                        maxLength: 6, // Giới hạn tối đa 6 ký tự
-                        inputMode: 'numeric', // Chỉ cho phép nhập số
-                        pattern: '[0-9]*' // Chỉ cho phép số
-                      }}
-                    />
-                  )}
-                />
-
-                <Box sx={{ mt: 2 }}>
-                  <Button
-                    variant='contained'
-                    color='primary'
+            <form onSubmit={handleSubmit(handleOtpSubmit)}>
+              <Controller
+                name='token'
+                control={control}
+                rules={{ required: 'Mã xác thực là bắt buộc', pattern: /^[0-9]{6}$/ }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label='Mã xác thực'
+                    variant='outlined'
                     fullWidth
-                    type='submit'
-                    disabled={token?.length !== 6} // Disable nếu mã OTP không đủ 6 ký tự
-                  >
-                    Xác nhận
-                  </Button>
-                </Box>
-              </form>
-            </>
-          )}
+                    margin='normal'
+                    error={!!errors.token}
+                    helperText={errors.token ? 'Mã phải là 6 số' : ''}
+                    inputProps={{
+                      maxLength: 6,
+                      inputMode: 'numeric',
+                      pattern: '[0-9]*'
+                    }}
+                  />
+                )}
+              />
+
+              <Box sx={{ mt: 2 }}>
+                <Button variant='contained' color='primary' fullWidth type='submit' disabled={!isValid}>
+                  Xác nhận
+                </Button>
+              </Box>
+            </form>
+          </>
         </Box>
       </ModalWrapper>
     </Box>

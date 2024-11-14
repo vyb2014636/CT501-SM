@@ -8,11 +8,12 @@ import { Outlet } from 'react-router-dom'
 const Auth = () => {
   return (
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', overflow: 'hidden', display: 'flex' }}>
-      <FlexCenter sx={{ height: '50%', padding: 2, m: 'auto' }}>
+      <FlexCenter sx={{ height: '70%', m: 'auto', width: { sx: '90%', md: '60%' } }}>
         <Box sx={styleBoxFlexAuth}>
           <LeftSection />
-
-          <Outlet />
+          <Box flex={2} width={1}>
+            <Outlet />
+          </Box>
         </Box>
       </FlexCenter>
     </Container>

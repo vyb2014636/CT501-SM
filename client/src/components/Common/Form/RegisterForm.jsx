@@ -5,109 +5,112 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import FlexRow from '@/components/Common/Flex/FlexRow'
-import { validateField } from '@/utils/validation'
+import { useForm, Controller } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import { setFalse, setValues } from '@/utils/helpers'
+import { setValues } from '@/utils/helpers'
 import { CircularProgress } from '@mui/material'
 import { registerAPI } from '@/apis/auth/authAPI'
+import { firstnameValidation, lastnameValidation, emailValidation, passwordValidation, confirmPasswordValidation } from '@/utils/validationRules'
 
 const RegisterForm = () => {
-  const [credentials, setCredentials] = useState({ firstname: '', lastname: '', email: '', password: '', confirmPassword: '' })
-  const [disabled, setDisabled] = useState(true)
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState({})
+  const [disabled, setDisabled] = useState(true)
   const navigate = useNavigate()
 
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target
-    setCredentials({ ...credentials, [name]: value })
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+    watch
+  } = useForm({
+    mode: 'onChange', // Check form validity on every change
+    defaultValues: {
+      firstname: '',
+      lastname: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    }
+  })
 
-    const error = validateField(name, value, credentials)
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }))
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    const { confirmPassword, ...user } = credentials
+  const onSubmit = async (data) => {
+    const { confirmPassword, ...dataWithoutConfirmPassword } = data
     setValues([setLoading, true], [setDisabled, true])
     try {
-      const response = await registerAPI(user)
+      const response = await registerAPI(dataWithoutConfirmPassword) // Gọi API với data không có confirmPassword
       const email = response.newUser.email
-      setValues([setLoading, false], [setDisabled, true])
+      setValues([setLoading, false], [setDisabled, false])
       toast.success(`${response.message}`)
       navigate('/auth/verify', { state: { email } })
     } catch (error) {
-      const setTimeoutLoading = setTimeout(() => {
-        toast.error(`${error.message}`)
-        setFalse(setDisabled, setLoading)
-      }, 1000)
-      return () => {
-        clearTimeout(setTimeoutLoading)
-      }
+      toast.error(`${error.message}`)
+      setValues([setLoading, false], [setDisabled, false])
     }
   }
 
-  useEffect(() => {
-    const hasErrors = Object.values(errors).some((error) => error !== '')
-    const isAnyFieldEmpty = Object.values(credentials).some((value) => value === '')
-
-    setDisabled(hasErrors || isAnyFieldEmpty)
-  }, [credentials, errors])
+  // useEffect(() => {
+  //   setDisabled(!isValid) // Disable submit button if form is not valid
+  // }, [isValid])
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FlexRow gap={2}>
-        <TextField
-          margin='normal'
-          label='Họ'
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FlexRow gap={2} width={1}>
+        <Controller
           name='firstname'
-          value={credentials.firstname}
-          onChange={handleChangeInput}
-          error={Boolean(errors.firstname)}
-          helperText={errors.firstname}
+          control={control}
+          rules={firstnameValidation}
+          render={({ field }) => (
+            <TextField {...field} margin='normal' label='Họ' error={Boolean(errors.firstname)} helperText={errors.firstname?.message} fullWidth />
+          )}
         />
-        <TextField
-          margin='normal'
-          label='Tên'
+        <Controller
           name='lastname'
-          value={credentials.lastname}
-          onChange={handleChangeInput}
-          error={Boolean(errors.lastname)}
-          helperText={errors.lastname}
+          control={control}
+          rules={lastnameValidation}
+          render={({ field }) => (
+            <TextField {...field} margin='normal' label='Tên' error={Boolean(errors.lastname)} helperText={errors.lastname?.message} fullWidth />
+          )}
         />
       </FlexRow>
-      <TextField
-        fullWidth
-        margin='normal'
-        label='Email'
+      <Controller
         name='email'
-        value={credentials.email}
-        onChange={handleChangeInput}
-        error={Boolean(errors.email)}
-        helperText={errors.email}
+        control={control}
+        rules={emailValidation}
+        render={({ field }) => (
+          <TextField {...field} fullWidth margin='normal' label='Email' error={Boolean(errors.email)} helperText={errors.email?.message} />
+        )}
       />
-      <TextField
-        fullWidth
-        margin='normal'
-        label='Mật khẩu'
-        variant='outlined'
+      <Controller
         name='password'
-        type='password'
-        value={credentials.password}
-        onChange={handleChangeInput}
-        error={Boolean(errors.password)}
-        helperText={errors.password}
+        control={control}
+        rules={passwordValidation}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            fullWidth
+            margin='normal'
+            label='Mật khẩu'
+            type='password'
+            error={Boolean(errors.password)}
+            helperText={errors.password?.message}
+          />
+        )}
       />
-      <TextField
-        fullWidth
-        margin='normal'
-        label='Xác nhận mật khẩu'
+      <Controller
         name='confirmPassword'
-        type='password'
-        value={credentials.confirmPassword}
-        onChange={handleChangeInput}
-        error={Boolean(errors.confirmPassword)}
-        helperText={errors.confirmPassword}
+        control={control}
+        rules={confirmPasswordValidation(watch, 'password')}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            fullWidth
+            margin='normal'
+            label='Xác nhận mật khẩu'
+            type='password'
+            error={Boolean(errors.confirmPassword)}
+            helperText={errors.confirmPassword?.message}
+          />
+        )}
       />
 
       <Typography variant='body2' color='textSecondary' textAlign='center' mt={2}>
@@ -121,10 +124,10 @@ const RegisterForm = () => {
           variant='contained'
           sx={{
             mt: 3,
-            background: !disabled ? 'linear-gradient(to right, #673ab7, #2196f3)' : undefined
+            background: isValid && !loading ? 'linear-gradient(to right, #673ab7, #2196f3)' : undefined
           }}
           startIcon={loading ? <CircularProgress size={24} /> : ''}
-          disabled={disabled || loading}>
+          disabled={!isValid || loading}>
           Đăng ký
         </Button>
       </Box>

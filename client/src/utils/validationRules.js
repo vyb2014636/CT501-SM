@@ -1,11 +1,5 @@
 // src/utils/validationRules.js
 
-export const nameValidation = {
-  required: 'Họ tên là bắt buộc',
-  minLength: { value: 3, message: 'Họ tên phải có ít nhất 3 ký tự' },
-  maxLength: { value: 50, message: 'Họ tên không được dài quá 50 ký tự' }
-}
-
 export const addressValidation = {
   required: 'Địa chỉ là bắt buộc',
   minLength: { value: 6, message: 'Địa chỉ phải có ít nhất 6 ký tự' },
@@ -18,7 +12,7 @@ export const passwordValidation = {
   validate: (value) => {
     const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/
     if (!regex.test(value)) {
-      return 'Mật khẩu phải có ít nhất 1 chữ cái viết hoa, 1 ký tự đặc biệt và 1 số'
+      return 'Mật khẩu gồm ít nhất 1 chữ viết hoa, 1 ký tự đặc biệt và 1 số'
     }
     return true
   }
@@ -43,3 +37,28 @@ export const newPasswordValidation = (watch) => ({
     return true
   }
 })
+export const emailValidation = {
+  required: 'Email là bắt buộc',
+  pattern: {
+    value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+    message: 'Email không hợp lệ'
+  }
+}
+export const lastnameValidation = {
+  required: 'Họ tên là bắt buộc',
+  minLength: { value: 1, message: 'Họ tên phải có ít nhất 3 ký tự' },
+  maxLength: { value: 50, message: 'Họ tên không được dài quá 20 ký tự' },
+  pattern: {
+    value: /^[A-Za-zÀ-ỹà-ỹ\s]+$/, // Cho phép cả chữ cái có dấu và không có dấu
+    message: 'Họ tên chỉ được chứa chữ cái'
+  }
+}
+export const firstnameValidation = {
+  required: 'Họ tên là bắt buộc',
+  minLength: { value: 1, message: 'Họ tên phải có ít nhất 3 ký tự' },
+  maxLength: { value: 50, message: 'Họ tên không được dài quá 20 ký tự' },
+  pattern: {
+    value: /^[A-Za-zÀ-ỹà-ỹ\s]+$/, // Cho phép cả chữ cái có dấu và không có dấu
+    message: 'Họ tên chỉ được chứa chữ cái'
+  }
+}
