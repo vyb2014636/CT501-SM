@@ -23,7 +23,7 @@ const UserTableRow = ({ user, serialNumber, history, setUsers }) => {
         {user.fullname}
       </TableCell>
       <TableCell sx={{ width: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
-        {user.address ? `${user.address.district}, ${user.address.ward} ,${user.address.province} ` : 'Chưa nhập địa chỉ'}
+        {user.province && user.province !== '' ? user.province : 'Chưa nhập địa chỉ'}
       </TableCell>
       <TableCell>{user.isAdmin ? 'Quản trị' : 'Người dùng'}</TableCell>
       <TableCell sx={{ textAlign: 'center' }}>{user.isVerify ? <CheckCircleIcon color='success' /> : '-'}</TableCell>

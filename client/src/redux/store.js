@@ -12,6 +12,7 @@ import messageReducer from '@/features/chat/messageSlice'
 import friendshipReducer from '@/features/request/friendshipSlice'
 import onlineReducer from '@/features/online/onlineSlice'
 import notificationReducer from '@/features/notification/notificationSlice'
+import reloadReducer from '@/features/loading/reloadSlice'
 import { setupAxiosInterceptors } from '@/apis/axiosIntercept'
 
 // Cấu hình persist
@@ -32,7 +33,8 @@ const rootReducer = combineReducers({
   friendship: friendshipReducer,
   chat: chatReducer,
   message: messageReducer,
-  online: onlineReducer
+  online: onlineReducer,
+  reload: reloadReducer
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 

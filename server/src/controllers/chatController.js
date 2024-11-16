@@ -42,5 +42,80 @@ const getChats = async (req, res, next) => {
     next(error)
   }
 }
+const removeMemberFromGroup = async (req, res, next) => {
+  const { chatId, userId } = req.body
+  const myId = req.user.id
+  try {
+    const chat = await chatService.removeMemberFromGroup(chatId, userId, myId)
+    res.status(200).json({
+      message: 'Danh sách các đoạn chat của bạn',
+      chat
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+const addMemberToGroup = async (req, res, next) => {
+  const { chatId, userIds } = req.body // Nhận danh sách userIds từ body
+  const myId = req.user.id
 
-export const chatController = { accessChat, createGroupChat, getChats }
+  try {
+    const chat = await chatService.addMemberToGroup(chatId, userIds, myId) // Gọi hàm service mới
+    res.status(200).json({
+      message: 'Thêm thành viên vào nhóm thành công',
+      chat
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const dissolveGroup = async (req, res, next) => {
+  const { chatId } = req.query
+  const myId = req.user.id
+  try {
+    const chatID = await chatService.dissolveGroup(chatId, myId)
+    res.status(200).json({
+      message: 'Danh sách các đoạn chat của bạn',
+      chat: { _id: chatID }
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+const leaveGroup = async (req, res, next) => {
+  const { chatId } = req.body
+  const myId = req.user.id
+  try {
+    const chat = await chatService.leaveGroup(chatId, myId)
+    res.status(200).json({
+      message: 'Danh sách các đoạn chat của bạn',
+      chat
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+const updateGroupAdmin = async (req, res, next) => {
+  try {
+    const { chatID, newAdminID, currentAdminID } = req.body
+    const chat = await chatService.updateGroupAdmin(chatID, newAdminID, currentAdminID)
+    res.status(200).json({
+      chat
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+export const chatController = {
+  accessChat,
+  createGroupChat,
+  getChats,
+  leaveGroup,
+  dissolveGroup,
+  addMemberToGroup,
+  removeMemberFromGroup,
+  updateGroupAdmin,
+  updateGroupAdmin
+}

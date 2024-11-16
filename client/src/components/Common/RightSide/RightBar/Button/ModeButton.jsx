@@ -1,6 +1,6 @@
 import React from 'react'
 import { Tooltip, useColorScheme } from '@mui/material'
-import IconButton from '@mui/material/IconButton'
+import MenuItem from '@mui/material/MenuItem'
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined'
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined'
 
@@ -9,14 +9,14 @@ const ModeButton = () => {
     const { mode, setMode } = useColorScheme()
     return (
       <Tooltip title='Chế độ'>
-        <IconButton
+        <MenuItem
           size='medium'
           color='primary'
           onClick={() => {
             setMode(mode === 'light' ? 'dark' : 'light')
           }}>
-          {mode === 'light' ? <DarkModeOutlinedIcon fontSize='medium' /> : <LightModeOutlinedIcon />}
-        </IconButton>
+          {mode === 'light' ? <DarkModeOutlinedIcon fontSize='medium' color='primary' /> : <LightModeOutlinedIcon color='primary' />}
+        </MenuItem>
       </Tooltip>
     )
   }

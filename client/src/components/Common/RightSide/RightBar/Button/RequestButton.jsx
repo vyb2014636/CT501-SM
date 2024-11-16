@@ -8,7 +8,6 @@ import Button from '@mui/material/Button'
 import Badge from '@mui/material/Badge'
 import Tooltip from '@mui/material/Tooltip'
 import ListItem from '@mui/material/ListItem'
-import IconButton from '@mui/material/IconButton'
 import ListItemText from '@mui/material/ListItemText'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined'
@@ -44,7 +43,7 @@ const RequestButton = () => {
   return (
     <>
       <Tooltip title='Lời mời'>
-        <IconButton
+        <MenuItem
           onClick={handleClick}
           aria-controls={open ? 'friends' : undefined}
           aria-haspopup='true'
@@ -57,7 +56,7 @@ const RequestButton = () => {
           ) : (
             <PeopleAltOutlinedIcon color='primary' fontSize='medium' />
           )}
-        </IconButton>
+        </MenuItem>
       </Tooltip>
 
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose} onClick={handleClose}>

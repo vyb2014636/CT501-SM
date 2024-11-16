@@ -34,14 +34,14 @@ const notifyShareToByPost = async (my, receiver, postId, type) => {
   try {
     const notification = new notificationModel({
       sender: my.id,
-      receiver,
+      receiver: receiver._id,
       type: type,
       postId
     })
     await notification.save()
     await notification.populate('sender postId', 'firstname lastname fullname avatar')
 
-    sendNotification(receiver, 'sharedPost', {
+    sendNotification(receiver._id, 'sharedPost', {
       userName: my.fullname,
       notification: notification
     })
@@ -99,7 +99,6 @@ const sharePost = async (postId, myId, describe) => {
 
     await logModel.create({
       user: myId.id,
-
       action: 'SHARED_POST',
       details: 'Người dùng chia sẻ bài đăng.',
       post: sharedPost._id
@@ -146,7 +145,6 @@ const getPostsTrash = async (myId) => {
     ])
 
     for (let group of days) {
-      // Populate cho mỗi bài post trong nhóm
       group.posts = await postModel.populate(group.posts, [
         { path: 'byPost' },
         { path: 'sharedPost', populate: { path: 'byPost', select: 'firstname lastname email background avatar' } },
@@ -189,16 +187,16 @@ const getPosts = async (loggedInId, userId, limit, skip) => {
 
 const likePost = async (userId, postId) => {
   try {
-    const post = await postModel.findByIdPopulates(postId)
+    const post = await postModel.findById(postId)
 
     if (!post) throw new ApiError(404, 'Không tìm thấy bài post')
 
     if (post.status !== 'normal') throw new ApiError(400, 'Bài đăng này có dấu hiệu vi phạm hoặc đã bị xóa')
 
-    const isLiked = post.likes.includes(userId)
+    const isLiked = post.likes.some((like) => like._id.toString() === userId.toString())
     let message = ''
     if (isLiked) {
-      post.likes = post.likes.filter((id) => id.toString() !== userId)
+      post.likes = post.likes.filter((like) => like._id.toString() !== userId)
       message = 'Bỏ like thành công'
     } else {
       post.likes.push(userId)
@@ -206,7 +204,10 @@ const likePost = async (userId, postId) => {
     }
 
     const quantity = post.likes.length
+
     await post.save()
+
+    await post.populatePost()
 
     return { message, post, quantity }
   } catch (error) {
@@ -240,17 +241,13 @@ const addComment = async (postID, content, myId) => {
 
     if (!post) throw new ApiError(404, 'Không tìm thấy bài post')
 
-    // post.comments.push({
-    //   user: myId,
-    //   content
-    // })
+    post.comments.push({
+      user: myId,
+      content
+    })
+    const populatedPost = await post.populate('comments.user comments.replies.user comments.likes')
+    await post.save()
 
-    // await post.save()
-
-    // const populatedPost = await post.populate('comments.user comments.replies.user comments.likes')
-
-    // Sử dụng phương thức addComment đã tạo trong model
-    const populatedPost = await post.addComment(myId, content)
     return populatedPost
   } catch (error) {
     throw error
@@ -293,11 +290,8 @@ const addReply = async (postId, commentId, content, myId) => {
 
     comment.replies.sort((a, b) => b.createdAt - a.createdAt)
 
-    const populatedPost = await post.populate({
-      path: 'comments.replies.user',
-      select: 'firstname lastname avatar'
-    })
-    return populatedPost.comments.id(commentId)
+    const populatedPost = await post.populatePost()
+    return { comment: populatedPost.comments.id(commentId), post: populatedPost }
   } catch (error) {
     throw error
   }
@@ -353,9 +347,9 @@ const likeReply = async (postId, commentId, replyId, userId) => {
     const reply = comment.replies.id(replyId)
     if (!reply) throw new ApiError(404, 'Reply not found')
 
-    const isLiked = reply.likes.includes(userId)
+    const isLiked = reply.likes.some((like) => like._id.toString() === userId)
     if (isLiked) {
-      reply.likes = reply.likes.filter((id) => id.toString() !== userId)
+      reply.likes = reply.likes.filter((like) => like._id.toString() !== userId)
     } else {
       reply.likes.push(userId)
     }
@@ -428,6 +422,28 @@ const restorePostFromTrash = async (postId, userId) => {
   }
 }
 
+const deleteFromTrashPost = async (postId, userId) => {
+  try {
+    if (!(postId || userId)) throw new ApiError(403, 'Vui lòng cung cấp đủ trường')
+
+    // Lấy bài viết theo ID
+    const post = await postModel.findOne({ _id: postId, status: 'trash' })
+
+    if (!post) throw new ApiError(404, 'Bài viết cần xóa không tồn tại không tồn tại')
+
+    // Cập nhật trạng thái thành trash và lưu lại thời gian trashDate
+    post.status = 'delete'
+    post.deleteDate = Date.now()
+
+    // Lưu bài viết với trạng thái mới
+    await post.save()
+
+    return post
+  } catch (error) {
+    throw error
+  }
+}
+
 export const postService = {
   createPost,
   getPosts,
@@ -442,5 +458,6 @@ export const postService = {
   getPost,
   putInTrashPost,
   restorePostFromTrash,
-  getPostsTrash
+  getPostsTrash,
+  deleteFromTrashPost
 }

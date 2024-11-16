@@ -1,11 +1,28 @@
 import React, { useState } from 'react'
-import { Box, List, ListItem, ListItemButton, ListItemText, Typography, Divider, ListItemIcon } from '@mui/material'
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Typography,
+  Divider,
+  ListItemIcon,
+  Drawer,
+  IconButton,
+  AppBar,
+  Toolbar
+} from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
 import Logo from '@/components/Common/LeftSide/LeftBar/Logo'
 import Sercurity from './Sercurity/Sercurity'
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined'
 import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined'
 import FlexRow from '@/components/Common/Flex/FlexRow'
 import Information from './Infomation/Information'
+import Trash from '../Home/Trash/Trash'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import FlexCenter from '@/components/Common/Flex/FlexCenter'
 
 const menuItems = [
   {
@@ -22,64 +39,126 @@ const menuItems = [
   },
   {
     key: 'settings',
-    label: 'Cài đặt khác',
+    label: 'Thùng rác',
     icon: <ShieldOutlinedIcon />,
-    content: (
-      <Box>
-        <Typography variant='h5' gutterBottom>
-          Cài đặt khác
-        </Typography>
-        <Typography variant='body1' color='textSecondary'>
-          Các cài đặt khác cho tài khoản của bạn.
-        </Typography>
-      </Box>
-    )
+    content: <Trash />
   }
 ]
 
 const AccountCenter = () => {
   const [selectedMenu, setSelectedMenu] = useState('info')
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const isSmallScreen = useMediaQuery('(max-width:600px)')
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen)
+  }
+
+  const renderMenu = (
+    <>
+      <Logo />
+      <Typography variant='h6' gutterBottom>
+        Trung tâm tài khoản
+      </Typography>
+      <Divider sx={{ mb: 2 }} />
+      <List>
+        {menuItems.map((item) => (
+          <ListItem key={item.key} sx={{ py: 1 }} disablePadding>
+            <ListItemButton
+              onClick={() => {
+                setSelectedMenu(item.key)
+                if (isSmallScreen) toggleDrawer()
+              }}
+              sx={{
+                backgroundColor: selectedMenu === item.key ? '#344854' : 'transparent',
+                color: selectedMenu === item.key ? '#fff' : 'inherit',
+                border: selectedMenu === item.key ? '2px solid #344854' : 'none',
+                borderRadius: '8px',
+                '&:hover': {
+                  backgroundColor: '#344854',
+                  color: '#fff'
+                }
+              }}>
+              <ListItemIcon
+                sx={{
+                  color: selectedMenu === item.key ? '#fff' : 'inherit'
+                }}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.label}
+                sx={{
+                  typography: {
+                    fontSize: isSmallScreen ? '12px' : '16px'
+                  }
+                }}
+              />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </>
+  )
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', height: '100vh', bgcolor: 'background.default', justifyContent: 'center' }}>
-      <FlexRow height={1} width='60%'>
+    <Box
+      sx={{
+        display: 'flex',
+        minHeight: '100vh',
+        bgcolor: 'background.default',
+        flexDirection: isSmallScreen ? 'column' : 'row',
+        width: { sx: 1, md: '70%' },
+        mx: 'auto',
+        minHeight: '100vh',
+        height: '100vh',
+        bgcolor: 'background.default',
+        justifyContent: 'center'
+      }}>
+      {isSmallScreen ? (
+        <>
+          {/* AppBar for small screens */}
+          <AppBar position='static' color='default' elevation={1}>
+            <Toolbar>
+              <IconButton edge='start' color='inherit' aria-label='menu' onClick={toggleDrawer} sx={{ mr: 2 }}>
+                <MenuIcon />
+              </IconButton>
+              <Typography variant='h6'>Trung tâm tài khoản</Typography>
+            </Toolbar>
+          </AppBar>
+
+          {/* Drawer for small screens */}
+          <Drawer anchor='left' open={drawerOpen} onClose={toggleDrawer}>
+            <Box
+              sx={{
+                width: 250,
+                padding: 2
+              }}
+              role='presentation'>
+              {renderMenu}
+            </Box>
+          </Drawer>
+        </>
+      ) : (
+        // Sidebar for larger screens
         <Box
           sx={{
-            width: '350px',
+            // width: { sx: '100px', md: '350px' },
+            flex: 3,
             padding: '20px',
             height: 1,
             borderRight: '1px solid #ccc'
           }}>
-          <Logo />
-          <Typography variant='h6' gutterBottom>
-            Trung tâm tài khoản
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <List>
-            {menuItems.map((item) => (
-              <ListItem key={item.key} sx={{ py: 1 }} disablePadding>
-                <ListItemButton
-                  onClick={() => setSelectedMenu(item.key)}
-                  sx={{
-                    backgroundColor: selectedMenu === item.key ? '#344854' : 'transparent',
-                    color: selectedMenu === item.key ? '#fff' : 'inherit',
-                    border: selectedMenu === item.key ? '2px solid #344854' : 'none',
-                    borderRadius: '8px',
-                    '&:hover': {
-                      backgroundColor: '#344854',
-                      color: '#fff'
-                    }
-                  }}>
-                  <ListItemIcon sx={{ color: selectedMenu === item.key ? '#fff' : 'inherit' }}>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.label} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
+          {renderMenu}
         </Box>
-        <Divider />
-        <Box sx={{ flex: 1, p: 8, height: 1 }}>{menuItems.find((item) => item.key === selectedMenu)?.content}</Box>
-      </FlexRow>
+      )}
+
+      <Box
+        sx={{
+          flex: 7,
+          p: isSmallScreen ? 3 : 8
+        }}>
+        {menuItems.find((item) => item.key === selectedMenu)?.content}
+      </Box>
     </Box>
   )
 }

@@ -4,7 +4,6 @@ import Tooltip from '@mui/material/Tooltip'
 import Menu from '@mui/material/Menu'
 import Typography from '@mui/material/Typography'
 import MenuItem from '@mui/material/MenuItem'
-import IconButton from '@mui/material/MenuItem'
 import Box from '@mui/material/Box'
 import Skeleton from '@mui/material/Skeleton'
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined'
@@ -22,11 +21,11 @@ const NoticeButton = () => {
   return (
     <>
       <Tooltip title='Thông báo'>
-        <IconButton onClick={handleClick}>
+        <MenuItem onClick={handleClick}>
           <Badge badgeContent={totalUnread} color='primary'>
             <NotificationsNoneOutlinedIcon color='primary' />
           </Badge>
-        </IconButton>
+        </MenuItem>
       </Tooltip>
 
       <Menu

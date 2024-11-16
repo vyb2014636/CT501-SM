@@ -1,6 +1,7 @@
 // src/features/postSlice.js
 import { createSlice } from '@reduxjs/toolkit'
 import { fetchAllPosts, fetchPost, toggleLikePost } from './postThunk'
+import { addComment, addReplyForComment } from '../comment/commentThunk'
 
 export const postSlice = createSlice({
   name: 'post',
@@ -61,6 +62,23 @@ export const postSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(addComment.fulfilled, (state, action) => {
+        const index = state.posts.findIndex((post) => post._id === action.payload.post._id)
+        if (index !== -1) state.posts[index] = action.payload.post
+
+        state.status = 'succeeded'
+        state.error = false
+        state.loading = false
+      })
+      .addCase(addReplyForComment.fulfilled, (state, action) => {
+        const index = state.posts.findIndex((post) => post._id === action.payload.post._id)
+
+        if (index !== -1) state.posts[index] = action.payload.post
+
+        state.status = 'succeeded'
+        state.error = false
+        state.loading = false
+      })
       .addCase(fetchAllPosts.pending, (state) => {
         state.status = 'loading'
         state.loading = true

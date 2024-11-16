@@ -4,6 +4,7 @@ const messageSchema = new mongoose.Schema(
   {
     sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     content: { type: String },
+    image: { type: String },
     chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
     readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     replyTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' }, // Tin nhắn trả lời

@@ -12,7 +12,7 @@ const chatSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-chatSchema.statics.findAndPopulateChat = async function (query) {
+chatSchema.statics.findOneAndPopulateChat = async function (query) {
   return await this.findOne(query)
     .populate('users', 'fullname avatar')
     .populate('groupAdmin', '-password')
@@ -24,6 +24,44 @@ chatSchema.statics.findAndPopulateChat = async function (query) {
       }
     })
 }
+
+chatSchema.statics.findByIdAndPopulateChat = async function (query) {
+  return await this.findById(query)
+    .populate('users', 'fullname avatar')
+    .populate('groupAdmin', '-password')
+    .populate({
+      path: 'latestMessage',
+      populate: {
+        path: 'sender',
+        select: 'fullname avatar'
+      }
+    })
+}
+chatSchema.statics.findAndPopulateChat = async function (query) {
+  return await this.find(query)
+    .populate('users', 'fullname avatar')
+    .populate('groupAdmin', '-password')
+    .populate({
+      path: 'latestMessage',
+      populate: {
+        path: 'sender',
+        select: 'fullname avatar'
+      }
+    })
+}
+
+// chatSchema.pre(/(find|findOne|findById)/, function (next) {
+//   this.populate('users', 'fullname avatar')
+//     .populate('groupAdmin', '-password')
+//     .populate({
+//       path: 'latestMessage',
+//       populate: {
+//         path: 'sender',
+//         select: 'fullname avatar'
+//       }
+//     })
+//   next()
+// })
 
 const Chat = mongoose.model('Chat', chatSchema)
 

@@ -6,6 +6,8 @@ import { VERIFICATION_EMAIL_TEMPLATE } from '~/utils/mailTemplates'
 import { sendMail } from '~/utils/sendMail'
 import { authService } from '~/services/authService'
 import logModel from '~/models/logModel'
+import { env } from '~/config/environment'
+import jwt from 'jsonwebtoken'
 
 const register = async (req, res, next) => {
   const { email, lastname, firstname, password } = req.body
@@ -79,10 +81,11 @@ const login = async (req, res, next) => {
   try {
     const { user, accessToken, refreshToken } = await authService.login(req.body)
 
-    res.cookie('refreshToken', login.refreshToken, {
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax'
+      //   secure: false,
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 ngày
     })
 
     res.status(200).json({
@@ -107,7 +110,7 @@ const logout = async (req, res, next) => {
 
     res.clearCookie('refreshToken', {
       httpOnly: true,
-      secure: true
+      sameSite: 'strict'
     })
     await logModel.create({
       user: id,
@@ -124,36 +127,38 @@ const logout = async (req, res, next) => {
 }
 
 const refreshAccessToken = async (req, res, next) => {
-  const refreshToken = req.cookies
-  const { id } = req.user
+  const { refreshToken } = req.cookies
+  // const { id } = req.user
   if (!refreshToken) throw new ApiError(500, 'Bạn chưa chứng thực')
-
   try {
-    jwt.verify(refreshToken, env.JWT_SECRET, async (err, user) => {
-      if (err) throw new ApiError(401, 'refreshToken không đúng')
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET)
+    const user = await User.findById(decoded.id)
 
-      const newAccessToken = generateAccessToken(user)
-      const newRefreshToken = generateRefreshToken(user)
-
-      res.cookie('refreshToken', newRefreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'strict'
-      })
-
-      const updateRefreshToken = await User.findByIdAndUpdate(
-        id,
-        { refreshToken: newRefreshToken },
-        { new: true } // trả về document đã cập nhật
-      )
-
-      return res.status(200).json({
-        success: updateRefreshToken ? true : false,
-        message: updateRefreshToken ? 'Cập nhật accessToken mới thành công' : 'Cập nhật accessToken mới thất bại',
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken
-      })
+    // if (!user) throw new ApiError(401, 'refreshToken hết hạn')
+    const newAccessToken = generateAccessToken(user)
+    res.status(200).json({
+      message: 'Cập nhật accessToken mới thành công',
+      accessToken: newAccessToken
     })
+    // jwt.verify(refreshToken, env.JWT_SECRET, async (err, decode) => {
+    //   if (err) {
+    //     res.clearCookie('refreshToken', {
+    //       httpOnly: true,
+    //       sameSite: 'strict'
+    //     })
+    //     return next(new ApiError(401, 'refreshToken không đúng'))
+    //   }
+
+    //   const user = await User.findById(decode.id)
+
+    //   const newAccessToken = generateAccessToken(user)
+
+    //   res.status(200).json({
+    //     success: user ? true : false,
+    //     message: user ? 'Cập nhật accessToken mới thành công' : 'Cập nhật accessToken mới thất bại',
+    //     accessToken: newAccessToken
+    //   })
+    // })
   } catch (error) {
     next(error)
   }
@@ -166,7 +171,9 @@ const getUsersOnline = async (req, res, next) => {
       users,
       message: users?.length > 0 ? 'Danh sách người dùng đang hoạt động' : 'Không có người dùng nào hoạt động'
     })
-  } catch (error) {}
+  } catch (error) {
+    next(error)
+  }
 }
 
 const enable2FA = async (req, res, next) => {

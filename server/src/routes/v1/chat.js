@@ -8,9 +8,14 @@ const router = express.Router()
 
 router
   .get('/', verifyToken, chatController.getChats)
+  .get('/:chatId/messages', verifyToken, messageController.getMessages)
   .post('/', verifyToken, chatController.accessChat)
   .post('/group', verifyToken, uploadCloud.single('avatarGroup'), chatController.createGroupChat)
-  .get('/:chatId/messages', verifyToken, messageController.getMessages)
-  .post('/sendMessage', verifyToken, messageController.sendMessage)
+  .post('/sendMessage', verifyToken, uploadCloud.single('image'), messageController.sendMessage)
+  .post('/addMemberGroup', verifyToken, chatController.addMemberToGroup)
+  .post('/removeMemberGroup', verifyToken, chatController.removeMemberFromGroup)
+  .post('/leaveGroup', verifyToken, chatController.leaveGroup)
+  .put('/updateAdmin', verifyToken, chatController.updateGroupAdmin)
+  .delete('/dissolve', verifyToken, chatController.dissolveGroup)
 
 export const chat = router

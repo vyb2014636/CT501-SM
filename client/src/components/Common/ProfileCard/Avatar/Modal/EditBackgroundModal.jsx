@@ -88,25 +88,35 @@ const EditBackgroundModal = ({ openModal, setOpenModal }) => {
 
   return (
     <Modal open={openModal} onClose={handleCloseModal}>
-      <Box sx={{ ...styleModal, height: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Box
+        sx={{
+          ...styleModal,
+          height: '400px',
+          maxWidth: '700px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
         <Button component='label' role={undefined} variant='contained' tabIndex={-1} startIcon={<CloudUploadIcon />}>
           Chọn ảnh nền
           <HiddenTextField type='file' accept='image/*' onChange={handleImageChange} />
         </Button>
         <Divider />
-
         {selectedImage && (
-          <Box sx={{ position: 'relative', width: '100%', height: '200px', mt: 2 }}>
+          <Box sx={{ position: 'relative', width: 700, height: 200, mt: 2, border: '1px solid' }}>
             <Cropper
               image={selectedImage}
               crop={crop}
               zoom={zoom}
-              aspect={16 / 9}
+              aspect={1} // Đảm bảo tỷ lệ crop là 1:1
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={handleCropComplete}
-              cropSize={{ width: 627, height: 200 }}
-              objectFit='horizontal-cover'
+              cropSize={{ width: 627, height: 200 }} // Chiều rộng và chiều cao tùy chỉnh, đây là hình vuông
+              objectFit='cover'
+              minZoom={1} // Cài đặt mức zoom tối thiểu
+              maxZoom={3} // Cài đặt mức zoom tối đa
             />
           </Box>
         )}

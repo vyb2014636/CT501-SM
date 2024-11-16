@@ -47,7 +47,7 @@ export const commentSlice = createSlice({
         state.loading = false
       })
       .addCase(addReplyForComment.fulfilled, (state, action) => {
-        const { _id, replies } = action.payload
+        const { _id, replies } = action.payload.comment
         const comment = state.comments.find((c) => c._id === _id)
         if (comment) {
           comment.replies = replies

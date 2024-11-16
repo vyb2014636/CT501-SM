@@ -1,7 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Badge, IconButton, Tooltip } from '@mui/material'
+import Badge from '@mui/material/Badge'
+import MenuItem from '@mui/material/MenuItem'
+import Tooltip from '@mui/material/Tooltip'
 import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined'
 import { resetSelect } from '@/features/chat/chatSlice'
 
@@ -22,11 +24,11 @@ const ChatButton = () => {
 
   return (
     <Tooltip title='Chat'>
-      <IconButton onClick={handleClick}>
+      <MenuItem onClick={handleClick}>
         <Badge color='primary' variant='dot' invisible={!hasUnreadMessages}>
           <ChatOutlinedIcon color='primary' fontSize='medium' />
         </Badge>
-      </IconButton>
+      </MenuItem>
     </Tooltip>
   )
 }

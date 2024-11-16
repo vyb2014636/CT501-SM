@@ -87,15 +87,35 @@ const uploadBackground = async (myId, background) => {
   const updatedUser = await userModel.findByIdAndUpdate(myId, { background }, { new: true })
   return populateUserFriends(updatedUser)
 }
-
 const uploadInfo = async (myId, reqBody) => {
-  if (!reqBody || Object.keys(reqBody).length === 0) throw new ApiError(400, 'Dữ liệu gửi lên không được rỗng')
-  const { firstname, lastname, address } = reqBody
-  const updateData = { firstname, lastname, address }
+  if (!reqBody || Object.keys(reqBody).length === 0) {
+    throw new ApiError(400, 'Dữ liệu gửi lên không được rỗng')
+  }
 
-  const updatedUser = await userModel.findByIdAndUpdate(myId, updateData, { new: true })
+  const user = await userModel.findById(myId)
+  if (!user) throw new ApiError(404, 'Không tìm thấy người dùng')
+
+  if (reqBody.firstname || reqBody.lastname) {
+    const currentDate = new Date()
+    const lastChangeDate = user.lastInfoChange ? new Date(user.lastInfoChange) : null
+
+    if (lastChangeDate) {
+      const timeDiff = currentDate - lastChangeDate
+      const daysDiff = timeDiff / (1000 * 3600 * 24)
+
+      if (daysDiff < 60) {
+        throw new ApiError(400, 'Bạn không thể thay đổi tên trong vòng 60 ngày')
+      }
+    }
+
+    reqBody.lastInfoChange = currentDate
+  }
+
+  const updatedUser = await userModel.findByIdAndUpdate(myId, reqBody, { new: true })
   if (!updatedUser) throw new ApiError(404, 'Không tìm thấy người dùng')
+
   await updatedUser.save()
+
   return populateUserFriends(updatedUser)
 }
 

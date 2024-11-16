@@ -3,14 +3,15 @@ import chatModel from '~/models/chatModel'
 import messageModel from '~/models/messageModel'
 import { sendNotification } from '~/sockets/'
 
-const sendMessage = async (chatId, senderId, content) => {
-  if (!chatId || !senderId || !content) throw new ApiError(400, 'Nội dung và chatId không được để trống')
+const sendMessage = async (chatId, senderId, content, image) => {
+  if (!chatId || !senderId) throw new ApiError(400, 'Nội dung và chatId không được để trống')
 
   const newMessage = await messageModel.create({
     sender: senderId,
     content,
     chat: chatId,
-    type: 'text'
+    type: 'text',
+    image
   })
 
   const chat = await chatModel.findByIdAndUpdate(chatId, { latestMessage: newMessage })

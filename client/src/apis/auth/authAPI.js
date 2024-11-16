@@ -47,3 +47,8 @@ export const verifyResetOTP = async (email, resetToken) => {
   const response = await axiosIntercept.get('auth/verifyResetOTP', { params: { email, resetToken } })
   return response
 }
+
+export const refreshTokenAPI = async () => {
+  const response = await axiosIntercept.post('/auth/refreshToken')
+  return response
+}

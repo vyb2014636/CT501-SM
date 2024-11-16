@@ -46,7 +46,6 @@ function Routing() {
         <Route path='/' element={<Home />}>
           <Route path='/' element={<Main />} />
           <Route path='favorite' element={<Favorites />} />
-          <Route path='trash' element={<Trash />} />
           <Route path='post/:postId' element={<ViewPost />} />
         </Route>
         <Route path='/chat' element={<Chat />} />

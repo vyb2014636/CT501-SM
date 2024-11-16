@@ -56,8 +56,9 @@ import { pushListRequests } from '@/features/request/requestSlice'
 import { updateFriends } from '@/features/auth/authSlice'
 import env from '@/utils/enviroment'
 import { receiveMessage } from '@/features/chat/messageSlice'
-import { updateLastMessage, updateNewGroup } from '@/features/chat/chatSlice'
+import { pushChat, removeChat, updateLastMessage, updateNewGroup } from '@/features/chat/chatSlice'
 import { setUserOffline, setUserOnline } from '@/features/online/onlineSlice'
+import { triggerReload } from '@/features/loading/reloadSlice'
 
 // Khởi tạo socket với các tùy chọn
 const socket = io(env.SOCKET_URL, {
@@ -104,11 +105,15 @@ socket.on('reconnect_attempt', (attempt) => {
 // Lắng nghe các sự kiện khác
 socket.on('newPost', (data) => {
   store.dispatch(receiveNotify(data.notification))
+  store.dispatch(triggerReload())
+
   toast.info(`${data.userName} đã đăng 1 bài viết mới.`, { position: 'top-center', hideProgressBar: true, onClose: 200 })
 })
 
 socket.on('sharedPost', (data) => {
   store.dispatch(receiveNotify(data.notification))
+  store.dispatch(triggerReload())
+
   toast.info(`${data.userName} đã chia sẻ bài viết của bạn.`, { position: 'top-center', hideProgressBar: true, onClose: 200 })
 })
 
@@ -145,6 +150,16 @@ socket.on('user_online_status', (data) => {
 })
 socket.on('user_offline_status', (data) => {
   store.dispatch(setUserOffline(data.userId))
+})
+socket.on('dissolveGroup', (data) => {
+  store.dispatch(removeChat(data.chat))
+})
+socket.on('isRemoveGroup', (data) => {
+  toast.info(`Bạn đã bị xóa khỏi nhóm ${data?.chat?.chatName}`)
+  store.dispatch(removeChat(data.chat))
+})
+socket.on('add_group', (data) => {
+  store.dispatch(pushChat(data.chat))
 })
 
 export default socket

@@ -42,9 +42,13 @@ export const fetchMessages = createAsyncThunk('message/', async (chatID, { rejec
   }
 })
 
-export const sendNewMessage = createAsyncThunk('message/sendMes', async ({ chatID, content }, { rejectWithValue }) => {
+export const sendNewMessage = createAsyncThunk('message/sendMes', async (formdata, { rejectWithValue }) => {
   try {
-    const response = await axiosIntercept.post(`/chat/sendMessage`, { chatID, content })
+    const response = await axiosIntercept.post(`/chat/sendMessage`, formdata, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     return response
   } catch (error) {
     rejectWithValue(error)

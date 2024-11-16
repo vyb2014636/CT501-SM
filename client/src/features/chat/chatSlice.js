@@ -27,16 +27,24 @@ const chatSlice = createSlice({
       const chatIndex = state.chats.findIndex((chat) => chat._id === action.payload.chatID)
 
       if (chatIndex !== -1) {
-        // Cập nhật lastMessage
         state.chats[chatIndex].latestMessage = action.payload.newMessage
 
-        // Lưu chat vào biến tạm để di chuyển
         const [updatedChat] = state.chats.splice(chatIndex, 1) // Xóa chat khỏi vị trí cũ
-        state.chats.unshift(updatedChat) // Thêm chat vào đầu mảng
+        state.chats.unshift(updatedChat)
       }
     },
     updateNewGroup: (state, action) => {
       state.chats.unshift(action.payload.groupChat)
+    },
+    removeChat: (state, action) => {
+      state.chats = state.chats.filter((chat) => chat._id !== action.payload._id)
+      if (state.selectedChat?._id === action?.payload._id) state.selectedChat = null
+    },
+    pushChat: (state, action) => {
+      state.chats.unshift(action.payload)
+    },
+    updatedUserInChat: (state, action) => {
+      state.chats = state.chats.map((chat) => (chat._id === action.payload.chat._id ? { ...chat, users: action.payload.chat.users } : chat))
     }
   },
   extraReducers: (builder) => {
@@ -66,12 +74,10 @@ const chatSlice = createSlice({
         const chatIndex = state.chats.findIndex((chat) => chat._id === action.payload.chatId)
 
         if (chatIndex !== -1) {
-          // Cập nhật lastMessage
           state.chats[chatIndex].latestMessage = action.payload.newMessage
 
-          // Lưu chat vào biến tạm để di chuyển
-          const [updatedChat] = state.chats.splice(chatIndex, 1) // Xóa chat khỏi vị trí cũ
-          state.chats.unshift(updatedChat) // Thêm chat vào đầu mảng
+          const [updatedChat] = state.chats.splice(chatIndex, 1)
+          state.chats.unshift(updatedChat)
         }
       })
       .addCase(createGroupChat.fulfilled, (state, action) => {
@@ -83,6 +89,7 @@ const chatSlice = createSlice({
   }
 })
 
-export const { resetSelect, selectChat, resetStateChat, updateLastMessage, updateNewGroup } = chatSlice.actions
+export const { resetSelect, selectChat, resetStateChat, updateLastMessage, updateNewGroup, removeChat, updatedUserInChat, pushChat } =
+  chatSlice.actions
 
 export default chatSlice.reducer

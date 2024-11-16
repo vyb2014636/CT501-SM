@@ -6,6 +6,7 @@ import socket, { connectUser, disconnectUser } from './services/socket'
 import { useEffect } from 'react'
 import { setOnlineUsers } from './features/online/onlineSlice'
 import { fetchUsersOnline } from './apis/auth/authAPI'
+import Reload from './components/Common/Reload/Reload'
 
 function App() {
   const { user, isAuthenticated } = useSelector((state) => state.auth)
@@ -21,6 +22,7 @@ function App() {
   return (
     <BrowserRouter>
       <BackdropLoad />
+      <Reload />
       <Routing />
     </BrowserRouter>
   )

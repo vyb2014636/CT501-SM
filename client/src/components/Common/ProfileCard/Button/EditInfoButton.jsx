@@ -18,9 +18,7 @@ const EditInfoButton = ({ user }) => {
   const [formData, setFormData] = useState({
     firstname: user.firstname || '',
     lastname: user.lastname || '',
-    province: user.address?.province || '',
-    district: user.address?.district || '',
-    ward: user.address?.ward || ''
+    province: user.province || ''
   })
   const [initialFormData, setInitialFormData] = useState(formData)
 
@@ -41,19 +39,14 @@ const EditInfoButton = ({ user }) => {
   }
 
   const handleSave = async () => {
-    const { firstname, lastname, province, district, ward } = formData
-    const data = {
-      firstname,
-      lastname,
-      address: {
-        province,
-        district,
-        ward
+    const data = Object.entries(formData).reduce((acc, [key, value]) => {
+      if (value.trim() !== '') {
+        acc[key] = value
       }
-    }
+      return acc
+    }, {})
     try {
       const response = await uploadInfo(data)
-      console.log(response)
       dispatch(updateUser(response.user))
       toast.success('Cập nhật thông tin thành công!')
       setInitialFormData(formData)

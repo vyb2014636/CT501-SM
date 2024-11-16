@@ -14,7 +14,7 @@ const ReplyForm = ({ post, comment, dispatch, setShowReplies, setShowReplyInput 
 
     dispatch(addReplyForComment({ postId: post._id, commentId: comment._id, content: replyText }))
       .unwrap()
-      .then(async () => {
+      .then(async (res) => {
         setReplyText('')
         setShowReplyInput(false)
         setShowReplies(true)

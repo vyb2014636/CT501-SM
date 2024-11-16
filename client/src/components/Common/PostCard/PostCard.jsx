@@ -12,7 +12,7 @@ const CardPost = ({ post, visibleMenu }) => {
   const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   const location = useLocation()
-  const isLiked = post?.likes?.includes(user?._id)
+  const isLiked = post?.likes?.some((like) => like?._id.toString() === user?._id)
 
   const handleClickLike = useCallback(() => {
     dispatch(toggleLikePost(post._id))

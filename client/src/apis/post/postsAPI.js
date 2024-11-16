@@ -40,6 +40,10 @@ export const moveToTrashAPI = async (postId) => {
   const response = await axiosIntercept.put('post/trash', { postId })
   return response
 }
+export const deleteFromTrashAPI = async (postId) => {
+  const response = await axiosIntercept.put('post/deleteTrash', { postId })
+  return response
+}
 export const restoreFromTrashAPI = async (postId) => {
   const response = await axiosIntercept.put('post/restore', { postId })
   return response

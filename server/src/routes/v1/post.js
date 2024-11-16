@@ -29,6 +29,7 @@ router
   .put('/likeReply', verifyToken, postController.likeReply)
   .put('/trash', verifyToken, postController.putInTrashPost)
   .put('/restore', verifyToken, postController.restorePostFromTrash)
+  .put('/deleteTrash', verifyToken, postController.deleteFromTrashPost)
 
 // router
 //   .route('/')

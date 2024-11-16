@@ -17,8 +17,8 @@ import { resetNotificationState } from '@/features/notification/notificationSlic
 import { resetFriendship } from '@/features/request/friendshipSlice'
 import { disconnectUser } from '@/services/socket'
 import { resetStateChat } from '@/features/chat/chatSlice'
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
+import LockPersonOutlinedIcon from '@mui/icons-material/LockPersonOutlined'
 const styleTriangle = {
   elevation: 0,
   sx: {
@@ -91,10 +91,14 @@ const AccountButton = () => {
         <MenuItem onClick={() => navigate(`/personal`)}>
           <Avatar /> Tài khoản của tôi
         </MenuItem>
-        <MenuItem onClick={() => navigate(`/settings`)}>
-          <Avatar /> Trung tâm tài khoản
-        </MenuItem>
+
         <Divider />
+        <MenuItem onClick={() => navigate(`/settings`)}>
+          <ListItemIcon>
+            <LockPersonOutlinedIcon fontSize='small' />
+          </ListItemIcon>
+          Trung tâm tài khoản
+        </MenuItem>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Settings fontSize='small' />
@@ -107,12 +111,7 @@ const AccountButton = () => {
           </ListItemIcon>
           Yêu thích
         </MenuItem>
-        <MenuItem onClick={() => navigate(`/trash`)}>
-          <ListItemIcon>
-            <DeleteOutlineOutlinedIcon fontSize='small' />
-          </ListItemIcon>
-          Thùng rác
-        </MenuItem>
+
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize='small' />

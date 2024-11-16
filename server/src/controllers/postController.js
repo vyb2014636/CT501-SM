@@ -124,8 +124,8 @@ const addReply = async (req, res, next) => {
   try {
     const myId = req.user.id
     const { postId, commentId, content } = req.body
-    const replies = await postService.addReply(postId, commentId, content, myId)
-    res.status(200).json(replies)
+    const { post, comment } = await postService.addReply(postId, commentId, content, myId)
+    res.status(200).json({ post, comment })
   } catch (error) {
     next(error)
   }
@@ -193,6 +193,19 @@ const getPostsTrash = async (req, res, next) => {
   }
 }
 
+const deleteFromTrashPost = async (req, res, next) => {
+  try {
+    const { postId } = req.body
+    const userId = req.user.id
+
+    const post = await postService.deleteFromTrashPost(postId, userId)
+
+    res.status(200).json({ post, message: post ? 'Đã xóa bài đăng' : 'Không xóa được bài đăng ' })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const postController = {
   createPost,
   getPosts,
@@ -207,5 +220,6 @@ export const postController = {
   getPost,
   putInTrashPost,
   restorePostFromTrash,
-  getPostsTrash
+  getPostsTrash,
+  deleteFromTrashPost
 }

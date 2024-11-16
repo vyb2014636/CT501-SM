@@ -17,7 +17,7 @@ const Main = () => {
     try {
       await Promise.all([dispatch(resetPostState()), dispatch(fetchAllPosts({ page: 1 }))])
     } catch (error) {
-      toast.error(error.message) ///đây chưa showw được lỗi vì trong slice chưa reject
+      console.log(error.message)
       setError(true)
     } finally {
       setLoading(false)

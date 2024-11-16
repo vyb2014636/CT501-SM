@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Outlet, useParams } from 'react-router-dom'
 
 const Search = () => {
-  const isNonScreenMobile = useMediaQuery('(min-width: 950px)')
+  const isNonScreenMobile = useMediaQuery('(min-width: 1150px)')
 
   return (
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', overflow: 'hidden' }}>

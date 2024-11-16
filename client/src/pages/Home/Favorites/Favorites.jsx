@@ -7,6 +7,7 @@ import { getFavoritesAPI } from '@/apis/user/userAPI'
 import FavoriteCard from './FavoriteCard/FavoriteCard'
 import useScrollInfinite from '@/hooks/useScrollInfinite'
 import CircularProgress from '@mui/material/CircularProgress'
+import MenuMobile from '@/components/Mobile/MenuMobile'
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([])
@@ -57,27 +58,30 @@ const Favorites = () => {
   useScrollInfinite(scrollRef, loadMoreFavorites, hasMoreFavorites)
 
   return (
-    <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }} ref={scrollRef}>
-      <Typography variant='h5' fontWeight='bold' p={3}>
-        Tất cả
-      </Typography>
-      {loading ? (
-        <SkeletonPosts />
-      ) : !loading && favorites?.length === 0 ? (
-        <Typography>Không có danh sách yêu thích</Typography>
-      ) : (
-        <>
-          {favorites.map((post) => (
-            <FavoriteCard key={post._id} post={post} setFavorites={setFavorites} />
-          ))}
-          {isFetchingMore && ( // Hiển thị hiệu ứng tải khi đang tải thêm
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <CircularProgress size={30} />
-            </Box>
-          )}
-        </>
-      )}
-    </Box>
+    <>
+      <MenuMobile />
+      <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }} ref={scrollRef}>
+        <Typography variant='h5' fontWeight='bold' p={3}>
+          Tất cả
+        </Typography>
+        {loading ? (
+          <SkeletonPosts />
+        ) : !loading && favorites?.length === 0 ? (
+          <Typography>Không có danh sách yêu thích</Typography>
+        ) : (
+          <>
+            {favorites.map((post) => (
+              <FavoriteCard key={post._id} post={post} setFavorites={setFavorites} />
+            ))}
+            {isFetchingMore && ( // Hiển thị hiệu ứng tải khi đang tải thêm
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                <CircularProgress size={30} />
+              </Box>
+            )}
+          </>
+        )}
+      </Box>
+    </>
   )
 }
 

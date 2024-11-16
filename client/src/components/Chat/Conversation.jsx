@@ -11,7 +11,6 @@ import FlexCenter from '../Common/Flex/FlexCenter'
 const Conversation = ({ loadingChats, chats, selectedChat }) => {
   const currentUser = useSelector((state) => state.auth.user)
   const [search, setSearch] = useState('')
-  console.log(loadingChats)
   const filteredChats = useMemo(() => {
     if (!search.trim()) return chats
     return chats.filter((chat) => {

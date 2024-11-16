@@ -18,7 +18,7 @@ router
   .post('/verifyEnable2FA', verifyToken, authController.verifyAndEnable2FA)
   .get('/logout', verifyToken, authController.logout)
   .get('/online', verifyToken, authController.getUsersOnline)
-  .get('/refreshToken', verifyToken, authController.refreshAccessToken)
+  .post('/refreshToken', authController.refreshAccessToken)
   .get('/verifyResetOTP', authController.verifyOTPPassword)
 // .get('/:id',verifyToken,authController.profile)
 

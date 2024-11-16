@@ -28,7 +28,9 @@ const NotificationCard = ({ notification }) => {
       newPost: ' đã đăng một bài viết mới.',
       sharedPost: ' đã chia sẻ một bài viết.',
       hiddenPost: ': bài đăng của bạn đã bị ẩn do bị vi phạm',
-      restorePost: ': bài đăng của bạn đã được phục hồi'
+      restorePost: ': bài đăng của bạn đã được phục hồi',
+      dissolve: 'đã bị giải tán',
+      removeGroup: 'Bạn đã bị xóa khỏi nhóm'
     }
     return (
       <Typography variant='body2' sx={{ marginLeft: 1, fontWeight: status === 'unread' ? 'bold' : 'normal', whiteSpace: 'normal' }}>

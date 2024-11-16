@@ -27,7 +27,15 @@ const Trash = () => {
     fetchTrashPosts()
   }, [])
   return (
-    <Box sx={{ flex: 3, p: 4, mx: 4, ...scrollbarStyleMui }}>
+    <Box sx={{ p: 4, mx: 4, ...scrollbarStyleMui }}>
+      <Typography variant='h4' fontWeight='bold' gutterBottom>
+        Thùng rác
+      </Typography>
+      <Box>
+        <Typography variant='caption' color='textSecondary'>
+          Các bài viết sẽ được xóa trong 30 ngày
+        </Typography>
+      </Box>
       {loading ? (
         <SkeletonPosts />
       ) : !loading && days?.length === 0 ? (

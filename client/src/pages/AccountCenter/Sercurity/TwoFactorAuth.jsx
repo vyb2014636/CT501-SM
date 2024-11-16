@@ -41,25 +41,31 @@ const TwoFactorAuth = ({ is2FAEnabled = false, onToggle2FA = () => {}, email }) 
   const handlePasswordSubmit = async (data) => {
     const { password } = data
     dispatch(openBackdrop())
-    try {
-      if (isEnabling2FA) {
-        // Bật 2FA
-        const response = await enable2FAAPI(email, password)
-        setQrCode(response.qrCode)
-        setSecret(response.secret)
-        setOpenOtpModal(true)
-        toast.success('Mật khẩu hợp lệ! Vui lòng quét mã QR để tiếp tục.')
-      } else {
-        const response = await disable2FAAPI(password)
-        dispatch(updated2FA(response.is2FAEnabled))
-        onToggle2FA(false)
-        toast.success('Đã tắt chế độ xác thưc 2FA')
+
+    if (password.trim('') !== '') {
+      try {
+        if (isEnabling2FA) {
+          // Bật 2FA
+          const response = await enable2FAAPI(email, password)
+          setQrCode(response.qrCode)
+          setSecret(response.secret)
+          setOpenOtpModal(true)
+          toast.success('Mật khẩu hợp lệ! Vui lòng quét mã QR để tiếp tục.')
+        } else {
+          const response = await disable2FAAPI(password)
+          dispatch(updated2FA(response.is2FAEnabled))
+          onToggle2FA(false)
+          toast.success('Đã tắt chế độ xác thưc 2FA')
+        }
+        setOpenPasswordModal(false)
+        reset({ password: '' })
+      } catch (error) {
+        toast.error('Mật khẩu không chính xác. Vui lòng thử lại!')
+      } finally {
+        dispatch(closeBackdrop())
       }
-      setOpenPasswordModal(false)
-      reset({ password: '' })
-    } catch (error) {
-      toast.error('Mật khẩu không chính xác. Vui lòng thử lại!')
-    } finally {
+    } else {
+      toast.error('Vui lòng nhập mật khẩu!')
       dispatch(closeBackdrop())
     }
   }
@@ -97,30 +103,32 @@ const TwoFactorAuth = ({ is2FAEnabled = false, onToggle2FA = () => {}, email }) 
           setOpenPasswordModal(false)
         }}
         title='Xác nhận mật khẩu'>
-        <form onSubmit={handleSubmit(handlePasswordSubmit)}>
-          <Controller
-            name='password'
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label='Mật khẩu'
-                type='password'
-                variant='outlined'
-                fullWidth
-                margin='normal'
-                error={!!errors.password}
-                helperText={errors.password?.message}
-              />
-            )}
-          />
+        <Box p={2}>
+          <form onSubmit={handleSubmit(handlePasswordSubmit)}>
+            <Controller
+              name='password'
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label='Mật khẩu'
+                  type='password'
+                  variant='outlined'
+                  fullWidth
+                  margin='normal'
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                />
+              )}
+            />
 
-          <Box sx={{ mt: 2 }}>
-            <Button variant='contained' color='primary' fullWidth type='submit'>
-              Xác nhận
-            </Button>
-          </Box>
-        </form>
+            <Box sx={{ mt: 2 }}>
+              <Button variant='contained' color='primary' fullWidth type='submit'>
+                Xác nhận
+              </Button>
+            </Box>
+          </form>
+        </Box>
       </ModalWrapper>
 
       {/* Modal nhập OTP */}

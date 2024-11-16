@@ -2,9 +2,15 @@
 import { refreshToken } from '@/features/auth/authThunk'
 import env from '@/utils/enviroment'
 import axios from 'axios'
+import { refreshTokenAPI } from './auth/authAPI'
+import { refreshAccessToken } from '@/features/auth/authSlice'
+import Swal from 'sweetalert2'
+import { useNavigate } from 'react-router-dom'
+import Cookies from 'js-cookie' // Sử dụng js-cookie để lấy cookie
 
 const axiosIntercept = axios.create({
-  baseURL: env.SOCKET_API_URL // Đảm bảo biến môi trường đã được thiết lập
+  baseURL: env.SOCKET_API_URL,
+  withCredentials: true
 })
 
 // Hàm này sẽ setup interceptors với store
@@ -30,20 +36,30 @@ export const setupAxiosInterceptors = (store) => {
     },
     async (error) => {
       const originalRequest = error.config
-      // if (error.response && error.response.status === 401 && !originalRequest._retry) {
-      //   originalRequest._retry = true
-      //   try {
-      //     // const response = await store.dispatch(refreshToken())
-      //     // const newAccessToken = response.accessToken
-      //     console.log(object);
-      //     // localStorage.setItem('accessToken', newAccessToken)
-      //     // originalRequest.headers.token = `Bearer ${newAccessToken}`
-      //     // return axiosIntercept(originalRequest)
-      //   } catch (err) {
-      //     console.log('Refresh token failed', err)
-      //     return err.response.data
-      //   }
-      // }
+      if (error.response && error.response.status === 401 && !originalRequest._retry) {
+        try {
+          const response = await refreshTokenAPI()
+          // console.log(response)
+          if (response && response.accessToken) {
+            await store.dispatch(refreshAccessToken(response))
+
+            originalRequest.headers['token'] = `Bearer ${response.accessToken}`
+            return axiosIntercept(originalRequest)
+          }
+        } catch (err) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Phiên đăng nhập đã hết hạn!',
+            text: 'Vui lòng đăng nhập lại.',
+            confirmButtonText: 'Đến trang đăng nhập'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              localStorage.clear()
+              window.location.href = '/auth'
+            }
+          })
+        }
+      }
       // return error.response.data
       return Promise.reject(error.response.data)
     }

@@ -11,12 +11,43 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import ListItemButton from '@mui/material/ListItemButton'
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
+import Divider from '@mui/material/Divider'
 import MenuIcon from '@mui/icons-material/Menu'
+import { useDispatch } from 'react-redux'
+import { logout } from '@/features/auth/authThunk'
+import { resetPostState } from '@/features/post/postSlice'
+import { resetCommentState } from '@/features/comment/commentSlice'
+import { resetNotificationState } from '@/features/notification/notificationSlice'
+import { resetFriendship } from '@/features/request/friendshipSlice'
+import { disconnectUser } from '@/services/socket'
+import { resetStateChat } from '@/features/chat/chatSlice'
+import HomeButton from '../Common/RightSide/RightBar/Button/HomeButton'
+import FlexBetween from '../Common/Flex/FlexBetween'
+import Logo from '../Common/LeftSide/LeftBar/Logo'
+import FlexCenter from '../Common/Flex/FlexCenter'
+import FlexRow from '../Common/Flex/FlexRow'
+import NoticeButton from '../Notification/Button/NoticeButton'
+import ModeButton from '../Common/RightSide/RightBar/Button/ModeButton'
+import RequestButton from '../Common/RightSide/RightBar/Button/RequestButton'
+import ChatButton from '../Common/RightSide/RightBar/Button/ChatButton'
 
 const MenuMobile = () => {
-  const isNonScreenMobile = useMediaQuery('(min-width: 950px)')
+  const isNonScreenMobile = useMediaQuery('(min-width: 1150px)')
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
+
+  const handleLogout = () => {
+    dispatch(resetPostState())
+    dispatch(resetCommentState())
+    dispatch(resetNotificationState())
+    dispatch(resetFriendship())
+    dispatch(resetStateChat())
+    disconnectUser()
+    dispatch(logout())
+  }
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen)
@@ -30,15 +61,32 @@ const MenuMobile = () => {
       role='presentation'
       onClick={toggleDrawer(false)}>
       <List>
-        <ListItem disablePadding onClick={() => navigate('/profile')}>
+        <ListItem disablePadding onClick={() => navigate('/personal')}>
           <ListItemButton>
             <ListItemIcon>
               <AccountBoxOutlinedIcon />
             </ListItemIcon>
-            <ListItemText primary='Tài khoản' />
+            <ListItemText primary='Tài khoản của tôi' />
           </ListItemButton>
         </ListItem>
-        <ListItem disablePadding>
+        <ListItem disablePadding onClick={() => navigate('/settings')}>
+          <ListItemButton>
+            <ListItemIcon>
+              <SettingsOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary='Trung tâm tài khoản' />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding onClick={() => navigate('/favorite')}>
+          <ListItemButton>
+            <ListItemIcon>
+              <FavoriteBorderOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary='Yêu thích' />
+          </ListItemButton>
+        </ListItem>
+        <Divider />
+        <ListItem disablePadding onClick={handleLogout}>
           <ListItemButton>
             <ListItemIcon>
               <LogoutOutlinedIcon />
@@ -51,14 +99,28 @@ const MenuMobile = () => {
   )
 
   return (
-    <div>
-      <Button onClick={toggleDrawer(!open)}>
-        <MenuIcon />
-      </Button>
+    <>
+      {!isNonScreenMobile && (
+        <FlexBetween py={2}>
+          <FlexCenter>
+            <Logo />
+          </FlexCenter>
+          <FlexRow>
+            <HomeButton />
+            <RequestButton />
+            <ChatButton />
+            <NoticeButton />
+            <Button onClick={toggleDrawer(!open)}>
+              <MenuIcon />
+            </Button>
+          </FlexRow>
+        </FlexBetween>
+      )}
       <Drawer anchor='bottom' open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
-    </div>
+    </>
   )
 }
+
 export default MenuMobile

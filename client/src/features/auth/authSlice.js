@@ -49,6 +49,10 @@ export const authSlice = createSlice({
     },
     updated2FA(state, action) {
       state.user.is2FAEnabled = action.payload
+    },
+    refreshAccessToken(state, action) {
+      state.accessToken = action.payload.accessToken
+      // state.refreshToken = action.payload.refreshToken
     }
   },
   extraReducers: (builder) => {
@@ -104,8 +108,7 @@ export const authSlice = createSlice({
         state.accessToken = null
         state.refreshToken = null
         state.error = null
-        // removeToken('accessToken')
-        // removeToken('refreshToken')
+
         state.status = 'idle'
         state.loading = false
         state.isAuthenticated = false
@@ -116,9 +119,13 @@ export const authSlice = createSlice({
       .addCase(unFriend.fulfilled, (state, action) => {
         state.user.friends = state.user.friends.filter((friend) => friend._id !== action.payload.request.to._id) // Xóa bạn khỏi danh sách
       })
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.accessToken = action.payload.accessToken
+        // state.refreshToken = action.payload.refreshToken
+      })
   }
 })
 
-export const { resetError, updateUser, updateFriends, removeHistorySearch, updatedFavorites, updated2FA } = authSlice.actions
+export const { resetError, updateUser, updateFriends, removeHistorySearch, updatedFavorites, updated2FA, refreshAccessToken } = authSlice.actions
 
 export default authSlice.reducer

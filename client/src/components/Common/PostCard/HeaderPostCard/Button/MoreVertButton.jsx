@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Typography } from '@mui/material'
 import ReportButton from '@/components/Report/ReportButton'
 import { confirmAction } from '@/utils/helpers'
-import { moveToTrashAPI, restoreFromTrashAPI } from '@/apis/post/postsAPI'
+import { deleteFromTrashAPI, moveToTrashAPI, restoreFromTrashAPI } from '@/apis/post/postsAPI'
 import { updatedPost } from '@/features/post/postSlice'
 import { toast } from 'react-toastify'
 import RestoreOutlinedIcon from '@mui/icons-material/RestoreOutlined'
@@ -29,7 +29,26 @@ const MoreVertButton = ({ userPost, post, setDays, day }) => {
       try {
         const response = await moveToTrashAPI(postId)
         dispatch(updatedPost({ post: response.post, action: 'trash' }))
-        console.log(response.post)
+      } catch (error) {
+        toast.error(error.message)
+      }
+    })
+  }
+  const deleteTrash = async (postId) => {
+    setAnchorEl(null)
+    confirmAction('Bạn có chắc muốn xóa bài đăng này? nếu làm vậy bạn sẽ không phục hồi được', async () => {
+      try {
+        const response = await deleteFromTrashAPI(postId)
+        const updatedPosts = day.posts.filter((post) => post._id !== postId)
+
+        setDays((prevDays) => {
+          return prevDays.map((d) => {
+            if (d._id === day._id) {
+              return { ...d, posts: updatedPosts }
+            }
+            return d
+          })
+        })
       } catch (error) {
         toast.error(error.message)
       }
@@ -96,18 +115,18 @@ const MoreVertButton = ({ userPost, post, setDays, day }) => {
           horizontal: 'right'
         }}
         onClose={() => setAnchorEl(null)}>
-        {userPost._id === user._id && post.status === 'normal' ? (
-          <MenuItem onClick={() => moveTrash(post._id)}>
+        {userPost?._id === user._id && post?.status === 'normal' ? (
+          <MenuItem onClick={() => moveTrash(post?._id)}>
             <DeleteOutlinedIcon />
             <Typography ml={1}>Gỡ bài đăng</Typography>
           </MenuItem>
-        ) : userPost._id === user._id && post.status === 'trash' ? (
+        ) : userPost?._id === user._id && post?.status === 'trash' ? (
           [
-            <MenuItem key='restore' onClick={() => restoreFromTrash(post._id)}>
+            <MenuItem key='restore' onClick={() => restoreFromTrash(post?._id)}>
               <RestoreOutlinedIcon />
               <Typography ml={1}>Phục hồi</Typography>
             </MenuItem>,
-            <MenuItem key='delete' onClick={() => setAnchorEl(null)}>
+            <MenuItem key='delete' onClick={() => deleteTrash(post?._id)}>
               <DeleteOutlinedIcon />
               <Typography ml={1}>Xóa</Typography>
             </MenuItem>
@@ -115,14 +134,14 @@ const MoreVertButton = ({ userPost, post, setDays, day }) => {
         ) : (
           <ReportButton setAnchorEl={setAnchorEl} post={post} userPost={userPost} />
         )}
-        {post.status === 'normal' &&
-          (user.favorites.includes(post._id) ? (
-            <MenuItem onClick={() => removeFavorite(post._id)}>
+        {post?.status === 'normal' &&
+          (user.favorites.includes(post?._id) ? (
+            <MenuItem onClick={() => removeFavorite(post?._id)}>
               <FavoriteOutlinedIcon />
               <Typography ml={1}>Bỏ yêu thích</Typography>
             </MenuItem>
           ) : (
-            <MenuItem onClick={() => addFavorite(post._id)}>
+            <MenuItem onClick={() => addFavorite(post?._id)}>
               <FavoriteBorderOutlinedIcon />
               <Typography ml={1}>Yêu thích</Typography>
             </MenuItem>

@@ -15,17 +15,18 @@ const ConversationCard = ({ chat, selectedChat, currentUser }) => {
     dispatch(accessChat({ chatID: chat._id }))
   }, [chat._id, dispatch])
 
-  const otherUser = useMemo(() => chat.users.find((user) => user._id !== currentUser._id), [chat.users, currentUser._id])
+  const otherUser = useMemo(() => chat.users.find((user) => user._id !== currentUser?._id), [chat.users, currentUser?._id])
   const latestMessage = useMemo(() => chat?.latestMessage)
-
   const isMessageUnread = useMemo(() => {
-    return latestMessage && !latestMessage.readBy.includes(currentUser._id) && !isMe(latestMessage.sender._id, currentUser._id)
+    return latestMessage && !latestMessage?.readBy.includes(currentUser?._id) && !isMe(latestMessage?.sender?._id, currentUser?._id)
   }, [latestMessage, currentUser])
 
   const messageContent = useMemo(() => {
     if (!latestMessage) return 'Chưa có tin nhắn'
-    return latestMessage.sender._id === currentUser._id
+    return latestMessage.sender._id === currentUser?._id
       ? `Bạn: ${latestMessage.content}`
+      : latestMessage?.type === 'notify'
+      ? latestMessage.content
       : chat.isGroupChat
       ? `${latestMessage.sender.fullname}: ${latestMessage.content}`
       : latestMessage.content
@@ -36,7 +37,13 @@ const ConversationCard = ({ chat, selectedChat, currentUser }) => {
       <StyledAvatar user={otherUser} chat={chat} />
       <FlexColumn ml={2}>
         <Typography fontWeight='bold'>{chat.chatName ? chat.chatName : otherUser?.fullname}</Typography>
-        <Typography variant='caption' fontWeight={isMessageUnread ? 'bold' : 'normal'}>
+        <Typography
+          variant='caption'
+          fontWeight={isMessageUnread ? 'bold' : 'normal'}
+          sx={{
+            width: 1,
+            maxWidth: 300
+          }}>
           {messageContent}
         </Typography>
       </FlexColumn>

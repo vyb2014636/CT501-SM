@@ -6,6 +6,7 @@ import ImageIcon from '@mui/icons-material/Image'
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import SlowMotionVideoOutlinedIcon from '@mui/icons-material/SlowMotionVideoOutlined'
+import CloseIcon from '@mui/icons-material/Close'
 import { formatFullname } from '@/utils/helpers'
 import { scrollbarStyles, styleModal } from '@/styles/styles'
 import { postAPI } from '@/apis/post/postsAPI'
@@ -55,6 +56,13 @@ const ModalPost = ({ children, user }) => {
     setFiles((prevFiles) => [...prevFiles, ...selectedFiles]) // Lưu các file để phân loại đúng
   }
 
+  const handleDelete = (index) => {
+    setPreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index))
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index))
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index))
+    setVideos((prevVideos) => prevVideos.filter((_, i) => i !== index))
+  }
+
   const handleSubmit = async (e) => {
     const formData = new FormData()
     formData.append('describe', describe)
@@ -70,7 +78,6 @@ const ModalPost = ({ children, user }) => {
     }
 
     dispatch(closeBackdrop())
-
     setOpen(false)
     handleClose()
   }
@@ -78,7 +85,7 @@ const ModalPost = ({ children, user }) => {
   return (
     <div style={{ height: '100%', width: '100%' }}>
       {cloneElement(children, { onClick: () => setOpen(true) })}
-      <ModalWrapper open={open} onClose={handleClose} title='Đăng bài viết' modal='post'>
+      <ModalWrapper open={open} onClose={handleClose} title='Đăng bài viết' modal='post' maxHeight={800} width={650} maxWidth={650}>
         <Box p={4}>
           <FlexRow sx={{ alignItems: 'flex-start', gap: '12px', mb: 2 }}>
             <Avatar alt={user?.lastname} src={user?.avatar} sx={{ width: 36, height: 36 }} />
@@ -90,15 +97,51 @@ const ModalPost = ({ children, user }) => {
           <Box>
             <DescribeTextField placeholder={`${user?.lastname} ơi bạn đang nghĩ gì`} content={describe} setContent={setDescribe} />
 
-            <Box mt={2} px={2} sx={{ maxHeight: '200px', overflowY: 'auto', ...scrollbarStyles }}>
+            <Box
+              mt={2}
+              px={2}
+              width={1}
+              sx={{
+                display: previews.length > 2 && 'flex',
+                flexWrap: previews.length > 2 && 'wrap',
+                maxHeight: '300px',
+                overflowY: 'auto',
+                ...scrollbarStyles,
+                gap: 2
+              }}>
               {previews.map((preview, index) => {
                 const fileType = files[index]?.type
+                const height = previews.length <= 2 ? '500px' : '300px'
+
                 return (
-                  <Box key={index} mb={2} sx={{ display: 'flex', flexDirection: 'column' }}>
+                  <Box
+                    key={index}
+                    mb={2}
+                    sx={{
+                      position: 'relative',
+                      flex: 'calc(30.333%)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      boxShadow: 2,
+                      p: 2
+                    }}>
+                    <IconButton
+                      onClick={() => handleDelete(index)}
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        zIndex: 1,
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: '50%'
+                      }}>
+                      <CloseIcon />
+                    </IconButton>
+
                     {fileType && fileType.startsWith('video/') ? (
-                      <video src={preview} controls style={{ gap: 2, width: '100%', height: 'auto', objectFit: 'cover' }} />
+                      <video src={preview} controls style={{ width: '100%', height, objectFit: 'cover' }} />
                     ) : (
-                      <img src={preview} alt={`Preview ${index}`} style={{ gap: 2, width: '100%', height: 'auto', objectFit: 'cover' }} />
+                      <img src={preview} alt={`Preview ${index}`} style={{ width: '100%', height, objectFit: 'cover' }} />
                     )}
                   </Box>
                 )

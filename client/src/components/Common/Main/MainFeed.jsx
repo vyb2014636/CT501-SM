@@ -8,6 +8,7 @@ import useScrollInfinite from '@/hooks/useScrollInfinite'
 import SkeletonPosts from '../Skeleton/PostsSkeleton'
 import PostCard from '../PostCard/PostCard'
 import PostCreation from '@/components/PostCreation/Card/PostCreation'
+import MenuMobile from '@/components/Mobile/MenuMobile'
 
 const MainFeed = ({ posts, totalPosts }) => {
   const { loading, hasMorePosts } = useSelector((state) => state.post)
@@ -24,28 +25,32 @@ const MainFeed = ({ posts, totalPosts }) => {
 
   useScrollInfinite(scrollPostsRef, loadMorePosts, hasMorePosts)
   return (
-    <Box sx={{ ...styleMain, ...scrollbarStyleMui }} ref={scrollPostsRef}>
-      <PostCreation />
+    <>
+      <MenuMobile />
 
-      {!loading && posts.length === 0 ? (
-        <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
-          Không có bài viết nào được đăng
-        </Typography>
-      ) : (
-        <>
-          {posts.map((post) => (
-            <PostCard key={post._id} post={post} visibleMenu={true} />
-          ))}
-          {loading && posts.length > 0 && <SkeletonPosts />}
+      <Box sx={{ ...styleMain, ...scrollbarStyleMui }} ref={scrollPostsRef}>
+        <PostCreation />
 
-          {!loading && posts.length !== 0 && posts.length >= totalPosts && (
-            <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
-              Đã hết bài viết
-            </Typography>
-          )}
-        </>
-      )}
-    </Box>
+        {!loading && posts.length === 0 ? (
+          <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
+            Không có bài viết nào được đăng
+          </Typography>
+        ) : (
+          <>
+            {posts.map((post) => (
+              <PostCard key={post._id} post={post} visibleMenu={true} />
+            ))}
+            {loading && posts.length > 0 && <SkeletonPosts />}
+
+            {!loading && posts.length !== 0 && posts.length >= totalPosts && (
+              <Typography variant='h6' fontWeight='semi' textAlign='center' py={2} my={2}>
+                Đã hết bài viết
+              </Typography>
+            )}
+          </>
+        )}
+      </Box>
+    </>
   )
 }
 

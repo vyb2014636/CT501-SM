@@ -34,7 +34,7 @@ const TrashCard = ({ day, setDays }) => {
   }
   return (
     <>
-      <Box bgcolor='background.paper' p={2} borderRadius={3} m={2}>
+      <Box bgcolor='background.paper' py={2} borderRadius={3} my={2}>
         <Typography p={2} fontWeight='bold' variant='h6'>
           {day._id}
         </Typography>

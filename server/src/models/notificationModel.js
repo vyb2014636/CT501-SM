@@ -3,7 +3,18 @@ import mongoose from 'mongoose'
 var notificationSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ['friendRequestAccepted', 'friendRequestReject', 'newPost', 'sharedPost', 'warning', 'report', 'hiddenPost', 'restorePost'],
+    enum: [
+      'friendRequestAccepted',
+      'friendRequestReject',
+      'newPost',
+      'sharedPost',
+      'warning',
+      'report',
+      'hiddenPost',
+      'restorePost',
+      'removeGroup',
+      'dissolve'
+    ],
     required: true
   },
   sender: { type: mongoose.Types.ObjectId, ref: 'User', required: true },

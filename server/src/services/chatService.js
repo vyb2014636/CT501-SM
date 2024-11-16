@@ -1,6 +1,7 @@
 import ApiError from '~/middlewares/ApiError'
 import chatModel from '~/models/chatModel'
 import messageModel from '~/models/messageModel'
+import userModel from '~/models/userModel'
 import { sendMessage, sendNotification } from '~/sockets/'
 
 const accessChat = async (chatID, myID, userID = null) => {
@@ -8,17 +9,17 @@ const accessChat = async (chatID, myID, userID = null) => {
     let chat
 
     if (chatID) {
-      chat = await chatModel.findAndPopulateChat({ _id: chatID, users: { $in: [myID] } })
+      chat = await chatModel.findOneAndPopulateChat({ _id: chatID, users: { $in: [myID] } })
 
       if (!chat) throw new ApiError(404, 'Cuộc trò chuyện không tồn tại hoặc bạn không có quyền truy cập')
 
       // await messageModel.updateMany({ chat: chatID, readBy: { $ne: myID } }, { $addToSet: { readBy: myID } })
     } else if (!chatID && userID) {
-      chat = await chatModel.findAndPopulateChat({ isGroupChat: false, users: { $all: [myID, userID] } })
+      chat = await chatModel.findOneAndPopulateChat({ isGroupChat: false, users: { $all: [myID, userID] } })
 
       if (!chat) {
         chat = await chatModel.create({ chatName: null, isGroupChat: false, users: [myID, userID] })
-        chat = await chatModel.findAndPopulateChat({ _id: chat._id })
+        chat = await chatModel.findOneAndPopulateChat({ _id: chat._id })
       }
     }
 
@@ -75,9 +76,163 @@ const getChats = async (myID) => {
 
   return chats
 }
+const removeMemberFromGroup = async (chatID, userID, myId) => {
+  const chat = await chatModel.findOneAndPopulateChat({ _id: chatID, groupAdmin: myId })
+
+  if (!chat) throw new ApiError(403, 'Bạn không có quyền xóa thành viên này')
+
+  const member = chat.users.find((user) => user._id.toString() === userID.toString())
+  if (!member) throw new ApiError(404, 'Thành viên không có trong nhóm')
+
+  chat.users = chat.users.filter((user) => user._id.toString() !== userID.toString())
+  await chat.save()
+
+  sendMessage(userID, 'isRemoveGroup', { chat: chat })
+  const notificationMessage = new messageModel({
+    sender: myId,
+    content: `Thành viên ${member.fullname} đã bị xóa khỏi nhóm`,
+    chat: chatID,
+    type: 'notify'
+  })
+  await chatModel.findByIdAndUpdate(chatID, { latestMessage: notificationMessage })
+
+  await notificationMessage.save()
+
+  chat.latestMessage = notificationMessage._id
+  await chat.save()
+  await notificationMessage.populate('sender', 'fullname avatar')
+
+  chat.users.forEach((user) => sendMessage(user._id.toString(), 'receive_message', { newMessage: notificationMessage, chatID: chatID }))
+
+  return chat
+}
+
+const addMemberToGroup = async (chatID, userIDs, myId) => {
+  // Tìm chat và kiểm tra quyền admin
+  const chat = await chatModel.findOneAndPopulateChat({ _id: chatID, groupAdmin: myId })
+
+  if (!chat) throw new ApiError(403, 'Bạn không có quyền thêm thành viên vào nhóm')
+
+  // Lọc những user chưa có trong nhóm
+  const existingUserIDs = chat.users.map((user) => user._id.toString())
+  const newUserIDs = userIDs.filter((userID) => !existingUserIDs.includes(userID.toString()))
+
+  if (newUserIDs.length === 0) throw new ApiError(400, 'Tất cả thành viên đã có trong nhóm')
+
+  chat.users.push(...newUserIDs)
+  await chat.save()
+
+  const newUsers = await userModel.find({ _id: { $in: newUserIDs } })
+
+  const newUserNames = newUsers.map((user) => user.fullname).join(', ')
+  const notificationMessage = new messageModel({
+    sender: myId,
+    content: `Thành viên ${newUserNames} đã gia nhập nhóm`,
+    chat: chatID,
+    type: 'notify'
+  })
+  await chatModel.findByIdAndUpdate(chatID, { latestMessage: notificationMessage })
+  await notificationMessage.save()
+
+  await chatModel.findByIdAndUpdate(chatID, { latestMessage: notificationMessage })
+  await chat.save()
+  await notificationMessage.populate('sender', 'fullname avatar')
+
+  // Gửi thông báo đến các thành viên trong nhóm
+  chat.users.forEach((user) => {
+    sendMessage(user._id.toString(), 'receive_message', { newMessage: notificationMessage, chatID: chatID })
+  })
+
+  userIDs.forEach((user) => {
+    sendMessage(user.toString(), 'add_group', { chat: chat })
+  })
+
+  return chat
+}
+
+const dissolveGroup = async (chatID, myId) => {
+  const chat = await chatModel.findOneAndPopulateChat({ _id: chatID, groupAdmin: myId })
+
+  if (!chat) throw new ApiError(403, 'Bạn không có quyền giải tán nhóm này')
+  await chat.save()
+  chat.users.forEach((user) => {
+    sendMessage(user._id, 'dissolveGroup', {})
+  })
+
+  await messageModel.deleteMany({ chat: chatID })
+
+  await chatModel.deleteOne({ _id: chatID })
+
+  return chatID
+}
+
+const leaveGroup = async (chatID, myId) => {
+  const chat = await chatModel.findOneAndPopulateChat({ _id: chatID })
+
+  if (!chat) throw new ApiError(404, 'Không tìm thấy nhóm này')
+  const existingUser = chat.users.find((user) => user._id.toString() === myId.toString())
+
+  if (!existingUser) throw new ApiError(400, 'Bạn không phải là thành viên của nhóm')
+
+  const member = chat.users.find((user) => user._id.toString() === myId.toString())
+
+  chat.users = chat.users.filter((user) => user._id.toString() !== myId.toString())
+  await chat.save()
+
+  const notificationMessage = new messageModel({
+    sender: myId,
+    content: `Thành viên ${member.fullname} đã rời nhóm`,
+    chat: chatID,
+    type: 'notify'
+  })
+  await chatModel.findByIdAndUpdate(chatID, { latestMessage: notificationMessage })
+
+  await notificationMessage.save()
+  await notificationMessage.populate('sender', 'fullname avatar')
+
+  chat.users.forEach((user) => {
+    sendMessage(user._id.toString(), 'receive_message', { newMessage: notificationMessage, chatID: chatID })
+  })
+
+  return chat
+}
+
+const updateGroupAdmin = async (chatID, newAdminID, currentAdminID) => {
+  try {
+    const chat = await chatModel.findOne({ _id: chatID, groupAdmin: currentAdminID })
+
+    if (!chat) throw new ApiError(403, 'Bạn không có quyền chuyển quyền trưởng nhóm')
+
+    chat.groupAdmin = newAdminID
+    await chat.save()
+    await chat.populate('groupAdmin', '-password -refreshToken -twoFactorSecret')
+
+    const notificationMessage = new messageModel({
+      sender: currentAdminID,
+      content: `Trưởng nhóm đã được chuyển quyền cho ${chat.groupAdmin.fullname}`,
+      chat: chatID,
+      type: 'notify'
+    })
+    await chatModel.findByIdAndUpdate(chatID, { latestMessage: notificationMessage })
+
+    await notificationMessage.save()
+    await notificationMessage.populate('sender', 'fullname avatar')
+
+    chat.users.forEach((user) => sendNotification(user.toString(), 'receive_message', { newMessage: notificationMessage, chatID: chatID }))
+
+    return chat
+  } catch (error) {
+    throw error
+  }
+}
 
 export const chatService = {
   accessChat,
   createGroupChat,
-  getChats
+  getChats,
+  removeMemberFromGroup,
+  addMemberToGroup,
+  dissolveGroup,
+  leaveGroup,
+  updateGroupAdmin
 }
