@@ -9,6 +9,7 @@ import { sharePostAPI } from '@/apis/post/postsAPI'
 import { useNavigate } from 'react-router-dom'
 import { closeBackdrop, openBackdrop } from '@/features/loading/loadingSlice'
 import ModalWrapper from '@/components/Common/Modal/ModalWrapper'
+import { addPost } from '@/features/post/postSlice'
 const ShareButton = ({ post }) => {
   const [openShare, setOpenShare] = useState(false)
   const [descibeShare, setDescribeShare] = useState('')
@@ -22,6 +23,8 @@ const ShareButton = ({ post }) => {
     dispatch(openBackdrop())
     try {
       const response = await sharePostAPI(post._id, descibeShare)
+      dispatch(addPost(response.post))
+
       toast.success(response.message)
       handleCloseShare()
     } catch (error) {

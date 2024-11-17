@@ -31,9 +31,7 @@ const ProfileCard = ({ user, totalPosts }) => {
         </Typography>
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-        {isMe(currentUser?._id, user._id) ? <EditInfoButton user={user} /> : <FriendShip user={user} inProfile />}
-      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>{!isMe(currentUser?._id, user._id) && <FriendShip user={user} inProfile />}</Box>
 
       <ProfileStat friendsCount={friends?.length} totalPosts={totalPosts} />
     </FlexColumn>

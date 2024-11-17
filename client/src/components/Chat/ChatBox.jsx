@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { accessChat, fetchMessages, sendNewMessage } from '@/features/chat/chatThunk'
 import FlexBetween from '../Common/Flex/FlexBetween'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import { Skeleton, Tooltip } from '@mui/material'
+import { CircularProgress, Skeleton, Tooltip } from '@mui/material'
 import ChatInfoEdit from './ChatInfoEdit'
 import FlexCenter from '../Common/Flex/FlexCenter'
 import MessageCard from './Card/MessageCard'
@@ -21,6 +21,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { selectChat } from '@/features/chat/chatSlice'
+import ChatBoxSkeleton from '../Common/Skeleton/ChatBoxSkeleton'
 
 const ChatBox = ({ selectedChat }) => {
   const dispatch = useDispatch()
@@ -30,6 +31,8 @@ const ChatBox = ({ selectedChat }) => {
   const [imageFile, setImageFile] = useState(null) // Lưu ảnh được chọn
   const [imagePreview, setImagePreview] = useState(null) // Lưu ảnh xem trước
   const [editingInfo, setEditingInfo] = useState(false)
+  const [loadingSend, setLoadingSend] = useState(false)
+
   const isNonScreenMobile = useMediaQuery('(min-width: 1150px)')
 
   const messagesEndRef = useRef(null)
@@ -60,14 +63,16 @@ const ChatBox = ({ selectedChat }) => {
       }
 
       formData.append('chatID', selectedChat._id)
-      dispatch(openBackdrop())
+      // dispatch(openBackdrop())
+      setLoadingSend(true)
       try {
         await dispatch(sendNewMessage(formData)) // Gửi FormData tới backend
         setNewMessage('')
       } catch (error) {
         console.error('Gửi tin nhắn thất bại:', error.message)
       }
-      dispatch(closeBackdrop())
+      // dispatch(closeBackdrop())
+      setLoadingSend(false)
     },
     [dispatch, newMessage, imageFile, selectedChat._id]
   )
@@ -99,7 +104,7 @@ const ChatBox = ({ selectedChat }) => {
     return selectedChat.users.find((user) => user._id.toString() !== currentUser._id.toString())
   }, [selectedChat, currentUser._id])
 
-  if (loading) return <Skeleton sx={{ flex: 3 }} height={1} width={1} />
+  if (loading) return <ChatBoxSkeleton />
 
   return (
     <FlexColumn sx={{ flex: 3, borderRadius: 4, py: 2, backgroundColor: 'background.paper' }} height={1} justifyContent='space-between'>
@@ -150,8 +155,8 @@ const ChatBox = ({ selectedChat }) => {
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder='Nhập tin nhắn của bạn'
             />
-            <IconButton color='primary' type='submit'>
-              <SendIcon />
+            <IconButton color='primary' type='submit' disabled={loadingSend}>
+              {loadingSend ? <CircularProgress /> : <SendIcon />}
             </IconButton>
           </Box>
 
@@ -159,7 +164,6 @@ const ChatBox = ({ selectedChat }) => {
           {imagePreview && (
             <Box mt={2} display='flex' justifyContent='center' alignItems='center' position='relative'>
               <img src={imagePreview} alt='Preview' style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '8px' }} />
-              {/* Nút xóa ảnh */}
               <IconButton color='primary' onClick={handleRemoveImage} sx={{ position: 'absolute', top: '20px', right: '20px' }}>
                 <CloseIcon />
               </IconButton>

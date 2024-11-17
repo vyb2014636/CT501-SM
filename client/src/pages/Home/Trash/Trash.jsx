@@ -3,9 +3,9 @@ import { scrollbarStyleMui } from '@/styles/styles'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { getPostsTrashAPI } from '@/apis/post/postsAPI'
-import PostCard from '@/components/Common/PostCard/PostCard'
 import SkeletonPosts from '@/components/Common/Skeleton/PostsSkeleton'
 import TrashCard from './TrashCard/TrashCard'
+import TrashCardSkeleton from '@/components/Common/Skeleton/TrashCardSkeleton'
 
 const Trash = () => {
   const [days, setDays] = useState([])
@@ -37,7 +37,7 @@ const Trash = () => {
         </Typography>
       </Box>
       {loading ? (
-        <SkeletonPosts />
+        <TrashCardSkeleton />
       ) : !loading && days?.length === 0 ? (
         <Typography>Không tồn tại bài đăng trong 30 ngày</Typography>
       ) : (

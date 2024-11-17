@@ -19,8 +19,8 @@ var notificationSchema = new mongoose.Schema({
   },
   sender: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
   receiver: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
-  postId: { type: mongoose.Types.ObjectId, ref: 'Post', required: false }, // Chỉ khi thông báo liên quan tới bài đăng
-  reportId: { type: mongoose.Types.ObjectId, ref: 'Report', required: false }, // Chỉ khi thông báo liên quan tới bài đăng
+  postId: { type: mongoose.Types.ObjectId, ref: 'Post', required: false },
+  reportId: { type: mongoose.Types.ObjectId, ref: 'Report', required: false },
   status: { type: String, enum: ['unread', 'read'], default: 'unread' },
   createdAt: { type: Date, default: Date.now }
 })

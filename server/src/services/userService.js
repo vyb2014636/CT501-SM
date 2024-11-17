@@ -181,7 +181,7 @@ const getUsers = async (searchQuery = '', sortBy = '', sortOrder = '') => {
 
     const users = await userModel
       .find({ isAdmin: false, ...searchCondition })
-      .select('fullname address avatar isAdmin isVerify status background')
+      .select('fullname address avatar isAdmin isVerify status background createdAt province')
       .sort(sortCondition)
       .lean()
 
@@ -200,6 +200,12 @@ const toggleUserStatus = async (userId, status) => {
 
       if (!updatedUser) throw new ApiError(404, 'Không tìm thấy người dùng')
 
+      if ((updatedUser.status = 'Banned')) {
+        updatedUser.blockDate = new Date()
+      } else {
+        updatedUser.blockDate = null
+      }
+      updatedUser.save()
       return updatedUser
     } else throw new ApiError(400, 'Bạn chọn trạng thái không hợp lệ')
   } catch (error) {
@@ -223,19 +229,8 @@ const deleteHistorySearch = async (myId, query) => {
 
 const getLogHistoryByUser = async (userId) => {
   try {
-    // const { userId } = req.params;
-    // const page = parseInt(req.query.page) || 1; // Trang hiện tại, mặc định là 1
-    // const limit = parseInt(req.query.limit) || 10; // Số lượng mỗi lần tải, mặc định là 10
-    // const skip = (page - 1) * limit;
-
     const sixMonthsAgo = new Date()
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
-
-    // // Tổng số hoạt động
-    // const totalActivities = await Activity.countDocuments({
-    //   userId: mongoose.Types.ObjectId(userId),
-    //   createdAt: { $gte: sixMonthsAgo }
-    // });
 
     const activities = await Log.aggregate([
       {
@@ -263,13 +258,13 @@ const getLogHistoryByUser = async (userId) => {
         {
           path: 'post',
           populate: [
-            { path: 'byPost', select: 'firstname lastname fullname email background avatar' }, // Thông tin người tạo bài viết
-            { path: 'sharesBy', select: 'firstname lastname fullname email background avatar' }, // Người chia sẻ bài viết
+            { path: 'byPost', select: 'firstname lastname fullname email background avatar province' }, // Thông tin người tạo bài viết
+            { path: 'sharesBy', select: 'firstname lastname fullname email background avatar province' }, // Người chia sẻ bài viết
             {
               path: 'sharedPost', // Bài viết được chia sẻ
               populate: {
                 path: 'byPost',
-                select: 'firstname lastname fullname email background avatar' // Thông tin người tạo bài viết được chia sẻ
+                select: 'firstname lastname fullname email background avatar province' // Thông tin người tạo bài viết được chia sẻ
               }
             }
           ]

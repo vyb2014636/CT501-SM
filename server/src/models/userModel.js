@@ -78,6 +78,10 @@ var userSchema = new mongoose.Schema(
       type: Date,
       default: null
     },
+    blockDate: {
+      type: Date,
+      default: null
+    },
     lastInfoChange: {
       type: Date,
       default: null

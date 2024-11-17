@@ -35,7 +35,7 @@ export const scrollbarStyles = {
 
 export const scrollbarStyleMui = {
   overflowY: 'auto',
-  overflowX: 'hidden',
+  overflowX: 'auto',
   scrollbarGutter: 'stable',
   '&::-webkit-scrollbar-thumb': { bgcolor: 'background.paper' },
   '&::-webkit-scrollbar-thumb:hover': { bgcolor: '#bfc2cf' },

@@ -6,15 +6,12 @@ import { Box, Typography } from '@mui/material'
 const Dashboard = () => {
   return (
     <>
-      {/* Header */}
       <Box sx={{ padding: 4 }}>
         <Typography variant='h4'>Hi, Chào mừng bạn 👋</Typography>
       </Box>
 
-      {/* Dashboard Stats */}
       <DashboardStats />
 
-      {/* Charts */}
       <ChartSection />
     </>
   )

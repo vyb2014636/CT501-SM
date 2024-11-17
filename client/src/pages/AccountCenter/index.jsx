@@ -1,28 +1,25 @@
 import React, { useState } from 'react'
-import {
-  Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Typography,
-  Divider,
-  ListItemIcon,
-  Drawer,
-  IconButton,
-  AppBar,
-  Toolbar
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
+import Typography from '@mui/material/Typography'
+import Divider from '@mui/material/Divider'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import Drawer from '@mui/material/Drawer'
+import IconButton from '@mui/material/IconButton'
+import AppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
 import MenuIcon from '@mui/icons-material/Menu'
 import Logo from '@/components/Common/LeftSide/LeftBar/Logo'
 import Sercurity from './Sercurity/Sercurity'
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined'
 import PermContactCalendarOutlinedIcon from '@mui/icons-material/PermContactCalendarOutlined'
-import FlexRow from '@/components/Common/Flex/FlexRow'
 import Information from './Infomation/Information'
 import Trash from '../Home/Trash/Trash'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import FlexCenter from '@/components/Common/Flex/FlexCenter'
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 
 const menuItems = [
   {
@@ -40,7 +37,7 @@ const menuItems = [
   {
     key: 'settings',
     label: 'Thùng rác',
-    icon: <ShieldOutlinedIcon />,
+    icon: <DeleteOutlinedIcon />,
     content: <Trash />
   }
 ]

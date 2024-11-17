@@ -67,12 +67,6 @@ const PostCreation = () => {
               </Button>
             </ModalPost>
           </Box>
-          <Button sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }} onClick={handleTestRefreshToken}>
-            <LocationOnOutlinedIcon color='primary' size='small' />
-            <Typography color='primary' fontWeight='bold'>
-              Vị trí
-            </Typography>
-          </Button>
         </FlexRow>
       </FlexColumn>
     </Box>

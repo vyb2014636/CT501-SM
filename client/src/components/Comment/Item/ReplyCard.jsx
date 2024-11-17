@@ -14,7 +14,7 @@ const ReplyCard = ({ postId, commentId, user, reply }) => {
 
   const currentUser = useSelector((state) => state.auth.user)
 
-  const isLiked = reply.likes?.includes(currentUser._id)
+  const isLiked = reply?.likes?.includes(currentUser._id)
 
   const handleLikeReply = () => {
     dispatch(likeReply({ postId, commentId, replyId: reply._id }))

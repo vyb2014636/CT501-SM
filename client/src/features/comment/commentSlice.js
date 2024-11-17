@@ -1,4 +1,3 @@
-// src/features/postSlice.js
 import { createSlice } from '@reduxjs/toolkit'
 import { addComment, addReplyForComment, fetchComments, likeComment, likeReply } from './commentThunk'
 
@@ -29,7 +28,7 @@ export const commentSlice = createSlice({
         state.loading = true
       })
       .addCase(fetchComments.fulfilled, (state, action) => {
-        state.comments = [...state.comments, ...action.payload.comments]
+        state.comments = [...state.comments, ...action.payload?.comments]
         state.status = 'succeeded'
         state.error = false
         state.loading = false
@@ -41,7 +40,7 @@ export const commentSlice = createSlice({
         state.loading = false
       })
       .addCase(addComment.fulfilled, (state, action) => {
-        state.comments = action.payload.post.comments
+        state.comments = action.payload?.post?.comments
         state.status = 'succeeded'
         state.error = false
         state.loading = false

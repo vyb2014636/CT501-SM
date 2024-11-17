@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { toast } from 'react-toastify'
 import Box from '@mui/material/Box'
 import List from '@mui/material/List'
@@ -7,35 +7,51 @@ import Typography from '@mui/material/Typography'
 import { getListSuggestion } from '@/apis/user/userAPI'
 import FlexColumn from '../Common/Flex/FlexColumn'
 import SuggestionCard from './ListSuggestion/SuggestionCard'
-import { useSelector } from 'react-redux'
 import { SentimentDissatisfied } from '@mui/icons-material'
+import SuggestionSkeleton from '../Common/Skeleton/SuggestionSkeleton'
 
 const Suggestion = () => {
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-  const [suggestions, setSuggestions] = useState(null)
-  const { requests, sends } = useSelector((state) => state.request)
+  const [error, setError] = useState(null)
+  const [suggestions, setSuggestions] = useState([])
 
-  const fetchListNoFriends = async () => {
+  const fetchListNoFriends = useCallback(async () => {
     try {
       setLoading(true)
       const response = await getListSuggestion()
-      setSuggestions(response.listUser)
-    } catch (error) {
-      setError(true)
-      toast.error(error.message)
+      setSuggestions(response.listUser || [])
+    } catch (err) {
+      setError(err.message || 'Đã xảy ra lỗi khi tải dữ liệu.')
+      console.log(err.message)
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     fetchListNoFriends()
-  }, [])
+  }, [fetchListNoFriends])
 
-  if (loading) return <Typography>...loading</Typography>
+  const renderContent = () => {
+    if (loading) return <SuggestionSkeleton />
+    if (error)
+      return (
+        <Typography color='error' align='center'>
+          {error}
+        </Typography>
+      )
+    if (suggestions.length === 0)
+      return (
+        <FlexColumn alignItems='center' mt={2}>
+          <SentimentDissatisfied sx={{ fontSize: 50, color: 'gray', mb: 1 }} />
+          <Typography borderRadius={4} p={2} variant='body1' sx={{ backgroundColor: 'background.paper' }} align='center' fontWeight='bold'>
+            Bạn đã kết bạn với tất cả
+          </Typography>
+        </FlexColumn>
+      )
 
-  if (error) return <Typography>Không có dữ liệu</Typography>
+    return suggestions.map((user, id) => <SuggestionCard userNoFriend={user} key={id} />)
+  }
 
   return (
     <FlexColumn
@@ -43,26 +59,22 @@ const Suggestion = () => {
         mt: '15px',
         flex: 10
       }}>
-      <List sx={{ bgcolor: 'background.paper', borderRadius: '18px', display: 'flex', flexDirection: 'column' }}>
+      <List
+        sx={{
+          bgcolor: 'background.paper',
+          borderRadius: '18px',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
         <ListItem>
           <Typography variant='h6' gutterBottom color='primary' fontWeight='bold'>
             Những người bạn có thể biết
           </Typography>
         </ListItem>
-        {suggestions.length > 0 ? (
-          suggestions?.map((user, id) => <SuggestionCard userNoFriend={user} key={id} />)
-        ) : (
-          <FlexColumn alignItems='center'>
-            <SentimentDissatisfied sx={{ fontSize: 50, color: 'gray', mb: 1 }} />
-
-            <Typography borderRadius={4} p={2} variant='body1' sx={{ backgroundColor: 'background.paper' }} align='center' fontWeight='bold'>
-              Bạn đã kết bạn với tất cả
-            </Typography>
-          </FlexColumn>
-        )}
+        {renderContent()}
       </List>
     </FlexColumn>
   )
 }
 
-export default Suggestion
+export default React.memo(Suggestion)

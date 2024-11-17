@@ -36,6 +36,9 @@ export const postSlice = createSlice({
       state.error = false
       state.loading = false
     },
+    addPost: (state, action) => {
+      state.posts.unshift(action.payload)
+    },
     updatedPost: (state, action) => {
       const index = state.posts.findIndex((post) => post._id === action.payload.post._id)
 
@@ -48,16 +51,6 @@ export const postSlice = createSlice({
           state.posts[index] = action.payload.post
         }
       }
-
-      // else {
-      //   //Phục hồi bài đăng
-      //   let insertIndex = state.posts.findIndex((post) => new Date(post.createdAt) < new Date(action.payload.post.createdAt))
-      //   if (insertIndex === -1) {
-      //     insertIndex = state.posts?.length
-      //   }
-
-      //   state.posts.splice(insertIndex, 0, action.payload.post)
-      // }
     }
   },
   extraReducers: (builder) => {
@@ -127,5 +120,5 @@ export const postSlice = createSlice({
   }
 })
 
-export const { resetPostState, searchPosts, updatedPost, selectViewPost } = postSlice.actions
+export const { resetPostState, searchPosts, updatedPost, selectViewPost, addPost } = postSlice.actions
 export default postSlice.reducer

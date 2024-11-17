@@ -1,18 +1,14 @@
 import React, { useState } from 'react'
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Avatar,
-  List,
-  ListItem,
-  ListItemText,
-  Collapse,
-  ListItemButton,
-  ListItemIcon,
-  IconButton
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Avatar from '@mui/material/Avatar'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemText from '@mui/material/ListItemText'
+import Collapse from '@mui/material/Collapse'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import IconButton from '@mui/material/IconButton'
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined'
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined'
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined'
@@ -61,7 +57,6 @@ const ChatInfoEdit = ({ chat, onSave, onCancel }) => {
         const response = await leaveGroupAPI(chat?._id)
         dispatch(removeChat(response?.chat))
       }
-      dispatch(updatedUserInChat(response))
       toast.success('Thành công')
       handleLeaveGroupDialogClose()
     } catch (error) {

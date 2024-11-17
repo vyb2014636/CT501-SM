@@ -42,7 +42,10 @@ const ConversationCard = ({ chat, selectedChat, currentUser }) => {
           fontWeight={isMessageUnread ? 'bold' : 'normal'}
           sx={{
             width: 1,
-            maxWidth: 300
+            maxWidth: 300,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
           }}>
           {messageContent}
         </Typography>

@@ -38,7 +38,7 @@ const SuggestionCard = ({ userNoFriend }) => {
       </ListItemAvatar>
       <ListItemText primary={formatFullname(userNoFriend.firstname, userNoFriend.lastname)} secondary={`@${userNoFriend.firstname}`} />
       <Button variant={changeButton ? 'outlined' : 'contained'} sx={{ borderRadius: 12 }} onClick={handleFriendRequest} disabled={changeButton}>
-        {changeButton ? 'Đã gửi yêu cầu' : 'Kết bạn'}
+        {changeButton ? 'Đã gửi ' : 'Kết bạn'}
       </Button>
     </ListItem>
   )

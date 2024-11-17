@@ -28,10 +28,8 @@ const MyPersonal = () => {
     fetchData()
   }, [dispatch])
 
-  // Kiểm tra lỗi
   if (error) return <NotFoundPage />
 
-  // Kiểm tra loading
   if ((loading && totalPosts === 0) || !currentUser)
     return (
       <ProfileSkeleton>

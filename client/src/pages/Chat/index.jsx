@@ -10,11 +10,12 @@ import Conversation from '@/components/Chat/Conversation'
 import { useDispatch, useSelector } from 'react-redux'
 import FlexRow from '@/components/Common/Flex/FlexRow'
 import ChatBox from '@/components/Chat/ChatBox'
-import { accessChat } from '@/features/chat/chatThunk'
+import { accessChat, fetchChats } from '@/features/chat/chatThunk'
 import { Typography } from '@mui/material'
 import socket from '@/services/socket'
 import MenuMobile from '@/components/Mobile/MenuMobile'
-
+import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined'
+import FlexColumn from '@/components/Common/Flex/FlexColumn'
 const Chat = () => {
   const dispatch = useDispatch()
   const isNonScreenMobile = useMediaQuery('(min-width: 1150px)')
@@ -33,6 +34,10 @@ const Chat = () => {
       socket.off('receive_message', handleMessageReceived)
     }
   }, [dispatch, selectedChat])
+
+  useEffect(() => {
+    dispatch(fetchChats())
+  }, [dispatch])
 
   return (
     <Container disableGutters maxWidth={false} sx={{ minHeight: '100vh', height: '100vh', overflow: 'hidden' }}>
@@ -70,15 +75,21 @@ const Chat = () => {
               {selectedChat ? (
                 <ChatBox selectedChat={selectedChat} />
               ) : (
-                <Box
+                <FlexColumn
                   sx={{
+                    display: 'flex',
                     flex: 3,
                     backgroundColor: 'background.paper',
-                    borderRadius: 4,
-                    height: 1
+                    height: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 4
                   }}>
-                  <Typography m={4}>Vui lòng chọn cuộc hội thoại</Typography>
-                </Box>
+                  <StickyNote2OutlinedIcon sx={{ fontSize: 100, color: 'primary', mb: 1 }} />
+                  <Typography variant='h5' fontWeight='bold'>
+                    Vui lòng chọn đoạn chat
+                  </Typography>
+                </FlexColumn>
               )}
             </>
           ) : (

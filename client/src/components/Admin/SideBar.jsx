@@ -40,6 +40,17 @@ const menuItems = [
     text: 'Lịch sử hoạt động',
     icon: <HistoryOutlinedIcon />,
     path: '/admin/history'
+  },
+  {
+    id: '6',
+    text: 'Thống kê',
+    icon: <WarningAmberOutlinedIcon />,
+    path: '/admin/statistic',
+    subItems: [
+      { id: 'newUsers', text: 'Người dùng mới', path: '/admin/statistic/newUsers' },
+      { id: 'totalPost', text: 'Tổng bài đăng', path: '/admin/statistic/totalPost' },
+      { id: 'BannedUser', text: 'Tổng người dùng bị cấm', path: '/admin/statistic/BannedUser' }
+    ]
   }
 ]
 
@@ -63,6 +74,7 @@ const Sidebar = () => {
       variant='permanent'
       sx={{
         width: 300,
+        overflow: 'hidden',
         '& .MuiDrawer-paper': { width: 300, boxSizing: 'border-box' }
       }}>
       <FlexColumn sx={{ pt: 4, color: '#0072E4', textAlign: 'center' }}>

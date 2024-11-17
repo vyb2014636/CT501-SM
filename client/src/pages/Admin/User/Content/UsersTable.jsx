@@ -10,7 +10,7 @@ import InputBase from '@mui/material/InputBase'
 import UserTableRow from '@/components/Admin/Table/UserTableRow'
 import Box from '@mui/material/Box'
 import { fetchListUserForAdmin } from '@/apis/user/userAPI'
-import { Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material'
+import { Typography, MenuItem, Select, FormControl, InputLabel, CircularProgress } from '@mui/material'
 import TableTitle from '@/components/Admin/Title/TableTitle'
 
 const UsersTable = ({ history }) => {
@@ -77,7 +77,7 @@ const UsersTable = ({ history }) => {
               <TableCell style={{ width: '100px' }}>Avatar</TableCell>
               <TableCell style={{ width: '200px' }}>Họ tên</TableCell>
               <TableCell style={{ width: '200px' }}>Địa chỉ</TableCell>
-              <TableCell style={{ width: '150px' }}>Vai trò</TableCell>
+              <TableCell style={{ width: '150px' }}>Ngày tạo</TableCell>
               <TableCell style={{ width: '150px', textAlign: 'center' }}>Xác thực</TableCell>
               <TableCell style={{ width: '150px', textAlign: 'center' }}>Trạng thái</TableCell>
               <TableCell style={{ width: '150px' }} />
@@ -87,7 +87,7 @@ const UsersTable = ({ history }) => {
             {loading ? (
               <TableRow>
                 <TableCell colSpan={8} align='center'>
-                  <Typography>Loading...</Typography>
+                  <CircularProgress color='primary' />
                 </TableCell>
               </TableRow>
             ) : users.length > 0 ? (

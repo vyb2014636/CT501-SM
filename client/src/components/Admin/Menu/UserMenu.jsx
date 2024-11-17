@@ -51,14 +51,6 @@ const UserMenu = ({ anchorEl, onClose, user }) => {
           }}>
           Chỉnh sửa
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setActionType('delete')
-            setDialogOpen(true)
-            onClose()
-          }}>
-          Xóa
-        </MenuItem>
       </Menu>
 
       {renderConfirmationDialog()}

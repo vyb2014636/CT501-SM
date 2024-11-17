@@ -89,7 +89,7 @@ const AccountButton = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
         <MenuItem onClick={() => navigate(`/personal`)}>
-          <Avatar /> Tài khoản của tôi
+          <Avatar src={user && user.avatar} /> Tài khoản của tôi
         </MenuItem>
 
         <Divider />
@@ -99,12 +99,7 @@ const AccountButton = () => {
           </ListItemIcon>
           Trung tâm tài khoản
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize='small' />
-          </ListItemIcon>
-          Cài đặt
-        </MenuItem>
+
         <MenuItem onClick={() => navigate(`/favorite`)}>
           <ListItemIcon>
             <FavoriteBorderOutlinedIcon fontSize='small' />

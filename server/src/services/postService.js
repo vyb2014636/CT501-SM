@@ -103,7 +103,7 @@ const sharePost = async (postId, myId, describe) => {
       details: 'Người dùng chia sẻ bài đăng.',
       post: sharedPost._id
     })
-
+    await sharedPost.populatePost()
     return sharedPost
   } catch (error) {
     throw error
@@ -222,8 +222,8 @@ const getComments = async (postID, page, limit) => {
 
     if (!post) throw new ApiError(404, 'Không tìm thấy bài Post')
 
-    const totalComments = post.comments.length
-    const slicedComments = post.comments.slice((page - 1) * limit, page * limit)
+    const totalComments = post.comments?.length || 0
+    const slicedComments = post.comments?.slice((page - 1) * limit, page * limit)
 
     return {
       ...post,

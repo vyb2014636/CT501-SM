@@ -1,7 +1,7 @@
 import { useState, cloneElement } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import { Avatar, IconButton, Typography } from '@mui/material'
+import { Avatar, IconButton, Tooltip, Typography } from '@mui/material'
 import ImageIcon from '@mui/icons-material/Image'
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
@@ -17,6 +17,7 @@ import HiddenTextField from '@/components/Common/TextField/HiddenTextField'
 import DescribeTextField from '@/components/Common/TextField/DescribeTextField'
 import FlexRow from '@/components/Common/Flex/FlexRow'
 import ModalWrapper from '@/components/Common/Modal/ModalWrapper'
+import { addPost } from '@/features/post/postSlice'
 
 const ModalPost = ({ children, user }) => {
   const [open, setOpen] = useState(false)
@@ -72,6 +73,7 @@ const ModalPost = ({ children, user }) => {
 
     try {
       const response = await postAPI(formData)
+      dispatch(addPost(response?.post))
       toast.success(response.message)
     } catch (error) {
       toast.error(error)
@@ -149,18 +151,13 @@ const ModalPost = ({ children, user }) => {
             </Box>
 
             <Box>
-              <IconButton component='label' role={undefined} variant='contained' tabIndex={-1} color='primary'>
-                <HiddenTextField type='file' multiple accept='image/*,video/*' onChange={handleFileChange} />
-                <ImageIcon />
-                <SlowMotionVideoOutlinedIcon />
-              </IconButton>
-
-              <IconButton color='primary'>
-                <EmojiEmotionsIcon />
-              </IconButton>
-              <IconButton color='primary'>
-                <LocationOnIcon />
-              </IconButton>
+              <Tooltip title='Ảnh hoặc video'>
+                <IconButton component='label' role={undefined} variant='contained' tabIndex={-1} color='primary'>
+                  <HiddenTextField type='file' multiple accept='image/*,video/*' onChange={handleFileChange} />
+                  <ImageIcon />
+                  <SlowMotionVideoOutlinedIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
           </Box>
         </Box>

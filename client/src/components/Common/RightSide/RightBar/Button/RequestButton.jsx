@@ -37,7 +37,11 @@ const RequestButton = () => {
   }
 
   useEffect(() => {
-    dispatch(fetchFriendRequests())
+    try {
+      dispatch(fetchFriendRequests()).unwrap()
+    } catch (error) {
+      console.log(error.message)
+    }
   }, [dispatch])
 
   return (

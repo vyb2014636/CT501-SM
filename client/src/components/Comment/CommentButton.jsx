@@ -53,9 +53,9 @@ const CommentButton = ({ post }) => {
 
       <ModalWrapper open={open} onClose={handleClose} title='Bình luận' height={600}>
         <Box sx={{ flex: 1, p: 4, overflow: 'auto', ...scrollbarStyles }} ref={commentsRef}>
-          {loading && comments.length === 0 ? (
+          {loading && comments?.length === 0 ? (
             <Skeleton variant='rectangular' width='100%' height={60} animation='wave' />
-          ) : comments.length === 0 ? (
+          ) : comments?.length === 0 ? (
             <Typography variant='body1' align='center' sx={{ mt: 2 }}>
               Không có bình luận nào được đăng
             </Typography>
@@ -64,7 +64,7 @@ const CommentButton = ({ post }) => {
               <CommentSection key={comment._id} post={post} comment={comment} user={comment.user} dispatch={dispatch} replies={comment.replies} />
             ))
           )}
-          {loading && comments.length > 0 && <Skeleton variant='rectangular' width='100%' height={60} animation='wave' />}
+          {loading && comments?.length > 0 && <Skeleton variant='rectangular' width='100%' height={60} animation='wave' />}
         </Box>
         <CommentForm user={user} post={post} />
       </ModalWrapper>

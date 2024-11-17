@@ -38,6 +38,10 @@ import ReProcessReport from '@/pages/Admin/Report/Reports/ReProcess/ReProcessRep
 import Verify2FA from '@/pages/Auth/Login/Verify2FA/Verify2FA'
 import AccountCenter from '@/pages/AccountCenter'
 import ForgotPassword from '@/pages/Auth/ForgotPassword/ForgotPassword'
+import Statistic from '@/pages/Admin/Statistic/Statistic'
+import NewUsers from '@/pages/Admin/Statistic/TotalUser/NewUsers'
+import BannedUser from '@/pages/Admin/Statistic/BannedUser/BannedUser'
+import TotalPost from '@/pages/Admin/Statistic/TotalPost/TotalPost'
 
 function Routing() {
   return (
@@ -79,6 +83,11 @@ function Routing() {
           </Route>
           <Route path='/admin/history' element={<History />} />
 
+          <Route path='/admin/statistic' element={<Statistic />}>
+            <Route path='/admin/statistic/newUsers' element={<NewUsers />} />
+            <Route path='/admin/statistic/BannedUser' element={<BannedUser />} />
+            <Route path='/admin/statistic/totalPost' element={<TotalPost />} />
+          </Route>
           <Route path='/admin/setting' element={<Setting />} />
         </Route>
       </Route>

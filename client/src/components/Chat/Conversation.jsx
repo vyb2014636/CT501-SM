@@ -7,6 +7,8 @@ import AddGroupButton from './Button/AddGroupButton'
 import SearchIcon from '@mui/icons-material/Search'
 import ConversationCard from './Card/ConversationCard'
 import FlexCenter from '../Common/Flex/FlexCenter'
+import ConversationSkeleton from '../Common/Skeleton/ConversationCard'
+import { scrollbarStyleMui } from '@/styles/styles'
 
 const Conversation = ({ loadingChats, chats, selectedChat }) => {
   const currentUser = useSelector((state) => state.auth.user)
@@ -21,7 +23,7 @@ const Conversation = ({ loadingChats, chats, selectedChat }) => {
     })
   }, [chats, search, currentUser._id])
 
-  if (loadingChats) return <Typography>Đang tải...</Typography>
+  if (loadingChats) return <ConversationSkeleton />
 
   return (
     <FlexColumn height={1}>
@@ -37,11 +39,15 @@ const Conversation = ({ loadingChats, chats, selectedChat }) => {
         <InputBase placeholder='Tìm kiếm trên Messenger' sx={{ marginLeft: 1, flex: 1 }} value={search} onChange={(e) => setSearch(e.target.value)} />
       </FlexCenter>
 
-      <FlexColumn gap={2} py={2} sx={{ overflowY: 'auto', height: 1 }}>
+      <FlexColumn gap={2} py={2} sx={{ overflowY: 'auto', height: 1, ...scrollbarStyleMui }}>
         {filteredChats?.length > 0 ? (
           filteredChats.map((chat) => <ConversationCard key={chat._id} chat={chat} selectedChat={selectedChat} currentUser={currentUser} />)
         ) : (
-          <Typography>Không có kết quả tìm kiếm phù hợp</Typography>
+          <FlexColumn height={1}>
+            <Typography fontWeight='bold' align='center'>
+              Không có kết quả tìm kiếm phù hợp
+            </Typography>
+          </FlexColumn>
         )}
       </FlexColumn>
     </FlexColumn>

@@ -1,14 +1,9 @@
-import { Box, IconButton, Avatar } from '@mui/material'
 import React, { useState } from 'react'
-import Popover from '@mui/material/Popover'
-import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import MenuList from '@mui/material/MenuList'
-import MenuItem from '@mui/material/MenuItem'
+import { Box, IconButton, Avatar, Popover, Typography, Button, Divider, MenuList, MenuItem } from '@mui/material'
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import AccountBoxOutlinedIcon from '@mui/icons-material/AccountBoxOutlined'
+import MenuIcon from '@mui/icons-material/Menu'
 import { useDispatch } from 'react-redux'
 import { disconnectUser } from '@/services/socket'
 import { resetPostState } from '@/features/post/postSlice'
@@ -19,7 +14,7 @@ import { resetStateChat } from '@/features/chat/chatSlice'
 import { logout } from '@/features/auth/authThunk'
 import ModeButton from '@/components/Common/RightSide/RightBar/Button/ModeButton'
 
-const Header = () => {
+const Header = ({ handleDrawerToggle }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const dispatch = useDispatch()
 
@@ -45,15 +40,40 @@ const Header = () => {
   }
 
   return (
-    <Box sx={{ textAlign: 'end' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        px: { xs: 2, sm: 4 },
+        py: 1,
+        boxShadow: 1,
+        bgcolor: 'background.paper',
+        position: 'sticky',
+        top: 0,
+        width: 1
+      }}>
+      {/* Nút menu cho mobile */}
+      <IconButton
+        sx={{
+          display: { xs: 'flex', md: 'none' } // Hiện trên mobile, ẩn trên desktop
+        }}
+        onClick={handleDrawerToggle} // Gọi hàm mở Sidebar
+      >
+        <MenuIcon />
+      </IconButton>
+
+      {/* ModeButton - luôn hiển thị */}
       <ModeButton />
 
+      {/* Avatar và Popover */}
       <IconButton
         aria-describedby={id}
         sx={{
           p: '2px',
           width: 40,
-          height: 40
+          height: 40,
+          ml: 'auto' // Đẩy Avatar về bên phải
         }}
         onClick={handleOpenPopover}>
         <Avatar sx={{ heigh: 1, width: 1 }} />
@@ -96,10 +116,9 @@ const Header = () => {
           <MenuItem>
             <SettingsOutlinedIcon />
             <Box component='span' p={2}>
-              cài đặt
+              Cài đặt
             </Box>
           </MenuItem>
-          {/* ))} */}
         </MenuList>
 
         <Divider sx={{ borderStyle: 'dashed' }} />

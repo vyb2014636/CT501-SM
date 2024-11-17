@@ -127,7 +127,7 @@ const EditBackgroundModal = ({ openModal, setOpenModal }) => {
               Hủy
             </Button>
             <Button variant='contained' onClick={handleUpload} disabled={loading}>
-              {loading ? <CircularProgress size={24} /> : 'Lưu ảnh'}
+              Lưu ảnh
             </Button>
           </FlexRow>
         )}

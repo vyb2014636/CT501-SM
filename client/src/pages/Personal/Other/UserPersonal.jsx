@@ -28,7 +28,6 @@ const UserPersonal = () => {
           dispatch(checkFriendshipStatus(userId))
         ])
       } catch (error) {
-        // toast.error(error.message)
         console.log(error.message)
 
         setError(true)

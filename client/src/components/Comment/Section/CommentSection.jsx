@@ -14,8 +14,7 @@ const CommentSection = ({ post, comment, user, dispatch }) => {
   const [showReplies, setShowReplies] = useState(false)
   const [replyCount, setReplyCount] = useState(3)
   const currentUser = useSelector((state) => state.auth.user)
-
-  const isLiked = comment.likes.some((like) => like._id === currentUser._id)
+  const isLiked = comment.likes.some((like) => like._id.toString() === currentUser._id.toString())
   const handleClickReply = () => {
     setShowReplyInput(!showReplyInput)
   }

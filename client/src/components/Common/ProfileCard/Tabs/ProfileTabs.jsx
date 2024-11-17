@@ -14,7 +14,6 @@ const ProfileTabs = ({ value, handleChange }) => {
         <Tab label='Bài viết' />
         <Tab label='Bạn bè' />
         <Tab label='Ảnh' />
-        <Tab label='Video' />
       </Tabs>
     </Box>
   )

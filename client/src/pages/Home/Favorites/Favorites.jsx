@@ -8,6 +8,7 @@ import FavoriteCard from './FavoriteCard/FavoriteCard'
 import useScrollInfinite from '@/hooks/useScrollInfinite'
 import CircularProgress from '@mui/material/CircularProgress'
 import MenuMobile from '@/components/Mobile/MenuMobile'
+import FavoriteCardSkeleton from '@/components/Common/Skeleton/FavoriteCardSkeleton'
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([])
@@ -65,7 +66,7 @@ const Favorites = () => {
           Tất cả
         </Typography>
         {loading ? (
-          <SkeletonPosts />
+          <FavoriteCardSkeleton />
         ) : !loading && favorites?.length === 0 ? (
           <Typography>Không có danh sách yêu thích</Typography>
         ) : (

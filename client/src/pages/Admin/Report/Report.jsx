@@ -4,11 +4,7 @@ import ReportTable from './Reports/Resolved/ResolvedReports'
 import { Outlet } from 'react-router-dom'
 
 const Report = () => {
-  return (
-    <Box sx={{ backgroundColor: 'background.paper', width: '100%', overflow: 'hidden', mt: 4 }}>
-      <Outlet />
-    </Box>
-  )
+  return <Outlet />
 }
 
 export default Report
